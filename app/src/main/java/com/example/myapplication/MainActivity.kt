@@ -35,6 +35,8 @@ sealed class Screen {
     data class ReportDamage(val sourceId: Int?) : Screen()
     object VillageLeaderPanel : Screen()
     object WaterOfficerPanel : Screen()
+    object DistrictOfficerPanel : Screen()
+    object AdminPanel : Screen()
     data class LogQuality(val sourceId: Int) : Screen()
     object Predictor : Screen()
 }
@@ -74,6 +76,17 @@ fun MainAppContainer() {
     fun navigateToRoot(screen: Screen) {
         backStack.clear()
         backStack.add(screen)
+    }
+
+    fun getRoleHomeRoute(): Screen {
+        val user = ApiClient.currentUser ?: return Screen.Login
+        return when (user.role) {
+            "village_leader" -> Screen.VillageLeaderPanel
+            "water_officer" -> Screen.WaterOfficerPanel
+            "district_officer" -> Screen.DistrictOfficerPanel
+            "admin" -> Screen.AdminPanel
+            else -> Screen.Dashboard // citizen
+        }
     }
 
     // Handle android physical back button
@@ -130,8 +143,8 @@ fun MainAppContainer() {
                         modifier = Modifier.height(72.dp)
                     ) {
                         NavigationBarItem(
-                            selected = currentScreen is Screen.Dashboard,
-                            onClick = { navigateToRoot(Screen.Dashboard) },
+                            selected = currentScreen !is Screen.Predictor && currentScreen !is Screen.Login && currentScreen !is Screen.Register,
+                            onClick = { navigateToRoot(getRoleHomeRoute()) },
                             icon = { Icon(Icons.Default.Home, contentDescription = "Dashboard") },
                             label = { Text("Home", fontSize = 10.sp, fontFamily = FontFamily.Monospace) },
                             colors = NavigationBarItemDefaults.colors(
@@ -170,8 +183,8 @@ fun MainAppContainer() {
             when (currentScreen) {
                 is Screen.Login -> {
                     LoginScreen(
-                        onLoginSuccess = {
-                            navigateToRoot(Screen.Dashboard)
+                        onLoginSuccess = { user ->
+                            navigateToRoot(getRoleHomeRoute())
                         },
                         onNavigateToRegister = {
                             navigateTo(Screen.Register)
@@ -180,8 +193,8 @@ fun MainAppContainer() {
                 }
                 is Screen.Register -> {
                     RegisterScreen(
-                        onRegisterSuccess = {
-                            navigateToRoot(Screen.Dashboard)
+                        onRegisterSuccess = { user ->
+                            navigateToRoot(getRoleHomeRoute())
                         },
                         onNavigateToLogin = {
                             navigateBack()
@@ -198,13 +211,21 @@ fun MainAppContainer() {
                         },
                         onNavigateToPredictor = {
                             navigateTo(Screen.Predictor)
-                        },
-                        onNavigateToLeaderPanel = {
-                            navigateTo(Screen.VillageLeaderPanel)
-                        },
-                        onNavigateToOfficerPanel = {
-                            navigateTo(Screen.WaterOfficerPanel)
                         }
+                    )
+                }
+                is Screen.AdminPanel -> {
+                    AdminScreen(
+                        onNavigateToCitizen = { navigateTo(Screen.Dashboard) },
+                        onNavigateToLeader = { navigateTo(Screen.VillageLeaderPanel) },
+                        onNavigateToOfficer = { navigateTo(Screen.WaterOfficerPanel) },
+                        onNavigateToDistrict = { navigateTo(Screen.DistrictOfficerPanel) },
+                        onNavigateToPredictor = { navigateTo(Screen.Predictor) }
+                    )
+                }
+                is Screen.DistrictOfficerPanel -> {
+                    DistrictOfficerScreen(
+                        onNavigateBack = { navigateBack() }
                     )
                 }
                 is Screen.WaterSourceDetails -> {
