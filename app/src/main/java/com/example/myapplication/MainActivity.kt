@@ -321,13 +321,7 @@ fun MainAppContainer() {
                         }
                     )
                 }
-                is Screen.Predictor -> {
-                    PredictorScreen(
-                        onNavigateBack = {
-                            navigateToRoot(Screen.Dashboard)
-                        }
-                    )
-                }
+
             }
         }
     }
