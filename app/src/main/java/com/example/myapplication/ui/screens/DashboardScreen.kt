@@ -93,233 +93,253 @@ fun DashboardScreen(
         loadDashboardData()
     }
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
-            .padding(16.dp)
+            .background(MBlack),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Top Welcome & Actions
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = "HABARI, ${user?.displayName?.uppercase() ?: "MGENI"}",
-                    color = MTextWhite,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 1.5.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-                Text(
-                    text = "Role: ${user?.role?.uppercase() ?: "PUBLIC citizen"}",
-                    color = MBlueLight,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp,
-                    fontFamily = FontFamily.Monospace
-                )
+        // ── Welcome Header ────────────────────────────────────────────────
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "HABARI, ${user?.displayName?.uppercase() ?: "MGENI"}",
+                        color = MTextWhite,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 1.5.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                    Text(
+                        text = "Role: ${user?.role?.uppercase() ?: "PUBLIC CITIZEN"}",
+                        color = MBlueLight,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+                MButton(text = "REFRESH", onClick = { loadDashboardData() })
             }
-            MButton(
-                text = "REFRESH",
-                onClick = { loadDashboardData() }
-            )
         }
 
-        MStripesDivider(modifier = Modifier.padding(bottom = 16.dp))
+        item { MStripesDivider() }
 
-
-
-        // Global shortcuts
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            MButton(
-                text = "PREDICT DEMAND (AI)",
-                onClick = onNavigateToPredictor,
-                modifier = Modifier.weight(1f)
-            )
-            MButton(
-                text = "RIPOTI UHARIBIFU",
-                onClick = { onNavigateToReportDamage(null) },
-                modifier = Modifier.weight(1f)
-            )
+        // ── Quick Action Shortcuts ─────────────────────────────────────────
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                MButton(
+                    text = "PREDICT DEMAND (AI)",
+                    onClick = onNavigateToPredictor,
+                    modifier = Modifier.weight(1f)
+                )
+                MButton(
+                    text = "RIPOTI UHARIBIFU",
+                    onClick = { onNavigateToReportDamage(null) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
 
-        // Search Bar & Filter options
-        MCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search",
-                    tint = MTextMuted,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                BasicTextField(
-                    value = searchQueries,
-                    onValueChange = { searchQueries = it },
-                    modifier = Modifier.weight(1f),
-                    textStyle = MaterialTheme.typography.bodyMedium.copy(color = MTextWhite),
-                    decorationBox = { innerTextField ->
-                        if (searchQueries.isEmpty()) {
-                            Text("Tafuta chanzo cha maji au kijiji...", color = MTextMuted, fontSize = 14.sp)
-                        }
-                        innerTextField()
-                    }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Nearby coordinates search box toggle
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable { useNearbyFilter = !useNearbyFilter }
-            ) {
-                Checkbox(
-                    checked = useNearbyFilter,
-                    onCheckedChange = { useNearbyFilter = it },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = MTextWhite,
-                        checkmarkColor = MBlack,
-                        uncheckedColor = MBorderGray
-                    )
-                )
-                Text(
-                    text = "TAFUTA VILIVYO KARIBU (NEARBY FILTER)",
-                    color = MTextWhite,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-            }
-
-            if (useNearbyFilter) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("LATITUDE", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
-                        BasicTextField(
-                            value = latText,
-                            onValueChange = { latText = it },
-                            textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
-                            modifier = Modifier
-                                .border(1.dp, MBorderGray, RectangleShape)
-                                .background(MBlack)
-                                .padding(8.dp),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        // ── Alerts Banner ─────────────────────────────────────────────────
+        if (alerts.isNotEmpty()) {
+            item {
+                MCard(borderColor = MRed, backgroundColor = Color(0xFF1A0A0A)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = "Alerts",
+                            tint = MRed,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            text = "ARIFA KUU / TANGAZO LA MAJI",
+                            color = MTextWhite,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp,
+                            fontFamily = FontFamily.Monospace
                         )
                     }
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("LONGITUDE", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
-                        BasicTextField(
-                            value = lngText,
-                            onValueChange = { lngText = it },
-                            textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
-                            modifier = Modifier
-                                .border(1.dp, MBorderGray, RectangleShape)
-                                .background(MBlack)
-                                .padding(8.dp),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    alerts.take(3).forEach { alert ->
+                        Text(
+                            text = "• [${alert.alertTypeDisplay.uppercase()}] ${alert.message}",
+                            color = MTextMuted,
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(vertical = 2.dp)
                         )
                     }
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("RADIUS (KM)", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
-                        BasicTextField(
-                            value = radiusText,
-                            onValueChange = { radiusText = it },
-                            textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
-                            modifier = Modifier
-                                .border(1.dp, MBorderGray, RectangleShape)
-                                .background(MBlack)
-                                .padding(8.dp),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
-                    }
-                    MButton(
-                        text = "TAFUTA",
-                        onClick = { loadDashboardData() },
-                        modifier = Modifier.align(Alignment.Bottom)
-                    )
                 }
             }
         }
 
-        // Summary Statistics Box
+        // ── Search Bar & Filter ───────────────────────────────────────────
+        item {
+            MCard(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search",
+                        tint = MTextMuted,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    BasicTextField(
+                        value = searchQueries,
+                        onValueChange = { searchQueries = it },
+                        modifier = Modifier.weight(1f),
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(color = MTextWhite),
+                        decorationBox = { innerTextField ->
+                            if (searchQueries.isEmpty()) {
+                                Text("Tafuta chanzo cha maji au kijiji...", color = MTextMuted, fontSize = 14.sp)
+                            }
+                            innerTextField()
+                        }
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable { useNearbyFilter = !useNearbyFilter }
+                ) {
+                    Checkbox(
+                        checked = useNearbyFilter,
+                        onCheckedChange = { useNearbyFilter = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = MTextWhite,
+                            checkmarkColor = MBlack,
+                            uncheckedColor = MBorderGray
+                        )
+                    )
+                    Text(
+                        text = "TAFUTA VILIVYO KARIBU (NEARBY FILTER)",
+                        color = MTextWhite,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+                if (useNearbyFilter) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("LATITUDE", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            BasicTextField(
+                                value = latText,
+                                onValueChange = { latText = it },
+                                textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
+                                modifier = Modifier.border(1.dp, MBorderGray, RectangleShape).background(MBlack).padding(8.dp),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            )
+                        }
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("LONGITUDE", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            BasicTextField(
+                                value = lngText,
+                                onValueChange = { lngText = it },
+                                textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
+                                modifier = Modifier.border(1.dp, MBorderGray, RectangleShape).background(MBlack).padding(8.dp),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            )
+                        }
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("RADIUS (KM)", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            BasicTextField(
+                                value = radiusText,
+                                onValueChange = { radiusText = it },
+                                textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
+                                modifier = Modifier.border(1.dp, MBorderGray, RectangleShape).background(MBlack).padding(8.dp),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            )
+                        }
+                        MButton(
+                            text = "TAFUTA",
+                            onClick = { loadDashboardData() },
+                            modifier = Modifier.align(Alignment.Bottom)
+                        )
+                    }
+                }
+            }
+        }
+
+        // ── Summary Stats ─────────────────────────────────────────────────
         if (sources.isNotEmpty()) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            item {
                 val total = sources.size
                 val salama = sources.count { it.status == "safe" }
                 val hatarini = sources.count { it.status == "unsafe" }
-                val nyingine = total - salama - hatarini
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .border(1.dp, MBorderGray, RectangleShape)
-                        .background(MDarkGray)
-                        .padding(8.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                        Text("VYANZO", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
-                        Text("$total", color = MTextWhite, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Box(
+                        modifier = Modifier.weight(1f).border(1.dp, MBorderGray, RectangleShape).background(MDarkGray).padding(8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("VYANZO", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            Text("$total", color = MTextWhite, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .border(1.dp, Color(0xFF4CAF50), RectangleShape)
-                        .background(MDarkGray)
-                        .padding(8.dp)
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                        Text("SALAMA", color = Color(0xFF4CAF50), fontSize = 9.sp, fontFamily = FontFamily.Monospace)
-                        Text("$salama", color = Color(0xFF4CAF50), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Box(
+                        modifier = Modifier.weight(1f).border(1.dp, Color(0xFF4CAF50), RectangleShape).background(MDarkGray).padding(8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("SALAMA", color = Color(0xFF4CAF50), fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            Text("$salama", color = Color(0xFF4CAF50), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .border(1.dp, Color(0xFFF44336), RectangleShape)
-                        .background(MDarkGray)
-                        .padding(8.dp)
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                        Text("HATARINI", color = Color(0xFFF44336), fontSize = 9.sp, fontFamily = FontFamily.Monospace)
-                        Text("$hatarini", color = Color(0xFFF44336), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Box(
+                        modifier = Modifier.weight(1f).border(1.dp, Color(0xFFF44336), RectangleShape).background(MDarkGray).padding(8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("HATARINI", color = Color(0xFFF44336), fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            Text("$hatarini", color = Color(0xFFF44336), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }
         }
 
-        // Main List Content
+        // ── Section Header ────────────────────────────────────────────────
+        item {
+            Text(
+                text = "VYANZO VYA MAJI",
+                color = MTextWhite,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = 2.sp,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+
+        // ── Loading / Empty / List ────────────────────────────────────────
         if (isLoading) {
-            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MTextWhite)
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = MTextWhite)
+                }
             }
         } else {
             val filteredSources = sources.filter {
@@ -327,71 +347,26 @@ fun DashboardScreen(
                         it.villageName.contains(searchQueries, ignoreCase = true) ||
                         it.sourceTypeDisplay.contains(searchQueries, ignoreCase = true)
             }
-
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
-                // Show alerts warnings if they exist
-                if (alerts.isNotEmpty()) {
-                    item {
-                        MCard(
-                            borderColor = MRed,
-                            backgroundColor = Color(0xFF1A0A0A)
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.Notifications,
-                                    contentDescription = "Alerts",
-                                    tint = MRed,
-                                    modifier = Modifier.padding(end = 8.dp)
-                                )
-                                Text(
-                                    text = "ARIFA KUU / TANGAZO LA MAJI",
-                                    color = MTextWhite,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    letterSpacing = 1.sp,
-                                    fontFamily = FontFamily.Monospace
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            alerts.take(3).forEach { alert ->
-                                Text(
-                                    text = "• [${alert.alertTypeDisplay.uppercase()}] ${alert.message}",
-                                    color = MTextMuted,
-                                    fontSize = 12.sp,
-                                    modifier = Modifier.padding(vertical = 2.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-
-                if (filteredSources.isEmpty()) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(32.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "Hakuna vyanzo vilivyopatikana.",
-                                color = MTextMuted,
-                                fontSize = 14.sp,
-                                fontFamily = FontFamily.Monospace
-                            )
-                        }
-                    }
-                } else {
-                    items(filteredSources) { source ->
-                        WaterSourceCard(
-                            source = source,
-                            onClick = { onNavigateToSourceDetails(source.id) }
+            if (filteredSources.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Hakuna vyanzo vilivyopatikana.",
+                            color = MTextMuted,
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily.Monospace
                         )
                     }
+                }
+            } else {
+                items(filteredSources) { source ->
+                    WaterSourceCard(
+                        source = source,
+                        onClick = { onNavigateToSourceDetails(source.id) }
+                    )
                 }
             }
         }

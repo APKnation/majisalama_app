@@ -30,6 +30,7 @@ import com.example.myapplication.ui.screens.*
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
 sealed class Screen {
+    object Landing : Screen()
     object Login : Screen()
     object Register : Screen()
     object Dashboard : Screen()
@@ -63,7 +64,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainAppContainer() {
     // Custom Stack Navigation
-    val backStack = remember { mutableStateListOf<Screen>(Screen.Login) }
+    val backStack = remember { mutableStateListOf<Screen>(Screen.Landing) }
     val currentScreen = backStack.lastOrNull() ?: Screen.Login
 
     fun navigateTo(screen: Screen) {
@@ -137,7 +138,11 @@ fun MainAppContainer() {
             }
         },
         bottomBar = {
-            if (ApiClient.accessToken != null) {
+            val showNav = ApiClient.accessToken != null &&
+                currentScreen !is Screen.Landing &&
+                currentScreen !is Screen.Login &&
+                currentScreen !is Screen.Register
+            if (showNav) {
                 Column {
                     MStripesDivider(height = 1.dp)
                     NavigationBar(
@@ -210,6 +215,12 @@ fun MainAppContainer() {
                 .padding(innerPadding)
         ) {
             when (currentScreen) {
+                is Screen.Landing -> {
+                    LandingScreen(
+                        onNavigateToLogin = { navigateTo(Screen.Login) },
+                        onNavigateToRegister = { navigateTo(Screen.Register) }
+                    )
+                }
                 is Screen.Login -> {
                     LoginScreen(
                         onLoginSuccess = { user ->
