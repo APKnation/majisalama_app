@@ -2,6 +2,7 @@ package com.example.myapplication.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,46 +22,50 @@ fun AdminScreen(
     onNavigateToDistrict: () -> Unit,
     onNavigateToPredictor: () -> Unit
 ) {
-    Column(
+    val user = ApiClient.currentUser
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
-            .padding(16.dp),
+            .background(MBlack),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Header
-        val user = ApiClient.currentUser
-        Text(
-            text = "ADMIN MASTER DASHBOARD",
-            color = MTextWhite,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.ExtraBold,
-            letterSpacing = 1.sp,
-            fontFamily = FontFamily.Monospace,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Text(
-            text = "Karibu, ${user?.displayName?.uppercase() ?: "ADMIN"}",
-            color = MRed,
-            fontSize = 12.sp,
-            fontFamily = FontFamily.Monospace,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        item {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "ADMIN MASTER DASHBOARD",
+                    color = MTextWhite,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 1.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                Text(
+                    text = "Karibu, ${user?.displayName?.uppercase() ?: "ADMIN"}",
+                    color = MRed,
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                MStripesDivider()
+            }
+        }
 
-        MStripesDivider(modifier = Modifier.padding(bottom = 24.dp))
+        item {
+            Text(
+                text = "CHAGUA PANELI (SELECT PANEL)",
+                color = MTextMuted,
+                fontSize = 12.sp,
+                fontFamily = FontFamily.Monospace,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+        }
 
-        Text(
-            text = "CHAGUA PANELI (SELECT PANEL)",
-            color = MTextMuted,
-            fontSize = 12.sp,
-            fontFamily = FontFamily.Monospace,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        item {
             MButton(
                 text = "→ DASHBOARD YA MWANANCHI (CITIZEN)",
                 onClick = onNavigateToCitizen,
@@ -69,7 +74,9 @@ fun AdminScreen(
                 borderColor = MTextWhite,
                 contentColor = MTextWhite
             )
+        }
 
+        item {
             MButton(
                 text = "→ DASHBOARD YA KIONGOZI (LEADER)",
                 onClick = onNavigateToLeader,
@@ -77,7 +84,9 @@ fun AdminScreen(
                 backgroundColor = MBlueDark.copy(alpha = 0.2f),
                 borderColor = MBlueDark
             )
+        }
 
+        item {
             MButton(
                 text = "→ DASHBOARD YA AFISA WA MAJI (OFFICER)",
                 onClick = onNavigateToOfficer,
@@ -85,7 +94,9 @@ fun AdminScreen(
                 backgroundColor = MBlueLight.copy(alpha = 0.2f),
                 borderColor = MBlueLight
             )
+        }
 
+        item {
             MButton(
                 text = "→ DASHBOARD YA WILAYA (DISTRICT)",
                 onClick = onNavigateToDistrict,
@@ -93,9 +104,13 @@ fun AdminScreen(
                 backgroundColor = MRed.copy(alpha = 0.2f),
                 borderColor = MRed
             )
+        }
 
-            MStripesDivider(height = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+        item {
+            MStripesDivider(height = 1.dp)
+        }
 
+        item {
             MButton(
                 text = "AI PREDICTOR",
                 onClick = onNavigateToPredictor,

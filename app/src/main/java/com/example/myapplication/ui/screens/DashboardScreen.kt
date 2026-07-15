@@ -29,6 +29,8 @@ import com.example.myapplication.data.WaterSource
 import com.example.myapplication.ui.components.*
 import kotlinx.coroutines.launch
 
+import androidx.compose.foundation.rememberScrollState
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
@@ -328,7 +330,8 @@ fun DashboardScreen(
 
             LazyColumn(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(bottom = 16.dp)
             ) {
                 // Show alerts warnings if they exist
                 if (alerts.isNotEmpty()) {
