@@ -8,11 +8,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -62,9 +60,6 @@ fun MainAppContainer() {
     val backStack = remember { mutableStateListOf<Screen>(Screen.Login) }
     val currentScreen = backStack.lastOrNull() ?: Screen.Login
 
-    var showSettingsDialog by remember { mutableStateOf(false) }
-    var apiHostInput by remember { mutableStateOf(ApiClient.baseUrl) }
-
     fun navigateTo(screen: Screen) {
         backStack.add(screen)
     }
@@ -102,14 +97,6 @@ fun MainAppContainer() {
                         )
                     },
                     actions = {
-                        // Settings Button to configure host API
-                        IconButton(onClick = { showSettingsDialog = true }) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "API Settings",
-                                tint = MTextWhite
-                            )
-                        }
                         if (ApiClient.accessToken != null) {
                             IconButton(onClick = {
                                 ApiClient.logout()
@@ -278,68 +265,5 @@ fun MainAppContainer() {
                 }
             }
         }
-    }
-
-    // Base URL Setting dialog
-    if (showSettingsDialog) {
-        AlertDialog(
-            onDismissRequest = { showSettingsDialog = false },
-            title = {
-                Text(
-                    text = "DANGO BACKEND HOST SETTINGS",
-                    color = MTextWhite,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace
-                )
-            },
-            text = {
-                Column {
-                    Text(
-                        text = "Weka URL ya server ya Django. Tumia http://10.0.2.2:8000 kwa emulator.",
-                        color = MTextMuted,
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    OutlinedTextField(
-                        value = apiHostInput,
-                        onValueChange = { apiHostInput = it },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .border(1.dp, MBorderGray, RectangleShape),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MTextWhite,
-                            unfocusedTextColor = MTextWhite,
-                            focusedBorderColor = MTextWhite,
-                            unfocusedBorderColor = MBorderGray,
-                            focusedContainerColor = MBlack,
-                            unfocusedContainerColor = MBlack
-                        ),
-                        shape = RectangleShape,
-                        singleLine = true
-                    )
-                }
-            },
-            confirmButton = {
-                MButton(
-                    text = "HIFADHI",
-                    onClick = {
-                        ApiClient.setBaseUrl(apiHostInput)
-                        showSettingsDialog = false
-                    }
-                )
-            },
-            dismissButton = {
-                MButton(
-                    text = "GHAIRI",
-                    onClick = {
-                        apiHostInput = ApiClient.baseUrl
-                        showSettingsDialog = false
-                    }
-                )
-            },
-            containerColor = MDarkGray,
-            shape = RectangleShape
-        )
     }
 }
