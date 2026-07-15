@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -100,7 +99,7 @@ fun VillageLeaderScreen(
         MStripesDivider(modifier = Modifier.padding(bottom = 16.dp))
 
         // Tabs
-        ScrollableTabRow(
+        PrimaryScrollableTabRow(
             selectedTabIndex = selectedTab,
             containerColor = MDarkGray,
             contentColor = MTextWhite,
@@ -108,13 +107,7 @@ fun VillageLeaderScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
-                .border(1.dp, MBorderGray, RectangleShape),
-            indicator = { tabPositions ->
-                TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                    color = MBlueLight
-                )
-            }
+                .border(1.dp, MBorderGray, RectangleShape)
         ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
