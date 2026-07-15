@@ -12,6 +12,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -39,6 +41,7 @@ sealed class Screen {
     object AdminPanel : Screen()
     data class LogQuality(val sourceId: Int) : Screen()
     object Predictor : Screen()
+    object Profile : Screen()
 }
 
 class MainActivity : ComponentActivity() {
@@ -143,7 +146,7 @@ fun MainAppContainer() {
                         modifier = Modifier.height(72.dp)
                     ) {
                         NavigationBarItem(
-                            selected = currentScreen !is Screen.Predictor && currentScreen !is Screen.Login && currentScreen !is Screen.Register,
+                            selected = currentScreen !is Screen.Predictor && currentScreen !is Screen.ReportDamage && currentScreen !is Screen.Profile && currentScreen !is Screen.Login && currentScreen !is Screen.Register,
                             onClick = { navigateToRoot(getRoleHomeRoute()) },
                             icon = { Icon(Icons.Default.Home, contentDescription = "Dashboard") },
                             label = { Text("Home", fontSize = 10.sp, fontFamily = FontFamily.Monospace) },
@@ -156,14 +159,40 @@ fun MainAppContainer() {
                             )
                         )
                         NavigationBarItem(
+                            selected = currentScreen is Screen.ReportDamage,
+                            onClick = { navigateToRoot(Screen.ReportDamage(null)) },
+                            icon = { Icon(Icons.Default.Warning, contentDescription = "Uharibifu") },
+                            label = { Text("Uharibifu", fontSize = 10.sp, fontFamily = FontFamily.Monospace) },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MTextWhite,
+                                selectedTextColor = MTextWhite,
+                                indicatorColor = MRed.copy(alpha = 0.4f),
+                                unselectedIconColor = MTextMuted,
+                                unselectedTextColor = MTextMuted
+                            )
+                        )
+                        NavigationBarItem(
                             selected = currentScreen is Screen.Predictor,
                             onClick = { navigateToRoot(Screen.Predictor) },
-                            icon = { Icon(Icons.Default.Info, contentDescription = "AI Predictor") },
-                            label = { Text("AI Predictor", fontSize = 10.sp, fontFamily = FontFamily.Monospace) },
+                            icon = { Icon(Icons.Default.Info, contentDescription = "AI") },
+                            label = { Text("AI", fontSize = 10.sp, fontFamily = FontFamily.Monospace) },
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = MTextWhite,
                                 selectedTextColor = MTextWhite,
                                 indicatorColor = MBlueLight.copy(alpha = 0.4f),
+                                unselectedIconColor = MTextMuted,
+                                unselectedTextColor = MTextMuted
+                            )
+                        )
+                        NavigationBarItem(
+                            selected = currentScreen is Screen.Profile,
+                            onClick = { navigateToRoot(Screen.Profile) },
+                            icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
+                            label = { Text("Profile", fontSize = 10.sp, fontFamily = FontFamily.Monospace) },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MTextWhite,
+                                selectedTextColor = MTextWhite,
+                                indicatorColor = MBlack,
                                 unselectedIconColor = MTextMuted,
                                 unselectedTextColor = MTextMuted
                             )
@@ -226,6 +255,20 @@ fun MainAppContainer() {
                 is Screen.DistrictOfficerPanel -> {
                     DistrictOfficerScreen(
                         onNavigateBack = { navigateBack() }
+                    )
+                }
+                is Screen.Predictor -> {
+                    PredictorScreen(
+                        onNavigateBack = { navigateBack() }
+                    )
+                }
+                is Screen.Profile -> {
+                    ProfileScreen(
+                        onNavigateBack = { navigateBack() },
+                        onLogout = {
+                            ApiClient.logout()
+                            navigateToRoot(Screen.Login)
+                        }
                     )
                 }
                 is Screen.WaterSourceDetails -> {
