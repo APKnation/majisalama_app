@@ -34,9 +34,7 @@ import kotlinx.coroutines.launch
 fun DashboardScreen(
     onNavigateToSourceDetails: (Int) -> Unit,
     onNavigateToReportDamage: (Int?) -> Unit,
-    onNavigateToPredictor: () -> Unit,
-    onNavigateToLeaderPanel: () -> Unit,
-    onNavigateToOfficerPanel: () -> Unit
+    onNavigateToPredictor: () -> Unit
 ) {
     var searchQueries by remember { mutableStateOf("") }
     var sources by remember { mutableStateOf<List<WaterSource>>(emptyList()) }
@@ -133,34 +131,7 @@ fun DashboardScreen(
 
         MStripesDivider(modifier = Modifier.padding(bottom = 16.dp))
 
-        // Role-Specific Navigation Buttons
-        if (user != null) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                if (user.role == "village_leader" || user.role == "admin") {
-                    MButton(
-                        text = "→ DASHBOARD YA MWENYEKITI (LEADER)",
-                        onClick = onNavigateToLeaderPanel,
-                        modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = MBlueDark.copy(alpha = 0.2f),
-                        borderColor = MBlueDark
-                    )
-                }
-                if (user.role == "water_officer" || user.role == "admin") {
-                    MButton(
-                        text = "→ DASHBOARD YA AFISA WA MAJI (OFFICER)",
-                        onClick = onNavigateToOfficerPanel,
-                        modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = MBlueLight.copy(alpha = 0.2f),
-                        borderColor = MBlueLight
-                    )
-                }
-            }
-        }
+
 
         // Global shortcuts
         Row(
