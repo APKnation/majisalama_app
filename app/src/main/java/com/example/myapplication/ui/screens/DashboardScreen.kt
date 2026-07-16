@@ -154,7 +154,7 @@ fun DashboardScreen(
         // ── Alerts Banner ─────────────────────────────────────────────────
         if (alerts.isNotEmpty()) {
             item {
-                MCard(borderColor = MaterialTheme.colorScheme.error, backgroundColor = Color(0xFF1A0A0A)) {
+                MCard(backgroundColor = Color(0xFF1A0A0A)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Notifications,

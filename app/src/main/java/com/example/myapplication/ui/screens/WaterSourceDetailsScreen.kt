@@ -142,7 +142,7 @@ fun WaterSourceDetailsScreen(
 
                 // Maintenance Schedule Panel
                 item {
-                    MCard(borderColor = MaterialTheme.colorScheme.secondary) {
+                    MCard() {
                         Text(
                             text = "RATIBA YA USAFISHAJI / MATENGENEZO",
                             color = MaterialTheme.colorScheme.onSurface,
@@ -159,7 +159,7 @@ fun WaterSourceDetailsScreen(
 
                 // Water quality parameters
                 item {
-                    MCard(borderColor = if (src.status == "safe") Color(0xFF4CAF50) else Color(0xFFF44336)) {
+                    MCard() Color(0xFF4CAF50) else Color(0xFFF44336)) {
                         Text(
                             text = "UBORA WA MAJI (VIPIMO VYA SASA)",
                             color = MaterialTheme.colorScheme.onSurface,
@@ -214,7 +214,6 @@ fun WaterSourceDetailsScreen(
                             text = "RIPOTI UHARIBIFU KANZA HAPA",
                             onClick = { onNavigateToReportDamage(src.id) },
                             modifier = Modifier.fillMaxWidth(),
-                            borderColor = MaterialTheme.colorScheme.error,
                             contentColor = MaterialTheme.colorScheme.error
                         )
 
@@ -224,7 +223,7 @@ fun WaterSourceDetailsScreen(
                                 text = "PIMA NA UWEKE UBORA WA MAJI (INSPECTION)",
                                 onClick = { onNavigateToLogQuality(src.id) },
                                 modifier = Modifier.fillMaxWidth(),
-                                borderColor = Color(0xFF4CAF50),
+                                ),
                                 contentColor = Color(0xFF4CAF50)
                             )
                         }
@@ -287,7 +286,7 @@ fun ParameterDisplay(
 
 @Composable
 fun QualityReportItem(report: QualityReport) {
-    MCard(borderColor = MaterialTheme.colorScheme.outline) {
+    MCard() {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
