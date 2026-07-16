@@ -91,12 +91,15 @@ fun MainAppContainer() {
 
     BackHandler(enabled = backStack.size > 1) { navigateBack() }
 
-    // ── Screens where top/bottom chrome is hidden (full screen) ────────────
-    val isFullScreen = currentScreen is Screen.Landing ||
-                       currentScreen is Screen.Login   ||
+    // ── Screens where ALL chrome (top + bottom bars) is hidden ─────────────
+    // Only Login / Register are truly full-screen (they are form flows)
+    val isFullScreen = currentScreen is Screen.Login ||
                        currentScreen is Screen.Register
 
-    // ── Screens where we show a back arrow instead of hamburger ────────────
+    // ── Landing is public — hide top bar but SHOW bottom nav ─────────────
+    val isLandingScreen = currentScreen is Screen.Landing
+
+    // ── Screens where we show a hamburger menu icon ────────────────────────
     val isRootScreen = currentScreen is Screen.Dashboard ||
                        currentScreen is Screen.AdminPanel ||
                        currentScreen is Screen.VillageLeaderPanel ||
@@ -139,7 +142,7 @@ fun MainAppContainer() {
     // ── Wrap everything in ModalNavigationDrawer ───────────────────────────
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = !isFullScreen,
+        gesturesEnabled = !isFullScreen && !isLandingScreen,
         drawerContent = {
             ModalDrawerSheet(
                 modifier = Modifier.width(280.dp),
@@ -255,7 +258,8 @@ fun MainAppContainer() {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                if (!isFullScreen) {
+                // Landing has its own built-in header — skip the top app bar for it
+                if (!isFullScreen && !isLandingScreen) {
                     Column {
                         TopAppBar(
                             title = {
@@ -295,66 +299,110 @@ fun MainAppContainer() {
                 }
             },
             bottomBar = {
-                val showNav = !isFullScreen
-                if (showNav) {
+                // Show bottom nav on Landing (guest nav) and all authenticated screens
+                if (!isFullScreen) {
                     NavigationBar(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         tonalElevation = 0.dp
                     ) {
-                        NavigationBarItem(
-                            selected = isRootScreen &&
-                                currentScreen != Screen.Profile &&
-                                currentScreen != Screen.Predictor,
-                            onClick = { navigateToRoot(getRoleHomeRoute()) },
-                            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                            label = { Text("Home", fontSize = 10.sp) },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.secondary,
-                                selectedTextColor = MaterialTheme.colorScheme.secondary,
-                                indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        if (isLandingScreen) {
+                            // ── Guest navigation (public Landing page) ────────
+                            NavigationBarItem(
+                                selected = true,
+                                onClick = { /* already here */ },
+                                icon = { Icon(Icons.Default.Home, contentDescription = "Nyumbani") },
+                                label = { Text("Nyumbani", fontSize = 10.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             )
-                        )
-                        NavigationBarItem(
-                            selected = currentScreen is Screen.ReportDamage,
-                            onClick = { navigateToRoot(Screen.ReportDamage(null)) },
-                            icon = { Icon(Icons.Default.ReportProblem, contentDescription = "Uharibifu") },
-                            label = { Text("Ripoti", fontSize = 10.sp) },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.error,
-                                selectedTextColor = MaterialTheme.colorScheme.error,
-                                indicatorColor = MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            NavigationBarItem(
+                                selected = false,
+                                onClick = { navigateTo(Screen.Login) },
+                                icon = { Icon(Icons.Default.Login, contentDescription = "Ingia") },
+                                label = { Text("Ingia", fontSize = 10.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.secondary,
+                                    selectedTextColor = MaterialTheme.colorScheme.secondary,
+                                    indicatorColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f),
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             )
-                        )
-                        NavigationBarItem(
-                            selected = currentScreen is Screen.Predictor,
-                            onClick = { navigateToRoot(Screen.Predictor) },
-                            icon = { Icon(Icons.Default.AutoAwesome, contentDescription = "AI") },
-                            label = { Text("AI", fontSize = 10.sp) },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = Color(0xFF30D158),
-                                selectedTextColor = Color(0xFF30D158),
-                                indicatorColor = Color(0xFF30D158).copy(alpha = 0.15f),
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            NavigationBarItem(
+                                selected = false,
+                                onClick = { navigateTo(Screen.Register) },
+                                icon = { Icon(Icons.Default.PersonAdd, contentDescription = "Jiandikishe") },
+                                label = { Text("Jiandikishe", fontSize = 10.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.tertiary,
+                                    selectedTextColor = MaterialTheme.colorScheme.tertiary,
+                                    indicatorColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             )
-                        )
-                        NavigationBarItem(
-                            selected = currentScreen is Screen.Profile,
-                            onClick = { navigateToRoot(Screen.Profile) },
-                            icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-                            label = { Text("Profile", fontSize = 10.sp) },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.onSurface,
-                                selectedTextColor = MaterialTheme.colorScheme.onSurface,
-                                indicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        } else {
+                            // ── Authenticated navigation ───────────────────────
+                            NavigationBarItem(
+                                selected = isRootScreen &&
+                                    currentScreen != Screen.Profile &&
+                                    currentScreen != Screen.Predictor,
+                                onClick = { navigateToRoot(getRoleHomeRoute()) },
+                                icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                                label = { Text("Home", fontSize = 10.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.secondary,
+                                    selectedTextColor = MaterialTheme.colorScheme.secondary,
+                                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             )
-                        )
+                            NavigationBarItem(
+                                selected = currentScreen is Screen.ReportDamage,
+                                onClick = { navigateToRoot(Screen.ReportDamage(null)) },
+                                icon = { Icon(Icons.Default.ReportProblem, contentDescription = "Uharibifu") },
+                                label = { Text("Ripoti", fontSize = 10.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.error,
+                                    selectedTextColor = MaterialTheme.colorScheme.error,
+                                    indicatorColor = MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            )
+                            NavigationBarItem(
+                                selected = currentScreen is Screen.Predictor,
+                                onClick = { navigateToRoot(Screen.Predictor) },
+                                icon = { Icon(Icons.Default.AutoAwesome, contentDescription = "AI") },
+                                label = { Text("AI", fontSize = 10.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = Color(0xFF30D158),
+                                    selectedTextColor = Color(0xFF30D158),
+                                    indicatorColor = Color(0xFF30D158).copy(alpha = 0.15f),
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            )
+                            NavigationBarItem(
+                                selected = currentScreen is Screen.Profile,
+                                onClick = { navigateToRoot(Screen.Profile) },
+                                icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
+                                label = { Text("Profile", fontSize = 10.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    indicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            )
+                        }
                     }
                 }
             },
