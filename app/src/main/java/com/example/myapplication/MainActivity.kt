@@ -27,6 +27,7 @@ import com.example.myapplication.ui.components.*
 import com.example.myapplication.ui.screens.*
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import kotlinx.coroutines.launch
+import androidx.compose.material3.MaterialTheme
 
 sealed class Screen {
     object Landing : Screen()
@@ -141,26 +142,26 @@ fun MainAppContainer() {
         drawerContent = {
             ModalDrawerSheet(
                 drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
-                drawerContainerColor = MSurface,
+                drawerContainerColor = MaterialTheme.colorScheme.surface,
                 drawerTonalElevation = 0.dp
             ) {
                 // ── Drawer Header ──────────────────────────────────────────
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MDarkGray)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .padding(24.dp)
                 ) {
                     Box(
                         modifier = Modifier
                             .size(56.dp)
                             .clip(RoundedCornerShape(28.dp))
-                            .background(MBlueDark),
+                            .background(MaterialTheme.colorScheme.primary),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = user?.displayName?.take(1)?.uppercase() ?: "?",
-                            color = MTextWhite,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -168,13 +169,13 @@ fun MainAppContainer() {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = user?.displayName ?: "Mgeni",
-                        color = MTextWhite,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = user?.role?.replace("_", " ")?.uppercase() ?: "",
-                        color = MBlueLight,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -210,12 +211,12 @@ fun MainAppContainer() {
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
                         shape = RoundedCornerShape(10.dp),
                         colors = NavigationDrawerItemDefaults.colors(
-                            selectedContainerColor = MBlueDark.copy(alpha = 0.2f),
+                            selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                             unselectedContainerColor = Color.Transparent,
-                            selectedIconColor = MBlueLight,
-                            unselectedIconColor = MTextMuted,
-                            selectedTextColor = MTextWhite,
-                            unselectedTextColor = MTextMuted
+                            selectedIconColor = MaterialTheme.colorScheme.secondary,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     )
                 }
@@ -228,11 +229,11 @@ fun MainAppContainer() {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                             contentDescription = "Logout",
-                            tint = MRed,
+                            tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(22.dp)
                         )
                     },
-                    label = { Text("Toka (Logout)", color = MRed) },
+                    label = { Text("Toka (Logout)", color = MaterialTheme.colorScheme.error) },
                     selected = false,
                     onClick = {
                         ApiClient.logout()
@@ -242,7 +243,7 @@ fun MainAppContainer() {
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
                     shape = RoundedCornerShape(10.dp),
                     colors = NavigationDrawerItemDefaults.colors(
-                        unselectedContainerColor = MRed.copy(alpha = 0.08f)
+                        unselectedContainerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.08f)
                     )
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -258,7 +259,7 @@ fun MainAppContainer() {
                             title = {
                                 Text(
                                     text = screenTitle(currentScreen),
-                                    color = MTextWhite,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -269,7 +270,7 @@ fun MainAppContainer() {
                                         Icon(
                                             imageVector = Icons.Default.Menu,
                                             contentDescription = "Menu",
-                                            tint = MTextWhite
+                                            tint = MaterialTheme.colorScheme.onSurface
                                         )
                                     }
                                 } else {
@@ -277,14 +278,14 @@ fun MainAppContainer() {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                             contentDescription = "Back",
-                                            tint = MTextWhite
+                                            tint = MaterialTheme.colorScheme.onSurface
                                         )
                                     }
                                 }
                             },
                             colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MDarkGray,
-                                titleContentColor = MTextWhite
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                titleContentColor = MaterialTheme.colorScheme.onSurface
                             )
                         )
                         MStripesDivider(height = 3.dp)
@@ -295,7 +296,7 @@ fun MainAppContainer() {
                 val showNav = !isFullScreen && ApiClient.accessToken != null
                 if (showNav) {
                     NavigationBar(
-                        containerColor = MDarkGray,
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         tonalElevation = 0.dp,
                         modifier = Modifier.height(68.dp)
                     ) {
@@ -307,11 +308,11 @@ fun MainAppContainer() {
                             icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
                             label = { Text("Home", fontSize = 10.sp) },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MBlueLight,
-                                selectedTextColor = MBlueLight,
-                                indicatorColor = MBlueDark.copy(alpha = 0.2f),
-                                unselectedIconColor = MTextMuted,
-                                unselectedTextColor = MTextMuted
+                                selectedIconColor = MaterialTheme.colorScheme.secondary,
+                                selectedTextColor = MaterialTheme.colorScheme.secondary,
+                                indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         )
                         NavigationBarItem(
@@ -320,11 +321,11 @@ fun MainAppContainer() {
                             icon = { Icon(Icons.Default.ReportProblem, contentDescription = "Uharibifu") },
                             label = { Text("Ripoti", fontSize = 10.sp) },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MRed,
-                                selectedTextColor = MRed,
-                                indicatorColor = MRed.copy(alpha = 0.15f),
-                                unselectedIconColor = MTextMuted,
-                                unselectedTextColor = MTextMuted
+                                selectedIconColor = MaterialTheme.colorScheme.error,
+                                selectedTextColor = MaterialTheme.colorScheme.error,
+                                indicatorColor = MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         )
                         NavigationBarItem(
@@ -336,8 +337,8 @@ fun MainAppContainer() {
                                 selectedIconColor = Color(0xFF30D158),
                                 selectedTextColor = Color(0xFF30D158),
                                 indicatorColor = Color(0xFF30D158).copy(alpha = 0.15f),
-                                unselectedIconColor = MTextMuted,
-                                unselectedTextColor = MTextMuted
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         )
                         NavigationBarItem(
@@ -346,22 +347,22 @@ fun MainAppContainer() {
                             icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
                             label = { Text("Profile", fontSize = 10.sp) },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MTextWhite,
-                                selectedTextColor = MTextWhite,
-                                indicatorColor = MBorderGray.copy(alpha = 0.5f),
-                                unselectedIconColor = MTextMuted,
-                                unselectedTextColor = MTextMuted
+                                selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                                selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                                indicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         )
                     }
                 }
             },
-            containerColor = MBlack
+            containerColor = MaterialTheme.colorScheme.background
         ) { innerPadding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MBlack)
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(innerPadding)
             ) {
                 when (currentScreen) {

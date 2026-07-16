@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.components.*
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun LandingScreen(
@@ -30,7 +31,7 @@ fun LandingScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack),
+            .background(MaterialTheme.colorScheme.background),
         contentPadding = PaddingValues(bottom = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -39,7 +40,7 @@ fun LandingScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MDarkGray)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(horizontal = 24.dp, vertical = 48.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -47,7 +48,7 @@ fun LandingScreen(
 
                 Text(
                     text = "MAJI",
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 56.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 8.sp,
@@ -55,7 +56,7 @@ fun LandingScreen(
                 )
                 Text(
                     text = "SALAMA",
-                    color = MBlueLight,
+                    color = MaterialTheme.colorScheme.secondary,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 6.sp,
@@ -65,7 +66,7 @@ fun LandingScreen(
 
                 Text(
                     text = "Mfumo wa kisasa wa ufuatiliaji wa\nrasilimali za maji Tanzania",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center,
                     lineHeight = 22.sp,
@@ -86,8 +87,8 @@ fun LandingScreen(
                         text = "JIANDIKISHE",
                         onClick = onNavigateToRegister,
                         modifier = Modifier.weight(1f),
-                        backgroundColor = MBlueDark.copy(alpha = 0.2f),
-                        borderColor = MBlueDark
+                        backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                        borderColor = MaterialTheme.colorScheme.primary
                     )
                 }
 
@@ -103,9 +104,9 @@ fun LandingScreen(
                     .padding(horizontal = 16.dp, vertical = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                StatBox(value = "500+", label = "VYANZO VYA MAJI", color = MBlueLight, modifier = Modifier.weight(1f))
+                StatBox(value = "500+", label = "VYANZO VYA MAJI", color = MaterialTheme.colorScheme.secondary, modifier = Modifier.weight(1f))
                 StatBox(value = "120", label = "VIJIJI", color = Color(0xFF4CAF50), modifier = Modifier.weight(1f))
-                StatBox(value = "3", label = "MIKOA", color = MRed, modifier = Modifier.weight(1f))
+                StatBox(value = "3", label = "MIKOA", color = MaterialTheme.colorScheme.error, modifier = Modifier.weight(1f))
             }
         }
 
@@ -119,7 +120,7 @@ fun LandingScreen(
             ) {
                 Text(
                     text = "HUDUMA ZETU",
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 2.sp,
@@ -132,13 +133,13 @@ fun LandingScreen(
                     icon = Icons.Default.Star,
                     title = "UFUATILIAJI WA UBORA",
                     description = "Fuatilia hali ya ubora wa maji katika vyanzo vyote kwa wakati halisi.",
-                    iconColor = MBlueLight
+                    iconColor = MaterialTheme.colorScheme.secondary
                 )
                 FeatureCard(
                     icon = Icons.Default.Notifications,
                     title = "RIPOTI ZA HARAKA",
                     description = "Ripoti uharibifu wa maji na ufuatiliaji wao hadi usuluhishaji.",
-                    iconColor = MRed
+                    iconColor = MaterialTheme.colorScheme.error
                 )
                 FeatureCard(
                     icon = Icons.Default.Info,
@@ -159,7 +160,7 @@ fun LandingScreen(
             ) {
                 Text(
                     text = "WATUMIAJI",
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 2.sp,
@@ -168,10 +169,10 @@ fun LandingScreen(
                 )
                 MStripesDivider(height = 2.dp, modifier = Modifier.padding(bottom = 8.dp))
 
-                RoleRow(role = "MWANANCHI", desc = "Angalia hali ya maji na ripoti uharibifu", color = MTextWhite)
-                RoleRow(role = "KIONGOZI WA KIJIJI", desc = "Simamia na uidhinishe ripoti za kijiji", color = MBlueDark)
-                RoleRow(role = "AFISA WA MAJI", desc = "Tekeleza kazi na ukaguzi wa ubora", color = MBlueLight)
-                RoleRow(role = "AFISA WA WILAYA", desc = "Simamia ripoti zilizopandishwa wilaya", color = MRed)
+                RoleRow(role = "MWANANCHI", desc = "Angalia hali ya maji na ripoti uharibifu", color = MaterialTheme.colorScheme.onSurface)
+                RoleRow(role = "KIONGOZI WA KIJIJI", desc = "Simamia na uidhinishe ripoti za kijiji", color = MaterialTheme.colorScheme.primary)
+                RoleRow(role = "AFISA WA MAJI", desc = "Tekeleza kazi na ukaguzi wa ubora", color = MaterialTheme.colorScheme.secondary)
+                RoleRow(role = "AFISA WA WILAYA", desc = "Simamia ripoti zilizopandishwa wilaya", color = MaterialTheme.colorScheme.error)
                 RoleRow(role = "MSIMAMIZI", desc = "Udhibiti kamili wa mfumo wote", color = Color(0xFFFFB300))
             }
         }
@@ -182,15 +183,15 @@ fun LandingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-                    .border(1.dp, MBorderGray, RectangleShape)
-                    .background(MDarkGray)
+                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
                     text = "ANZA LEO",
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 2.sp,
@@ -198,7 +199,7 @@ fun LandingScreen(
                 )
                 Text(
                     text = "Jiunge na mfumo wa kisasa wa\nusimamizi wa maji nchini Tanzania",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp,
                     textAlign = TextAlign.Center
                 )
@@ -211,9 +212,9 @@ fun LandingScreen(
                     text = "NINA AKAUNTI → INGIA",
                     onClick = onNavigateToLogin,
                     modifier = Modifier.fillMaxWidth(),
-                    backgroundColor = MBlack,
-                    borderColor = MBorderGray,
-                    contentColor = MTextMuted
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    borderColor = MaterialTheme.colorScheme.outline,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -231,7 +232,7 @@ private fun StatBox(value: String, label: String, color: Color, modifier: Modifi
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(value, color = color, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, fontFamily = FontFamily.Monospace)
-            Text(label, color = MTextMuted, fontSize = 8.sp, fontFamily = FontFamily.Monospace, textAlign = TextAlign.Center)
+            Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 8.sp, fontFamily = FontFamily.Monospace, textAlign = TextAlign.Center)
         }
     }
 }
@@ -242,9 +243,9 @@ private fun FeatureCard(icon: ImageVector, title: String, description: String, i
         Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(imageVector = icon, contentDescription = title, tint = iconColor, modifier = Modifier.size(32.dp))
             Column {
-                Text(title, color = MTextWhite, fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                Text(title, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(description, color = MTextMuted, fontSize = 12.sp, lineHeight = 18.sp)
+                Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp, lineHeight = 18.sp)
             }
         }
     }
@@ -263,7 +264,7 @@ private fun RoleRow(role: String, desc: String, color: Color) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(role, color = color, fontSize = 11.sp, fontWeight = FontWeight.ExtraBold, fontFamily = FontFamily.Monospace)
-            Text(desc, color = MTextMuted, fontSize = 11.sp)
+            Text(desc, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
         }
     }
 }

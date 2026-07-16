@@ -22,6 +22,7 @@ import com.example.myapplication.data.ApiClient
 import com.example.myapplication.data.DamageReport
 import com.example.myapplication.ui.components.*
 import kotlinx.coroutines.launch
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun WaterOfficerScreen(
@@ -66,7 +67,7 @@ fun WaterOfficerScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
         // Header
@@ -83,7 +84,7 @@ fun WaterOfficerScreen(
             )
             Text(
                 text = "KAZI ZA AFISA WA MAJI",
-                color = MTextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -96,12 +97,12 @@ fun WaterOfficerScreen(
         // Tabs
         PrimaryTabRow(
             selectedTabIndex = selectedTab,
-            containerColor = MDarkGray,
-            contentColor = MTextWhite,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
-                .border(1.dp, MBorderGray, RectangleShape)
+                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
         ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
@@ -121,7 +122,7 @@ fun WaterOfficerScreen(
 
         if (isLoading) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MTextWhite)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
             }
         } else {
             val filteredReports = when (selectedTab) {
@@ -138,7 +139,7 @@ fun WaterOfficerScreen(
                 ) {
                     Text(
                         text = "Hakuna majukumu hapa.",
-                        color = MTextMuted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp,
                         fontFamily = FontFamily.Monospace
                     )
@@ -180,20 +181,20 @@ fun OfficerReportCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = report.title.uppercase(),
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace
                 )
                 Text(
                     text = "Chanzo: ${report.waterSourceName}",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 2.dp)
                 )
                 Text(
                     text = "Tarehe: ${report.reportDate}",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace
                 )
@@ -208,7 +209,7 @@ fun OfficerReportCard(
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Mtoa Taarifa: ${report.reportedByName}",
-            color = MBlueLight,
+            color = MaterialTheme.colorScheme.secondary,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold
         )
@@ -216,7 +217,7 @@ fun OfficerReportCard(
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = report.description,
-            color = MTextMuted,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 13.sp,
             maxLines = if (isExpanding) Int.MAX_VALUE else 2
         )
@@ -224,7 +225,7 @@ fun OfficerReportCard(
         if (report.description.length > 80) {
             Text(
                 text = if (isExpanding) "SOMA KIPUNGUZO (LESS)" else "SOMA ZAIDI (MORE)",
-                color = MTextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace,
@@ -250,7 +251,7 @@ fun OfficerReportCard(
             MStripesDivider(height = 1.dp, modifier = Modifier.padding(bottom = 12.dp))
 
             if (isOperating) {
-                CircularProgressIndicator(color = MTextWhite, modifier = Modifier.size(20.dp))
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
             } else if (showResolveInput) {
                 MTextField(
                     value = resolutionNotes,
@@ -348,7 +349,7 @@ fun LogQualityScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
         // Header
@@ -365,7 +366,7 @@ fun LogQualityScreen(
             )
             Text(
                 text = "PIMA MAJI YA CHANZO",
-                color = MTextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -455,7 +456,7 @@ fun LogQualityScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 if (isLoading) {
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = MTextWhite)
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
                     }
                 } else {
                     MButton(

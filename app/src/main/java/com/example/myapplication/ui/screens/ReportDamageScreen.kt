@@ -21,6 +21,7 @@ import com.example.myapplication.data.ApiClient
 import com.example.myapplication.data.WaterSource
 import com.example.myapplication.ui.components.*
 import kotlinx.coroutines.launch
+import androidx.compose.material3.MaterialTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +69,7 @@ fun ReportDamageScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
         // Header
@@ -85,7 +86,7 @@ fun ReportDamageScreen(
             )
             Text(
                 text = "RIPOTI UHARIBIFU",
-                color = MTextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -97,7 +98,7 @@ fun ReportDamageScreen(
 
         if (isFetchingSources) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MTextWhite)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
             }
         } else {
             LazyColumn(
@@ -121,7 +122,7 @@ fun ReportDamageScreen(
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = "CHANZO CHA MAJI (WATER SOURCE)",
-                            color = MTextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 1.sp,
@@ -135,13 +136,13 @@ fun ReportDamageScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .border(1.dp, MBorderGray, RectangleShape)
-                                    .background(MDarkGray)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
                                     .padding(14.dp)
                             ) {
                                 Text(
                                     text = selectedSource!!.name.uppercase(),
-                                    color = MTextWhite,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 15.sp
                                 )
@@ -151,8 +152,8 @@ fun ReportDamageScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .border(1.dp, MBorderGray, RectangleShape)
-                                    .background(MBlack)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                    .background(MaterialTheme.colorScheme.background)
                                     .clickable { if (!isLoading) sourceDropdownExpanded = true }
                                     .padding(14.dp)
                             ) {
@@ -163,13 +164,13 @@ fun ReportDamageScreen(
                                 ) {
                                     Text(
                                         text = selectedSource?.name ?: "Chagua Chanzo",
-                                        color = MTextWhite,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontSize = 15.sp
                                     )
                                     Icon(
                                         imageVector = Icons.Default.ArrowDropDown,
                                         contentDescription = "Dropdown",
-                                        tint = MTextWhite
+                                        tint = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                                 DropdownMenu(
@@ -177,12 +178,12 @@ fun ReportDamageScreen(
                                     onDismissRequest = { sourceDropdownExpanded = false },
                                     modifier = Modifier
                                         .fillMaxWidth(0.8f)
-                                        .background(MDarkGray)
-                                        .border(1.dp, MBorderGray, RectangleShape)
+                                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                                        .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
                                 ) {
                                     sources.forEach { s ->
                                         DropdownMenuItem(
-                                            text = { Text("${s.name} (${s.villageName})", color = MTextWhite) },
+                                            text = { Text("${s.name} (${s.villageName})", color = MaterialTheme.colorScheme.onSurface) },
                                             onClick = {
                                                 selectedSource = s
                                                 sourceDropdownExpanded = false
@@ -200,7 +201,7 @@ fun ReportDamageScreen(
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = "DHARURA / UMUHIMU (PRIORITY)",
-                            color = MTextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 1.sp,
@@ -211,8 +212,8 @@ fun ReportDamageScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .border(1.dp, MBorderGray, RectangleShape)
-                                .background(MBlack)
+                                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                .background(MaterialTheme.colorScheme.background)
                                 .clickable { if (!isLoading) priorityDropdownExpanded = true }
                                 .padding(14.dp)
                         ) {
@@ -223,13 +224,13 @@ fun ReportDamageScreen(
                             ) {
                                 Text(
                                     text = priorities.find { it.first == selectedPriority }?.second ?: selectedPriority,
-                                    color = MTextWhite,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 15.sp
                                 )
                                 Icon(
                                     imageVector = Icons.Default.ArrowDropDown,
                                     contentDescription = "Dropdown",
-                                    tint = MTextWhite
+                                    tint = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                             DropdownMenu(
@@ -237,12 +238,12 @@ fun ReportDamageScreen(
                                 onDismissRequest = { priorityDropdownExpanded = false },
                                 modifier = Modifier
                                     .fillMaxWidth(0.8f)
-                                    .background(MDarkGray)
-                                    .border(1.dp, MBorderGray, RectangleShape)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
                             ) {
                                 priorities.forEach { p ->
                                     DropdownMenuItem(
-                                        text = { Text(p.second, color = MTextWhite) },
+                                        text = { Text(p.second, color = MaterialTheme.colorScheme.onSurface) },
                                         onClick = {
                                             selectedPriority = p.first
                                             priorityDropdownExpanded = false
@@ -281,7 +282,7 @@ fun ReportDamageScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     if (isLoading) {
                         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator(color = MTextWhite)
+                            CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
                         }
                     } else {
                         MButton(
@@ -313,8 +314,8 @@ fun ReportDamageScreen(
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            borderColor = MRed,
-                            contentColor = MRed
+                            borderColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.error
                         )
                     }
                 }

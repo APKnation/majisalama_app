@@ -25,6 +25,7 @@ import com.example.myapplication.data.User
 import com.example.myapplication.data.Village
 import com.example.myapplication.ui.components.*
 import kotlinx.coroutines.launch
+import androidx.compose.material3.MaterialTheme
 
 // ─── Default Demo Credentials ───────────────────────────────────────────────
 // These match the Django seeded / superuser accounts.
@@ -59,22 +60,22 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MDarkGray, RectangleShape)
-                .border(1.dp, MBorderGray, RectangleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant, RectangleShape)
+                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Brand Headline
             Text(
                 text = "WATERTRACK",
-                color = MTextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 4.sp,
@@ -82,7 +83,7 @@ fun LoginScreen(
             )
             Text(
                 text = "TANZANIA WATER PORTAL",
-                color = MBlueLight,
+                color = MaterialTheme.colorScheme.secondary,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.sp,
@@ -94,7 +95,7 @@ fun LoginScreen(
             // ── Demo Quick-Login Buttons ─────────────────────────────────
             Text(
                 text = "DEMO ACCOUNTS (SKIP TYPING)",
-                color = MTextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 9.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -164,7 +165,7 @@ fun LoginScreen(
 
             if (isLoading) {
                 CircularProgressIndicator(
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(24.dp)
                 )
             } else {
@@ -194,7 +195,7 @@ fun LoginScreen(
 
                 Text(
                     text = "Hauna akaunti? Jisajili hapa",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                     fontFamily = FontFamily.Monospace,
                     modifier = Modifier
@@ -252,15 +253,15 @@ fun RegisterScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MDarkGray, RectangleShape)
-                .border(1.dp, MBorderGray, RectangleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant, RectangleShape)
+                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -268,7 +269,7 @@ fun RegisterScreen(
             item {
                 Text(
                     text = "JISAJILI (REGISTER)",
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 3.sp,
@@ -351,7 +352,7 @@ fun RegisterScreen(
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "JUKUMU (ROLE)",
-                        color = MTextMuted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp,
@@ -362,8 +363,8 @@ fun RegisterScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MBorderGray, RectangleShape)
-                            .background(MBlack)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .background(MaterialTheme.colorScheme.background)
                             .clickable { if (!isLoading) roleDropdownExpanded = true }
                             .padding(14.dp)
                     ) {
@@ -374,13 +375,13 @@ fun RegisterScreen(
                         ) {
                             Text(
                                 text = roles.find { it.first == selectedRole }?.second ?: selectedRole,
-                                color = MTextWhite,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 15.sp
                             )
                             Icon(
                                 imageVector = Icons.Default.ArrowDropDown,
                                 contentDescription = "Dropdown",
-                                tint = MTextWhite
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                         DropdownMenu(
@@ -388,12 +389,12 @@ fun RegisterScreen(
                             onDismissRequest = { roleDropdownExpanded = false },
                             modifier = Modifier
                                 .fillMaxWidth(0.8f)
-                                .background(MDarkGray)
-                                .border(1.dp, MBorderGray, RectangleShape)
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
                         ) {
                             roles.forEach { r ->
                                 DropdownMenuItem(
-                                    text = { Text(r.second, color = MTextWhite) },
+                                    text = { Text(r.second, color = MaterialTheme.colorScheme.onSurface) },
                                     onClick = {
                                         selectedRole = r.first
                                         roleDropdownExpanded = false
@@ -411,7 +412,7 @@ fun RegisterScreen(
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = "KIJIJI (VILLAGE)",
-                            color = MTextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 1.sp,
@@ -422,8 +423,8 @@ fun RegisterScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .border(1.dp, MBorderGray, RectangleShape)
-                                .background(MBlack)
+                                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                .background(MaterialTheme.colorScheme.background)
                                 .clickable { if (!isLoading) villageDropdownExpanded = true }
                                 .padding(14.dp)
                         ) {
@@ -434,13 +435,13 @@ fun RegisterScreen(
                             ) {
                                 Text(
                                     text = selectedVillage?.name ?: "Chagua Kijiji",
-                                    color = MTextWhite,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 15.sp
                                 )
                                 Icon(
                                     imageVector = Icons.Default.ArrowDropDown,
                                     contentDescription = "Dropdown",
-                                    tint = MTextWhite
+                                    tint = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                             DropdownMenu(
@@ -448,12 +449,12 @@ fun RegisterScreen(
                                 onDismissRequest = { villageDropdownExpanded = false },
                                 modifier = Modifier
                                     .fillMaxWidth(0.8f)
-                                    .background(MDarkGray)
-                                    .border(1.dp, MBorderGray, RectangleShape)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
                             ) {
                                 villages.forEach { v ->
                                     DropdownMenuItem(
-                                        text = { Text("${v.name} (${v.district})", color = MTextWhite) },
+                                        text = { Text("${v.name} (${v.district})", color = MaterialTheme.colorScheme.onSurface) },
                                         onClick = {
                                             selectedVillage = v
                                             villageDropdownExpanded = false
@@ -469,7 +470,7 @@ fun RegisterScreen(
             item {
                 if (isLoading) {
                     CircularProgressIndicator(
-                        color = MTextWhite,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(24.dp)
                     )
                 } else {
@@ -508,7 +509,7 @@ fun RegisterScreen(
 
                     Text(
                         text = "Tayari una akaunti? Ingia hapa",
-                        color = MTextMuted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp,
                         fontFamily = FontFamily.Monospace,
                         modifier = Modifier

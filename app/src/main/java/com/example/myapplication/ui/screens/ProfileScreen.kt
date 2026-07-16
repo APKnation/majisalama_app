@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.data.ApiClient
 import com.example.myapplication.ui.components.*
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun ProfileScreen(
@@ -26,13 +27,13 @@ fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "WASIFU WAKO (PROFILE)",
-            color = MTextWhite,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.ExtraBold,
             letterSpacing = 1.sp,
@@ -46,7 +47,7 @@ fun ProfileScreen(
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "Profile",
-                tint = MBlueLight,
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier
                     .size(80.dp)
                     .padding(bottom = 16.dp)
@@ -69,9 +70,9 @@ fun ProfileScreen(
             text = "LOGOUT",
             onClick = onLogout,
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = MRed.copy(alpha = 0.2f),
-            borderColor = MRed,
-            contentColor = MRed
+            backgroundColor = MaterialTheme.colorScheme.error.copy(alpha = 0.2f),
+            borderColor = MaterialTheme.colorScheme.error,
+            contentColor = MaterialTheme.colorScheme.error
         )
     }
 }
@@ -81,7 +82,7 @@ fun ProfileRow(label: String, value: String) {
     Column {
         Text(
             text = label,
-            color = MTextMuted,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.Monospace,
@@ -89,7 +90,7 @@ fun ProfileRow(label: String, value: String) {
         )
         Text(
             text = value,
-            color = MTextWhite,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             fontFamily = FontFamily.Monospace

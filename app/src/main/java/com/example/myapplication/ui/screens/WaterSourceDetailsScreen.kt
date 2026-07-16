@@ -20,6 +20,7 @@ import com.example.myapplication.data.QualityReport
 import com.example.myapplication.data.WaterSource
 import com.example.myapplication.ui.components.*
 import kotlinx.coroutines.launch
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun WaterSourceDetailsScreen(
@@ -63,7 +64,7 @@ fun WaterSourceDetailsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
         // Header
@@ -80,7 +81,7 @@ fun WaterSourceDetailsScreen(
             )
             Text(
                 text = "TAARIFA ZA CHANZO",
-                color = MTextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -92,7 +93,7 @@ fun WaterSourceDetailsScreen(
 
         if (isLoading) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MTextWhite)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
             }
         } else if (source == null) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -119,7 +120,7 @@ fun WaterSourceDetailsScreen(
                         ) {
                             Text(
                                 text = src.name.uppercase(),
-                                color = MTextWhite,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 1.5.sp,
@@ -131,28 +132,28 @@ fun WaterSourceDetailsScreen(
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        Text(text = "AINA YA CHANZO: ${src.sourceTypeDisplay}", color = MTextMuted, fontSize = 13.sp)
-                        Text(text = "KIJIJI: ${src.villageName}", color = MTextMuted, fontSize = 13.sp)
-                        Text(text = "MAHALI (GPS): ${src.latitude ?: "N/A"}, ${src.longitude ?: "N/A"}", color = MTextMuted, fontSize = 13.sp)
-                        Text(text = "MWAKA WA KUJENGWA: ${src.constructionYear ?: "Haijulikani"}", color = MTextMuted, fontSize = 13.sp)
-                        Text(text = "IMESIMAMIWA NA: ${src.managedByName ?: "N/A"}", color = MTextMuted, fontSize = 13.sp)
+                        Text(text = "AINA YA CHANZO: ${src.sourceTypeDisplay}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                        Text(text = "KIJIJI: ${src.villageName}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                        Text(text = "MAHALI (GPS): ${src.latitude ?: "N/A"}, ${src.longitude ?: "N/A"}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                        Text(text = "MWAKA WA KUJENGWA: ${src.constructionYear ?: "Haijulikani"}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                        Text(text = "IMESIMAMIWA NA: ${src.managedByName ?: "N/A"}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                     }
                 }
 
                 // Maintenance Schedule Panel
                 item {
-                    MCard(borderColor = MBlueLight) {
+                    MCard(borderColor = MaterialTheme.colorScheme.secondary) {
                         Text(
                             text = "RATIBA YA USAFISHAJI / MATENGENEZO",
-                            color = MTextWhite,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp,
                             fontFamily = FontFamily.Monospace
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = "Usafishaji wa Mwisho: ${src.lastCleaned ?: "Haijafanyika bado"}", color = MTextMuted, fontSize = 13.sp)
-                        Text(text = "Usafishaji Unaofuata: ${src.nextCleaning ?: "Haipangiliwa bado"}", color = MTextMuted, fontSize = 13.sp)
+                        Text(text = "Usafishaji wa Mwisho: ${src.lastCleaned ?: "Haijafanyika bado"}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                        Text(text = "Usafishaji Unaofuata: ${src.nextCleaning ?: "Haipangiliwa bado"}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                     }
                 }
 
@@ -161,7 +162,7 @@ fun WaterSourceDetailsScreen(
                     MCard(borderColor = if (src.status == "safe") Color(0xFF4CAF50) else Color(0xFFF44336)) {
                         Text(
                             text = "UBORA WA MAJI (VIPIMO VYA SASA)",
-                            color = MTextWhite,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp,
@@ -172,7 +173,7 @@ fun WaterSourceDetailsScreen(
                         if (src.phLevel == null) {
                             Text(
                                 text = "Hakuna data za vipimo zilizorekodiwa hivi karibuni.",
-                                color = MTextMuted,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 13.sp,
                                 fontFamily = FontFamily.Monospace
                             )
@@ -195,7 +196,7 @@ fun WaterSourceDetailsScreen(
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = "Vipimo vya mwisho: ${src.lastTested ?: "N/A"}",
-                                color = MTextMuted,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 10.sp,
                                 fontFamily = FontFamily.Monospace
                             )
@@ -213,8 +214,8 @@ fun WaterSourceDetailsScreen(
                             text = "RIPOTI UHARIBIFU KANZA HAPA",
                             onClick = { onNavigateToReportDamage(src.id) },
                             modifier = Modifier.fillMaxWidth(),
-                            borderColor = MRed,
-                            contentColor = MRed
+                            borderColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.error
                         )
 
                         // If water officer, log inspection
@@ -234,7 +235,7 @@ fun WaterSourceDetailsScreen(
                 item {
                     Text(
                         text = "HISTORIA YA VIPIMO VYA MAJI",
-                        color = MTextWhite,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
@@ -247,7 +248,7 @@ fun WaterSourceDetailsScreen(
                     item {
                         Text(
                             text = "Hakuna vipimo vilivyowahi kurekodiwa vya nyuma.",
-                            color = MTextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 12.sp,
                             fontFamily = FontFamily.Monospace
                         )
@@ -272,21 +273,21 @@ fun ParameterDisplay(
     val color = if (isSafe) Color(0xFF4CAF50) else Color(0xFFF44336)
     Column(
         modifier = Modifier
-            .border(1.dp, MBorderGray, RectangleShape)
-            .background(MBlack)
+            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+            .background(MaterialTheme.colorScheme.background)
             .padding(8.dp)
             .width(130.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = title.uppercase(), color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+        Text(text = title.uppercase(), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
         Text(text = value, color = color, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-        Text(text = "Kawaida: $range", color = MTextMuted, fontSize = 9.sp)
+        Text(text = "Kawaida: $range", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp)
     }
 }
 
 @Composable
 fun QualityReportItem(report: QualityReport) {
-    MCard(borderColor = MBorderGray) {
+    MCard(borderColor = MaterialTheme.colorScheme.outline) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -295,26 +296,26 @@ fun QualityReportItem(report: QualityReport) {
             Column {
                 Text(
                     text = "TAREHE: ${report.testDate}",
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace
                 )
                 Text(
                     text = "Mtaalamu: ${report.testedByName}",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp
                 )
                 Text(
                     text = "pH: ${report.phLevel} | Bact: ${report.bacteriaCount} | Iron: ${report.ironLevel}",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace
                 )
                 if (report.notes.isNotEmpty()) {
                     Text(
                         text = "Maelezo: ${report.notes}",
-                        color = MTextMuted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp,
                         modifier = Modifier.padding(top = 4.dp)
                     )

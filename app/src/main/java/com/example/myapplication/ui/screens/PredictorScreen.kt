@@ -27,6 +27,7 @@ import com.example.myapplication.data.ApiClient
 import com.example.myapplication.ui.components.*
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
+import androidx.compose.material3.MaterialTheme
 
 data class ChatMessage(
     val sender: String, // "bot" or "user"
@@ -79,7 +80,7 @@ fun PredictorScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
         // Header
@@ -96,7 +97,7 @@ fun PredictorScreen(
             )
             Text(
                 text = "UTABIRI WA AI (PREDICTOR)",
-                color = MTextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -112,8 +113,8 @@ fun PredictorScreen(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .border(1.dp, MBorderGray, RectangleShape)
-                .background(MDarkGray)
+                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -128,13 +129,13 @@ fun PredictorScreen(
                         horizontalArrangement = Arrangement.Start
                     ) {
                         CircularProgressIndicator(
-                            color = MBlueLight,
+                            color = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "WaterTrack AI anafanya utabiri...",
-                            color = MTextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 12.sp,
                             fontFamily = FontFamily.Monospace
                         )
@@ -151,7 +152,7 @@ fun PredictorScreen(
         ) {
             Text(
                 text = "VIGEZO VYA UTABIRI (PREDICTION INPUTS)",
-                color = MTextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -165,12 +166,12 @@ fun PredictorScreen(
             ) {
                 // District Selection Dropdown
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("WILAYA (DISTRICT)", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                    Text("WILAYA (DISTRICT)", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MBorderGray, RectangleShape)
-                            .background(MBlack)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .background(MaterialTheme.colorScheme.background)
                             .clickable { if (!isLoading) districtExpanded = true }
                             .padding(8.dp)
                     ) {
@@ -179,17 +180,17 @@ fun PredictorScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = district, color = MTextWhite, fontSize = 12.sp)
-                            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null, tint = MTextWhite, modifier = Modifier.size(16.dp))
+                            Text(text = district, color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
+                            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(16.dp))
                         }
                         DropdownMenu(
                             expanded = districtExpanded,
                             onDismissRequest = { districtExpanded = false },
-                            modifier = Modifier.background(MDarkGray).border(1.dp, MBorderGray, RectangleShape)
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant).border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
                         ) {
                             districts.forEach { d ->
                                 DropdownMenuItem(
-                                    text = { Text(d, color = MTextWhite, fontSize = 12.sp) },
+                                    text = { Text(d, color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp) },
                                     onClick = {
                                         district = d
                                         districtExpanded = false
@@ -202,12 +203,12 @@ fun PredictorScreen(
 
                 // Month Selection Dropdown
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("MWEZI (MONTH)", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                    Text("MWEZI (MONTH)", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MBorderGray, RectangleShape)
-                            .background(MBlack)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .background(MaterialTheme.colorScheme.background)
                             .clickable { if (!isLoading) monthExpanded = true }
                             .padding(8.dp)
                     ) {
@@ -216,17 +217,17 @@ fun PredictorScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = selectedMonth, color = MTextWhite, fontSize = 12.sp)
-                            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null, tint = MTextWhite, modifier = Modifier.size(16.dp))
+                            Text(text = selectedMonth, color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
+                            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(16.dp))
                         }
                         DropdownMenu(
                             expanded = monthExpanded,
                             onDismissRequest = { monthExpanded = false },
-                            modifier = Modifier.background(MDarkGray).border(1.dp, MBorderGray, RectangleShape)
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant).border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
                         ) {
                             months.forEach { m ->
                                 DropdownMenuItem(
-                                    text = { Text(m, color = MTextWhite, fontSize = 12.sp) },
+                                    text = { Text(m, color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp) },
                                     onClick = {
                                         selectedMonth = m
                                         monthExpanded = false
@@ -245,45 +246,45 @@ fun PredictorScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("JOTO (°C)", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                    Text("JOTO (°C)", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
                     BasicTextField(
                         value = tempText,
                         onValueChange = { tempText = it },
-                        textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
+                        textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MBorderGray, RectangleShape)
-                            .background(MBlack)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .background(MaterialTheme.colorScheme.background)
                             .padding(8.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("MVUA (MM)", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                    Text("MVUA (MM)", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
                     BasicTextField(
                         value = rainfallText,
                         onValueChange = { rainfallText = it },
-                        textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
+                        textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MBorderGray, RectangleShape)
-                            .background(MBlack)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .background(MaterialTheme.colorScheme.background)
                             .padding(8.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("POPULATION", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                    Text("POPULATION", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
                     BasicTextField(
                         value = populationText,
                         onValueChange = { populationText = it },
-                        textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
+                        textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MBorderGray, RectangleShape)
-                            .background(MBlack)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .background(MaterialTheme.colorScheme.background)
                             .padding(8.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
@@ -325,8 +326,8 @@ fun PredictorScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading,
-                borderColor = MBlueLight,
-                contentColor = MBlueLight
+                borderColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.secondary
             )
         }
     }
@@ -336,9 +337,9 @@ fun PredictorScreen(
 fun ChatBubble(chatMessage: ChatMessage) {
     val isBot = chatMessage.sender == "bot"
     val align = if (isBot) Alignment.Start else Alignment.End
-    val bgColor = if (isBot) MBorderGray else MBlueDark.copy(alpha = 0.3f)
-    val textColor = MTextWhite
-    val borderColors = if (isBot) MBorderGray else MBlueDark
+    val bgColor = if (isBot) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val borderColors = if (isBot) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
 
     Box(
         modifier = Modifier.fillMaxWidth(),
@@ -353,7 +354,7 @@ fun ChatBubble(chatMessage: ChatMessage) {
         ) {
             Text(
                 text = if (isBot) "WATERTRACK AI" else "WEWE (YOU)",
-                color = if (isBot) MBlueLight else Color.Cyan,
+                color = if (isBot) MaterialTheme.colorScheme.secondary else Color.Cyan,
                 fontSize = 9.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace,

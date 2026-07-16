@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.data.ApiClient
 import com.example.myapplication.ui.components.*
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun AdminScreen(
@@ -27,7 +28,7 @@ fun AdminScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack),
+            .background(MaterialTheme.colorScheme.background),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -37,7 +38,7 @@ fun AdminScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "ADMIN MASTER DASHBOARD",
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 1.sp,
@@ -46,7 +47,7 @@ fun AdminScreen(
                 )
                 Text(
                     text = "Karibu, ${user?.displayName?.uppercase() ?: "ADMIN"}",
-                    color = MRed,
+                    color = MaterialTheme.colorScheme.error,
                     fontSize = 12.sp,
                     fontFamily = FontFamily.Monospace,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -58,7 +59,7 @@ fun AdminScreen(
         item {
             Text(
                 text = "CHAGUA PANELI (SELECT PANEL)",
-                color = MTextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp,
                 fontFamily = FontFamily.Monospace,
                 modifier = Modifier.padding(bottom = 4.dp)
@@ -70,9 +71,9 @@ fun AdminScreen(
                 text = "→ DASHBOARD YA MWANANCHI (CITIZEN)",
                 onClick = onNavigateToCitizen,
                 modifier = Modifier.fillMaxWidth(),
-                backgroundColor = MBlack,
-                borderColor = MTextWhite,
-                contentColor = MTextWhite
+                backgroundColor = MaterialTheme.colorScheme.background,
+                borderColor = MaterialTheme.colorScheme.onSurface,
+                contentColor = MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -81,8 +82,8 @@ fun AdminScreen(
                 text = "→ DASHBOARD YA KIONGOZI (LEADER)",
                 onClick = onNavigateToLeader,
                 modifier = Modifier.fillMaxWidth(),
-                backgroundColor = MBlueDark.copy(alpha = 0.2f),
-                borderColor = MBlueDark
+                backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                borderColor = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -91,8 +92,8 @@ fun AdminScreen(
                 text = "→ DASHBOARD YA AFISA WA MAJI (OFFICER)",
                 onClick = onNavigateToOfficer,
                 modifier = Modifier.fillMaxWidth(),
-                backgroundColor = MBlueLight.copy(alpha = 0.2f),
-                borderColor = MBlueLight
+                backgroundColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
+                borderColor = MaterialTheme.colorScheme.secondary
             )
         }
 
@@ -101,8 +102,8 @@ fun AdminScreen(
                 text = "→ DASHBOARD YA WILAYA (DISTRICT)",
                 onClick = onNavigateToDistrict,
                 modifier = Modifier.fillMaxWidth(),
-                backgroundColor = MRed.copy(alpha = 0.2f),
-                borderColor = MRed
+                backgroundColor = MaterialTheme.colorScheme.error.copy(alpha = 0.2f),
+                borderColor = MaterialTheme.colorScheme.error
             )
         }
 

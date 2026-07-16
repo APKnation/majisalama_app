@@ -16,6 +16,7 @@ import com.example.myapplication.data.ApiClient
 import com.example.myapplication.data.DamageReport
 import com.example.myapplication.ui.components.*
 import kotlinx.coroutines.launch
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun DistrictOfficerScreen(
@@ -54,7 +55,7 @@ fun DistrictOfficerScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
         // Header
@@ -69,7 +70,7 @@ fun DistrictOfficerScreen(
             Column {
                 Text(
                     text = "DASHBOARD YA WILAYA",
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 1.sp,
@@ -77,7 +78,7 @@ fun DistrictOfficerScreen(
                 )
                 Text(
                     text = "Afisa: ${user?.displayName?.uppercase() ?: ""}",
-                    color = MBlueLight,
+                    color = MaterialTheme.colorScheme.secondary,
                     fontSize = 12.sp,
                     fontFamily = FontFamily.Monospace
                 )
@@ -92,13 +93,13 @@ fun DistrictOfficerScreen(
 
         if (isLoading) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MTextWhite)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
             }
         } else if (errorMessage != null) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Text(
                     text = errorMessage!!,
-                    color = MRed,
+                    color = MaterialTheme.colorScheme.error,
                     fontSize = 14.sp,
                     fontFamily = FontFamily.Monospace
                 )
@@ -107,7 +108,7 @@ fun DistrictOfficerScreen(
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Text(
                     text = "Hakuna ripoti zilizotumwa wilayani.",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp,
                     fontFamily = FontFamily.Monospace
                 )
@@ -136,20 +137,20 @@ fun DistrictReportCard(report: DamageReport) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = report.title.uppercase(),
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace
                 )
                 Text(
                     text = "Chanzo: ${report.waterSourceName}",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 2.dp)
                 )
                 Text(
                     text = "Tarehe: ${report.reportDate}",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace
                 )
@@ -164,7 +165,7 @@ fun DistrictReportCard(report: DamageReport) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = report.description,
-            color = MTextWhite,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 13.sp
         )
         
@@ -175,7 +176,7 @@ fun DistrictReportCard(report: DamageReport) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Imeletwa na Kijiji: ${report.forwardedAt ?: "Haijulikani"}",
-            color = MBlueLight,
+            color = MaterialTheme.colorScheme.secondary,
             fontSize = 10.sp,
             fontFamily = FontFamily.Monospace
         )

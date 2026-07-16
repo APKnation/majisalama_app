@@ -23,6 +23,7 @@ import com.example.myapplication.data.DamageReport
 import com.example.myapplication.data.User
 import com.example.myapplication.ui.components.*
 import kotlinx.coroutines.launch
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun VillageLeaderScreen(
@@ -71,7 +72,7 @@ fun VillageLeaderScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
         // Header
@@ -88,7 +89,7 @@ fun VillageLeaderScreen(
             )
             Text(
                 text = "IDHINI ZA MWENYEKITI",
-                color = MTextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -101,13 +102,13 @@ fun VillageLeaderScreen(
         // Tabs
         PrimaryScrollableTabRow(
             selectedTabIndex = selectedTab,
-            containerColor = MDarkGray,
-            contentColor = MTextWhite,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurface,
             edgePadding = 0.dp,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
-                .border(1.dp, MBorderGray, RectangleShape)
+                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
         ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
@@ -127,7 +128,7 @@ fun VillageLeaderScreen(
 
         if (isLoading) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MTextWhite)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
             }
         } else {
             // Filter reports by tab
@@ -150,7 +151,7 @@ fun VillageLeaderScreen(
                 ) {
                     Text(
                         text = "Hakuna ripoti katika kundi hili.",
-                        color = MTextMuted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp,
                         fontFamily = FontFamily.Monospace
                     )
@@ -204,20 +205,20 @@ fun LeaderReportCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = report.title.uppercase(),
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace
                 )
                 Text(
                     text = "Chanzo: ${report.waterSourceName}",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 2.dp)
                 )
                 Text(
                     text = "Tarehe: ${report.reportDate}",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace
                 )
@@ -232,7 +233,7 @@ fun LeaderReportCard(
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Mtoa Taarifa: ${report.reportedByName}",
-            color = MBlueLight,
+            color = MaterialTheme.colorScheme.secondary,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold
         )
@@ -240,7 +241,7 @@ fun LeaderReportCard(
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = report.description,
-            color = MTextMuted,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 13.sp,
             maxLines = if (isExpanding) Int.MAX_VALUE else 2
         )
@@ -248,7 +249,7 @@ fun LeaderReportCard(
         if (report.description.length > 80) {
             Text(
                 text = if (isExpanding) "SOMA KIPUNGUZO (LESS)" else "SOMA ZAIDI (MORE)",
-                color = MTextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace,
@@ -285,7 +286,7 @@ fun LeaderReportCard(
             MStripesDivider(height = 1.dp, modifier = Modifier.padding(bottom = 12.dp))
 
             if (isOperating) {
-                CircularProgressIndicator(color = MTextWhite, modifier = Modifier.size(20.dp))
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
             } else if (showRejectInput) {
                 MTextField(
                     value = rejectionReason,
@@ -307,8 +308,8 @@ fun LeaderReportCard(
                                 }
                             }
                         },
-                        borderColor = MRed,
-                        contentColor = MRed
+                        borderColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.error
                     )
                     MButton(
                         text = "GHAIRI",
@@ -335,8 +336,8 @@ fun LeaderReportCard(
                     MButton(
                         text = "KATAA (REJECT)",
                         onClick = { showRejectInput = true },
-                        borderColor = MRed,
-                        contentColor = MRed
+                        borderColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.error
                     )
                 }
             }
@@ -348,12 +349,12 @@ fun LeaderReportCard(
             MStripesDivider(height = 1.dp, modifier = Modifier.padding(bottom = 12.dp))
 
             if (isOperating) {
-                CircularProgressIndicator(color = MTextWhite, modifier = Modifier.size(20.dp))
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
             } else {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "PANGA MFANYAKAZI (ASSIGN WATER OFFICER)",
-                        color = MTextMuted,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 10.sp,
                         fontFamily = FontFamily.Monospace,
                         modifier = Modifier.padding(bottom = 4.dp)
@@ -367,8 +368,8 @@ fun LeaderReportCard(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .border(1.dp, MBorderGray, RectangleShape)
-                                .background(MBlack)
+                                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                .background(MaterialTheme.colorScheme.background)
                                 .clickable { workerDropdownExpanded = true }
                                 .padding(10.dp)
                         ) {
@@ -379,13 +380,13 @@ fun LeaderReportCard(
                             ) {
                                 Text(
                                     text = selectedWorker?.username ?: "Chagua Mfanyakazi",
-                                    color = MTextWhite,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontSize = 13.sp
                                 )
                                 Icon(
                                     imageVector = Icons.Default.ArrowDropDown,
                                     contentDescription = "Dropdown",
-                                    tint = MTextWhite
+                                    tint = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                             DropdownMenu(
@@ -393,12 +394,12 @@ fun LeaderReportCard(
                                 onDismissRequest = { workerDropdownExpanded = false },
                                 modifier = Modifier
                                     .fillMaxWidth(0.6f)
-                                    .background(MDarkGray)
-                                    .border(1.dp, MBorderGray, RectangleShape)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
                             ) {
                                 workers.forEach { w ->
                                     DropdownMenuItem(
-                                        text = { Text(w.username, color = MTextWhite) },
+                                        text = { Text(w.username, color = MaterialTheme.colorScheme.onSurface) },
                                         onClick = {
                                             selectedWorker = w
                                             workerDropdownExpanded = false

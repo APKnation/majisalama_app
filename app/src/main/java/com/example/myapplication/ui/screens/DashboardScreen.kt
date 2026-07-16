@@ -30,6 +30,7 @@ import com.example.myapplication.ui.components.*
 import kotlinx.coroutines.launch
 
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.MaterialTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,7 +97,7 @@ fun DashboardScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(MBlack),
+            .background(MaterialTheme.colorScheme.background),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -110,7 +111,7 @@ fun DashboardScreen(
                 Column {
                     Text(
                         text = "HABARI, ${user?.displayName?.uppercase() ?: "MGENI"}",
-                        color = MTextWhite,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.ExtraBold,
                         letterSpacing = 1.5.sp,
@@ -118,7 +119,7 @@ fun DashboardScreen(
                     )
                     Text(
                         text = "Role: ${user?.role?.uppercase() ?: "PUBLIC CITIZEN"}",
-                        color = MBlueLight,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
@@ -153,17 +154,17 @@ fun DashboardScreen(
         // ── Alerts Banner ─────────────────────────────────────────────────
         if (alerts.isNotEmpty()) {
             item {
-                MCard(borderColor = MRed, backgroundColor = Color(0xFF1A0A0A)) {
+                MCard(borderColor = MaterialTheme.colorScheme.error, backgroundColor = Color(0xFF1A0A0A)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Notifications,
                             contentDescription = "Alerts",
-                            tint = MRed,
+                            tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(end = 8.dp)
                         )
                         Text(
                             text = "ARIFA KUU / TANGAZO LA MAJI",
-                            color = MTextWhite,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp,
@@ -174,7 +175,7 @@ fun DashboardScreen(
                     alerts.take(3).forEach { alert ->
                         Text(
                             text = "• [${alert.alertTypeDisplay.uppercase()}] ${alert.message}",
-                            color = MTextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 12.sp,
                             modifier = Modifier.padding(vertical = 2.dp)
                         )
@@ -193,17 +194,17 @@ fun DashboardScreen(
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search",
-                        tint = MTextMuted,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(end = 8.dp)
                     )
                     BasicTextField(
                         value = searchQueries,
                         onValueChange = { searchQueries = it },
                         modifier = Modifier.weight(1f),
-                        textStyle = MaterialTheme.typography.bodyMedium.copy(color = MTextWhite),
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
                         decorationBox = { innerTextField ->
                             if (searchQueries.isEmpty()) {
-                                Text("Tafuta chanzo cha maji au kijiji...", color = MTextMuted, fontSize = 14.sp)
+                                Text("Tafuta chanzo cha maji au kijiji...", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                             }
                             innerTextField()
                         }
@@ -218,14 +219,14 @@ fun DashboardScreen(
                         checked = useNearbyFilter,
                         onCheckedChange = { useNearbyFilter = it },
                         colors = CheckboxDefaults.colors(
-                            checkedColor = MTextWhite,
-                            checkmarkColor = MBlack,
-                            uncheckedColor = MBorderGray
+                            checkedColor = MaterialTheme.colorScheme.onSurface,
+                            checkmarkColor = MaterialTheme.colorScheme.background,
+                            uncheckedColor = MaterialTheme.colorScheme.outline
                         )
                     )
                     Text(
                         text = "TAFUTA VILIVYO KARIBU (NEARBY FILTER)",
-                        color = MTextWhite,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
@@ -239,32 +240,32 @@ fun DashboardScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("LATITUDE", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            Text("LATITUDE", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
                             BasicTextField(
                                 value = latText,
                                 onValueChange = { latText = it },
-                                textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
-                                modifier = Modifier.border(1.dp, MBorderGray, RectangleShape).background(MBlack).padding(8.dp),
+                                textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
+                                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape).background(MaterialTheme.colorScheme.background).padding(8.dp),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                         }
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("LONGITUDE", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            Text("LONGITUDE", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
                             BasicTextField(
                                 value = lngText,
                                 onValueChange = { lngText = it },
-                                textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
-                                modifier = Modifier.border(1.dp, MBorderGray, RectangleShape).background(MBlack).padding(8.dp),
+                                textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
+                                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape).background(MaterialTheme.colorScheme.background).padding(8.dp),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                         }
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("RADIUS (KM)", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            Text("RADIUS (KM)", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
                             BasicTextField(
                                 value = radiusText,
                                 onValueChange = { radiusText = it },
-                                textStyle = MaterialTheme.typography.bodySmall.copy(color = MTextWhite),
-                                modifier = Modifier.border(1.dp, MBorderGray, RectangleShape).background(MBlack).padding(8.dp),
+                                textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
+                                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape).background(MaterialTheme.colorScheme.background).padding(8.dp),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                         }
@@ -289,16 +290,16 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Box(
-                        modifier = Modifier.weight(1f).border(1.dp, MBorderGray, RectangleShape).background(MDarkGray).padding(8.dp),
+                        modifier = Modifier.weight(1f).border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape).background(MaterialTheme.colorScheme.surfaceVariant).padding(8.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("VYANZO", color = MTextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
-                            Text("$total", color = MTextWhite, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Text("VYANZO", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            Text("$total", color = MaterialTheme.colorScheme.onSurface, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                     Box(
-                        modifier = Modifier.weight(1f).border(1.dp, Color(0xFF4CAF50), RectangleShape).background(MDarkGray).padding(8.dp),
+                        modifier = Modifier.weight(1f).border(1.dp, Color(0xFF4CAF50), RectangleShape).background(MaterialTheme.colorScheme.surfaceVariant).padding(8.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -307,7 +308,7 @@ fun DashboardScreen(
                         }
                     }
                     Box(
-                        modifier = Modifier.weight(1f).border(1.dp, Color(0xFFF44336), RectangleShape).background(MDarkGray).padding(8.dp),
+                        modifier = Modifier.weight(1f).border(1.dp, Color(0xFFF44336), RectangleShape).background(MaterialTheme.colorScheme.surfaceVariant).padding(8.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -323,7 +324,7 @@ fun DashboardScreen(
         item {
             Text(
                 text = "VYANZO VYA MAJI",
-                color = MTextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 2.sp,
@@ -338,7 +339,7 @@ fun DashboardScreen(
                     modifier = Modifier.fillMaxWidth().height(200.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = MTextWhite)
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
                 }
             }
         } else {
@@ -355,7 +356,7 @@ fun DashboardScreen(
                     ) {
                         Text(
                             text = "Hakuna vyanzo vilivyopatikana.",
-                            color = MTextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp,
                             fontFamily = FontFamily.Monospace
                         )
@@ -391,7 +392,7 @@ fun WaterSourceCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = source.name.uppercase(),
-                    color = MTextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
@@ -399,7 +400,7 @@ fun WaterSourceCard(
                 )
                 Text(
                     text = "Aina: ${source.sourceTypeDisplay} | Kijiji: ${source.villageName}",
-                    color = MTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -408,7 +409,7 @@ fun WaterSourceCard(
                 if (source.phLevel != null) {
                     Text(
                         text = "pH: ${source.phLevel} | Bacteria: ${source.bacteriaCount ?: 0} CFU",
-                        color = MBlueLight,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontSize = 11.sp,
                         fontFamily = FontFamily.Monospace,
                         modifier = Modifier.padding(top = 4.dp)
