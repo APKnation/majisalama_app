@@ -142,6 +142,7 @@ fun MainAppContainer() {
         gesturesEnabled = !isFullScreen,
         drawerContent = {
             ModalDrawerSheet(
+                modifier = Modifier.width(280.dp),
                 drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
                 drawerContainerColor = MaterialTheme.colorScheme.surface,
                 drawerTonalElevation = 0.dp
