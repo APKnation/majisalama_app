@@ -159,7 +159,7 @@ fun WaterSourceDetailsScreen(
 
                 // Water quality parameters
                 item {
-                    MCard() Color(0xFF4CAF50) else Color(0xFFF44336)) {
+                    MCard {
                         Text(
                             text = "UBORA WA MAJI (VIPIMO VYA SASA)",
                             color = MaterialTheme.colorScheme.onSurface,
@@ -217,13 +217,11 @@ fun WaterSourceDetailsScreen(
                             contentColor = MaterialTheme.colorScheme.error
                         )
 
-                        // If water officer, log inspection
                         if (currentUser?.role == "water_officer" || currentUser?.role == "admin") {
                             MButton(
                                 text = "PIMA NA UWEKE UBORA WA MAJI (INSPECTION)",
                                 onClick = { onNavigateToLogQuality(src.id) },
                                 modifier = Modifier.fillMaxWidth(),
-                                ),
                                 contentColor = Color(0xFF4CAF50)
                             )
                         }
