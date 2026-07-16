@@ -6,21 +6,19 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +26,7 @@ import com.example.myapplication.data.ApiClient
 import com.example.myapplication.ui.components.*
 import com.example.myapplication.ui.screens.*
 import com.example.myapplication.ui.theme.MyApplicationTheme
+import kotlinx.coroutines.launch
 
 sealed class Screen {
     object Landing : Screen()
@@ -50,115 +49,267 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MyApplicationTheme(
-                darkTheme = true,
-                dynamicColor = false
-            ) {
+            MyApplicationTheme(darkTheme = true, dynamicColor = false) {
                 MainAppContainer()
             }
         }
     }
 }
 
+// ── Drawer nav item data ─────────────────────────────────────────────────────
+private data class DrawerItem(
+    val icon: ImageVector,
+    val label: String,
+    val screen: Screen
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainAppContainer() {
-    // Custom Stack Navigation
     val backStack = remember { mutableStateListOf<Screen>(Screen.Landing) }
-    val currentScreen = backStack.lastOrNull() ?: Screen.Login
+    val currentScreen = backStack.lastOrNull() ?: Screen.Landing
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-    fun navigateTo(screen: Screen) {
-        backStack.add(screen)
-    }
-
-    fun navigateBack() {
-        if (backStack.size > 1) {
-            backStack.removeAt(backStack.size - 1)
-        }
-    }
-
-    fun navigateToRoot(screen: Screen) {
-        backStack.clear()
-        backStack.add(screen)
-    }
+    fun navigateTo(screen: Screen) { backStack.add(screen) }
+    fun navigateBack() { if (backStack.size > 1) backStack.removeAt(backStack.size - 1) }
+    fun navigateToRoot(screen: Screen) { backStack.clear(); backStack.add(screen) }
+    fun closeDrawer() { scope.launch { drawerState.close() } }
 
     fun getRoleHomeRoute(): Screen {
         val user = ApiClient.currentUser ?: return Screen.Login
         return when (user.role) {
-            "village_leader" -> Screen.VillageLeaderPanel
-            "water_officer" -> Screen.WaterOfficerPanel
+            "village_leader"   -> Screen.VillageLeaderPanel
+            "water_officer"    -> Screen.WaterOfficerPanel
             "district_officer" -> Screen.DistrictOfficerPanel
-            "admin" -> Screen.AdminPanel
-            else -> Screen.Dashboard // citizen
+            "admin"            -> Screen.AdminPanel
+            else               -> Screen.Dashboard
         }
     }
 
-    // Handle android physical back button
-    BackHandler(enabled = backStack.size > 1) {
-        navigateBack()
+    BackHandler(enabled = backStack.size > 1) { navigateBack() }
+
+    // ── Screens where top/bottom chrome is hidden (full screen) ────────────
+    val isFullScreen = currentScreen is Screen.Landing ||
+                       currentScreen is Screen.Login   ||
+                       currentScreen is Screen.Register
+
+    // ── Screens where we show a back arrow instead of hamburger ────────────
+    val isRootScreen = currentScreen is Screen.Dashboard ||
+                       currentScreen is Screen.AdminPanel ||
+                       currentScreen is Screen.VillageLeaderPanel ||
+                       currentScreen is Screen.WaterOfficerPanel ||
+                       currentScreen is Screen.DistrictOfficerPanel ||
+                       currentScreen is Screen.Profile ||
+                       currentScreen is Screen.Predictor
+
+    // ── Build role-appropriate drawer items ────────────────────────────────
+    val user = ApiClient.currentUser
+    val drawerItems: List<DrawerItem> = buildList {
+        when (user?.role) {
+            "admin" -> {
+                add(DrawerItem(Icons.Default.Dashboard, "Admin Dashboard", Screen.AdminPanel))
+                add(DrawerItem(Icons.Default.People, "Citizen View", Screen.Dashboard))
+                add(DrawerItem(Icons.Default.Groups, "Leader Panel", Screen.VillageLeaderPanel))
+                add(DrawerItem(Icons.Default.Engineering, "Officer Panel", Screen.WaterOfficerPanel))
+                add(DrawerItem(Icons.Default.LocationCity, "District Panel", Screen.DistrictOfficerPanel))
+            }
+            "village_leader" -> {
+                add(DrawerItem(Icons.Default.Dashboard, "Leader Dashboard", Screen.VillageLeaderPanel))
+                add(DrawerItem(Icons.Default.WaterDrop, "Vyanzo vya Maji", Screen.Dashboard))
+            }
+            "water_officer" -> {
+                add(DrawerItem(Icons.Default.Dashboard, "Officer Dashboard", Screen.WaterOfficerPanel))
+                add(DrawerItem(Icons.Default.WaterDrop, "Vyanzo vya Maji", Screen.Dashboard))
+            }
+            "district_officer" -> {
+                add(DrawerItem(Icons.Default.Dashboard, "District Dashboard", Screen.DistrictOfficerPanel))
+            }
+            else -> {  // citizen
+                add(DrawerItem(Icons.Default.Home, "Nyumbani", Screen.Dashboard))
+            }
+        }
+        add(DrawerItem(Icons.Default.AutoAwesome, "AI Predictor", Screen.Predictor))
+        add(DrawerItem(Icons.Default.ReportProblem, "Ripoti Uharibifu", Screen.ReportDamage(null)))
+        add(DrawerItem(Icons.Default.Person, "Wasifu Wangu", Screen.Profile))
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            Column {
-                TopAppBar(
-                    title = {
+    // ── Wrap everything in ModalNavigationDrawer ───────────────────────────
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        gesturesEnabled = !isFullScreen,
+        drawerContent = {
+            ModalDrawerSheet(
+                drawerShape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
+                drawerContainerColor = MSurface,
+                drawerTonalElevation = 0.dp
+            ) {
+                // ── Drawer Header ──────────────────────────────────────────
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MDarkGray)
+                        .padding(24.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(28.dp))
+                            .background(MBlueDark),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(
-                            text = "WATERTRACK",
+                            text = user?.displayName?.take(1)?.uppercase() ?: "?",
                             color = MTextWhite,
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.ExtraBold,
-                                letterSpacing = 3.sp,
-                                fontFamily = FontFamily.Monospace
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = user?.displayName ?: "Mgeni",
+                        color = MTextWhite,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = user?.role?.replace("_", " ")?.uppercase() ?: "",
+                        color = MBlueLight,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    MStripesDivider(height = 2.dp)
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // ── Drawer Items ───────────────────────────────────────────
+                drawerItems.forEach { item ->
+                    val isSelected = currentScreen == item.screen ||
+                        (item.screen is Screen.ReportDamage && currentScreen is Screen.ReportDamage)
+                    NavigationDrawerItem(
+                        icon = {
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = item.label,
+                                modifier = Modifier.size(22.dp)
                             )
+                        },
+                        label = {
+                            Text(
+                                text = item.label,
+                                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+                            )
+                        },
+                        selected = isSelected,
+                        onClick = {
+                            navigateToRoot(item.screen)
+                            closeDrawer()
+                        },
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedContainerColor = MBlueDark.copy(alpha = 0.2f),
+                            unselectedContainerColor = Color.Transparent,
+                            selectedIconColor = MBlueLight,
+                            unselectedIconColor = MTextMuted,
+                            selectedTextColor = MTextWhite,
+                            unselectedTextColor = MTextMuted
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                // ── Logout Button ──────────────────────────────────────────
+                NavigationDrawerItem(
+                    icon = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Logout",
+                            tint = MRed,
+                            modifier = Modifier.size(22.dp)
                         )
                     },
-                    actions = {
-                        if (ApiClient.accessToken != null) {
-                            IconButton(onClick = {
-                                ApiClient.logout()
-                                navigateToRoot(Screen.Login)
-                            }) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                                    contentDescription = "Logout",
-                                    tint = MRed
-                                )
-                            }
-                        }
+                    label = { Text("Toka (Logout)", color = MRed) },
+                    selected = false,
+                    onClick = {
+                        ApiClient.logout()
+                        navigateToRoot(Screen.Landing)
+                        closeDrawer()
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MBlack,
-                        titleContentColor = MTextWhite
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = MRed.copy(alpha = 0.08f)
                     )
                 )
-                // Distinct tricolor BMW M band directly under the TopBar
-                MStripesDivider(height = 2.dp)
+                Spacer(modifier = Modifier.height(16.dp))
             }
-        },
-        bottomBar = {
-            val showNav = ApiClient.accessToken != null &&
-                currentScreen !is Screen.Landing &&
-                currentScreen !is Screen.Login &&
-                currentScreen !is Screen.Register
-            if (showNav) {
-                Column {
-                    MStripesDivider(height = 1.dp)
+        }
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                if (!isFullScreen) {
+                    Column {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    text = screenTitle(currentScreen),
+                                    color = MTextWhite,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            },
+                            navigationIcon = {
+                                if (isRootScreen) {
+                                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Menu,
+                                            contentDescription = "Menu",
+                                            tint = MTextWhite
+                                        )
+                                    }
+                                } else {
+                                    IconButton(onClick = { navigateBack() }) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "Back",
+                                            tint = MTextWhite
+                                        )
+                                    }
+                                }
+                            },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = MDarkGray,
+                                titleContentColor = MTextWhite
+                            )
+                        )
+                        MStripesDivider(height = 3.dp)
+                    }
+                }
+            },
+            bottomBar = {
+                val showNav = !isFullScreen && ApiClient.accessToken != null
+                if (showNav) {
                     NavigationBar(
-                        containerColor = MBlack,
+                        containerColor = MDarkGray,
                         tonalElevation = 0.dp,
-                        modifier = Modifier.height(72.dp)
+                        modifier = Modifier.height(68.dp)
                     ) {
                         NavigationBarItem(
-                            selected = currentScreen !is Screen.Predictor && currentScreen !is Screen.ReportDamage && currentScreen !is Screen.Profile && currentScreen !is Screen.Login && currentScreen !is Screen.Register,
+                            selected = isRootScreen &&
+                                currentScreen != Screen.Profile &&
+                                currentScreen != Screen.Predictor,
                             onClick = { navigateToRoot(getRoleHomeRoute()) },
-                            icon = { Icon(Icons.Default.Home, contentDescription = "Dashboard") },
-                            label = { Text("Home", fontSize = 10.sp, fontFamily = FontFamily.Monospace) },
+                            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                            label = { Text("Home", fontSize = 10.sp) },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MTextWhite,
-                                selectedTextColor = MTextWhite,
-                                indicatorColor = MBlueDark.copy(alpha = 0.4f),
+                                selectedIconColor = MBlueLight,
+                                selectedTextColor = MBlueLight,
+                                indicatorColor = MBlueDark.copy(alpha = 0.2f),
                                 unselectedIconColor = MTextMuted,
                                 unselectedTextColor = MTextMuted
                             )
@@ -166,12 +317,12 @@ fun MainAppContainer() {
                         NavigationBarItem(
                             selected = currentScreen is Screen.ReportDamage,
                             onClick = { navigateToRoot(Screen.ReportDamage(null)) },
-                            icon = { Icon(Icons.Default.Warning, contentDescription = "Uharibifu") },
-                            label = { Text("Uharibifu", fontSize = 10.sp, fontFamily = FontFamily.Monospace) },
+                            icon = { Icon(Icons.Default.ReportProblem, contentDescription = "Uharibifu") },
+                            label = { Text("Ripoti", fontSize = 10.sp) },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MTextWhite,
-                                selectedTextColor = MTextWhite,
-                                indicatorColor = MRed.copy(alpha = 0.4f),
+                                selectedIconColor = MRed,
+                                selectedTextColor = MRed,
+                                indicatorColor = MRed.copy(alpha = 0.15f),
                                 unselectedIconColor = MTextMuted,
                                 unselectedTextColor = MTextMuted
                             )
@@ -179,12 +330,12 @@ fun MainAppContainer() {
                         NavigationBarItem(
                             selected = currentScreen is Screen.Predictor,
                             onClick = { navigateToRoot(Screen.Predictor) },
-                            icon = { Icon(Icons.Default.Info, contentDescription = "AI") },
-                            label = { Text("AI", fontSize = 10.sp, fontFamily = FontFamily.Monospace) },
+                            icon = { Icon(Icons.Default.AutoAwesome, contentDescription = "AI") },
+                            label = { Text("AI", fontSize = 10.sp) },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MTextWhite,
-                                selectedTextColor = MTextWhite,
-                                indicatorColor = MBlueLight.copy(alpha = 0.4f),
+                                selectedIconColor = Color(0xFF30D158),
+                                selectedTextColor = Color(0xFF30D158),
+                                indicatorColor = Color(0xFF30D158).copy(alpha = 0.15f),
                                 unselectedIconColor = MTextMuted,
                                 unselectedTextColor = MTextMuted
                             )
@@ -193,147 +344,104 @@ fun MainAppContainer() {
                             selected = currentScreen is Screen.Profile,
                             onClick = { navigateToRoot(Screen.Profile) },
                             icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-                            label = { Text("Profile", fontSize = 10.sp, fontFamily = FontFamily.Monospace) },
+                            label = { Text("Profile", fontSize = 10.sp) },
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = MTextWhite,
                                 selectedTextColor = MTextWhite,
-                                indicatorColor = MBlack,
+                                indicatorColor = MBorderGray.copy(alpha = 0.5f),
                                 unselectedIconColor = MTextMuted,
                                 unselectedTextColor = MTextMuted
                             )
                         )
                     }
                 }
-            }
-        },
-        containerColor = MBlack
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MBlack)
-                .padding(innerPadding)
-        ) {
-            when (currentScreen) {
-                is Screen.Landing -> {
-                    LandingScreen(
+            },
+            containerColor = MBlack
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MBlack)
+                    .padding(innerPadding)
+            ) {
+                when (currentScreen) {
+                    is Screen.Landing -> LandingScreen(
                         onNavigateToLogin = { navigateTo(Screen.Login) },
                         onNavigateToRegister = { navigateTo(Screen.Register) }
                     )
-                }
-                is Screen.Login -> {
-                    LoginScreen(
-                        onLoginSuccess = { user ->
-                            navigateToRoot(getRoleHomeRoute())
-                        },
-                        onNavigateToRegister = {
-                            navigateTo(Screen.Register)
-                        }
+                    is Screen.Login -> LoginScreen(
+                        onLoginSuccess = { navigateToRoot(getRoleHomeRoute()) },
+                        onNavigateToRegister = { navigateTo(Screen.Register) }
                     )
-                }
-                is Screen.Register -> {
-                    RegisterScreen(
-                        onRegisterSuccess = { user ->
-                            navigateToRoot(getRoleHomeRoute())
-                        },
-                        onNavigateToLogin = {
-                            navigateBack()
-                        }
+                    is Screen.Register -> RegisterScreen(
+                        onRegisterSuccess = { navigateToRoot(getRoleHomeRoute()) },
+                        onNavigateToLogin = { navigateBack() }
                     )
-                }
-                is Screen.Dashboard -> {
-                    DashboardScreen(
-                        onNavigateToSourceDetails = { id ->
-                            navigateTo(Screen.WaterSourceDetails(id))
-                        },
-                        onNavigateToReportDamage = { initialId ->
-                            navigateTo(Screen.ReportDamage(initialId))
-                        },
-                        onNavigateToPredictor = {
-                            navigateTo(Screen.Predictor)
-                        }
+                    is Screen.Dashboard -> DashboardScreen(
+                        onNavigateToSourceDetails = { id -> navigateTo(Screen.WaterSourceDetails(id)) },
+                        onNavigateToReportDamage = { id -> navigateTo(Screen.ReportDamage(id)) },
+                        onNavigateToPredictor = { navigateTo(Screen.Predictor) }
                     )
-                }
-                is Screen.AdminPanel -> {
-                    AdminScreen(
+                    is Screen.AdminPanel -> AdminScreen(
                         onNavigateToCitizen = { navigateTo(Screen.Dashboard) },
                         onNavigateToLeader = { navigateTo(Screen.VillageLeaderPanel) },
                         onNavigateToOfficer = { navigateTo(Screen.WaterOfficerPanel) },
                         onNavigateToDistrict = { navigateTo(Screen.DistrictOfficerPanel) },
                         onNavigateToPredictor = { navigateTo(Screen.Predictor) }
                     )
-                }
-                is Screen.DistrictOfficerPanel -> {
-                    DistrictOfficerScreen(
+                    is Screen.DistrictOfficerPanel -> DistrictOfficerScreen(
                         onNavigateBack = { navigateBack() }
                     )
-                }
-                is Screen.Predictor -> {
-                    PredictorScreen(
+                    is Screen.VillageLeaderPanel -> VillageLeaderScreen(
                         onNavigateBack = { navigateBack() }
                     )
-                }
-                is Screen.Profile -> {
-                    ProfileScreen(
+                    is Screen.WaterOfficerPanel -> WaterOfficerScreen(
+                        onNavigateBack = { navigateBack() }
+                    )
+                    is Screen.Predictor -> PredictorScreen(
+                        onNavigateBack = { navigateBack() }
+                    )
+                    is Screen.Profile -> ProfileScreen(
                         onNavigateBack = { navigateBack() },
                         onLogout = {
                             ApiClient.logout()
-                            navigateToRoot(Screen.Login)
+                            navigateToRoot(Screen.Landing)
                         }
                     )
-                }
-                is Screen.WaterSourceDetails -> {
-                    WaterSourceDetailsScreen(
+                    is Screen.WaterSourceDetails -> WaterSourceDetailsScreen(
                         sourceId = currentScreen.sourceId,
-                        onNavigateBack = {
-                            navigateBack()
-                        },
-                        onNavigateToReportDamage = { id ->
-                            navigateTo(Screen.ReportDamage(id))
-                        },
-                        onNavigateToLogQuality = { id ->
-                            navigateTo(Screen.LogQuality(id))
-                        }
+                        onNavigateBack = { navigateBack() },
+                        onNavigateToReportDamage = { id -> navigateTo(Screen.ReportDamage(id)) },
+                        onNavigateToLogQuality = { id -> navigateTo(Screen.LogQuality(id)) }
                     )
-                }
-                is Screen.ReportDamage -> {
-                    ReportDamageScreen(
+                    is Screen.ReportDamage -> ReportDamageScreen(
                         initialSourceId = currentScreen.sourceId,
-                        onNavigateBack = {
-                            navigateBack()
-                        },
-                        onSuccess = {
-                            navigateBack()
-                        }
+                        onNavigateBack = { navigateBack() },
+                        onSuccess = { navigateBack() }
                     )
-                }
-                is Screen.VillageLeaderPanel -> {
-                    VillageLeaderScreen(
-                        onNavigateBack = {
-                            navigateBack()
-                        }
-                    )
-                }
-                is Screen.WaterOfficerPanel -> {
-                    WaterOfficerScreen(
-                        onNavigateBack = {
-                            navigateBack()
-                        }
-                    )
-                }
-                is Screen.LogQuality -> {
-                    LogQualityScreen(
+                    is Screen.LogQuality -> LogQualityScreen(
                         waterSourceId = currentScreen.sourceId,
-                        onNavigateBack = {
-                            navigateBack()
-                        },
-                        onSuccess = {
-                            navigateBack()
-                        }
+                        onNavigateBack = { navigateBack() },
+                        onSuccess = { navigateBack() }
                     )
                 }
-
             }
         }
     }
+}
+
+// ── Screen title helper ──────────────────────────────────────────────────────
+private fun screenTitle(screen: Screen): String = when (screen) {
+    is Screen.Dashboard            -> "Vyanzo vya Maji"
+    is Screen.AdminPanel           -> "Admin Dashboard"
+    is Screen.VillageLeaderPanel   -> "Paneli ya Kiongozi"
+    is Screen.WaterOfficerPanel    -> "Paneli ya Afisa Maji"
+    is Screen.DistrictOfficerPanel -> "Paneli ya Wilaya"
+    is Screen.Predictor            -> "AI Predictor"
+    is Screen.Profile              -> "Wasifu Wangu"
+    is Screen.ReportDamage         -> "Ripoti Uharibifu"
+    is Screen.WaterSourceDetails   -> "Maelezo ya Chanzo"
+    is Screen.LogQuality           -> "Ukaguzi wa Ubora"
+    is Screen.Register             -> "Jiandikishe"
+    else                           -> "WaterTrack"
 }

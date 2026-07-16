@@ -2,15 +2,14 @@ package com.example.myapplication.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontFamily
@@ -21,105 +20,102 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// Color Tokens
-val MBlack = Color(0xFF000000)
-val MDarkGray = Color(0xFF0A0A0A)
-val MBorderGray = Color(0xFF2C2C2C)
-val MTextWhite = Color(0xFFFFFFFF)
-val MTextMuted = Color(0xFFBBBBBB)
+// ── Colour Tokens ───────────────────────────────────────────────────────────
+val MBlack      = Color(0xFF0A0A0A)
+val MDarkGray   = Color(0xFF141414)
+val MSurface    = Color(0xFF1C1C1E)   // iOS-like dark surface
+val MBorderGray = Color(0xFF2C2C2E)
+val MTextWhite  = Color(0xFFFFFFFF)
+val MTextMuted  = Color(0xFF8E8E93)
 
-// BMW M Tricolor Scheme
-val MBlueLight = Color(0xFF0066B1)
-val MBlueDark = Color(0xFF1C69D4)
-val MRed = Color(0xFFE22718)
+// BMW M Tricolor
+val MBlueLight  = Color(0xFF0A84FF)   // iOS-blue variant for legibility
+val MBlueDark   = Color(0xFF1C69D4)
+val MRed        = Color(0xFFE22718)
 
+// Card shape — rounded for mobile
+val CardShape = RoundedCornerShape(12.dp)
+val ChipShape = RoundedCornerShape(6.dp)
+val ButtonShape = RoundedCornerShape(8.dp)
+
+// ── Stripe Divider (BMW M) ──────────────────────────────────────────────────
 @Composable
 fun MStripesDivider(
     modifier: Modifier = Modifier,
-    height: Dp = 4.dp
+    height: Dp = 3.dp
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(height)
+            .clip(RoundedCornerShape(2.dp))
     ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .background(MBlueLight)
-        )
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .background(MBlueDark)
-        )
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .background(MRed)
-        )
+        Box(modifier = Modifier.weight(1f).fillMaxHeight().background(MBlueLight))
+        Box(modifier = Modifier.weight(1f).fillMaxHeight().background(MBlueDark))
+        Box(modifier = Modifier.weight(1f).fillMaxHeight().background(MRed))
     }
 }
 
+// ── Card ────────────────────────────────────────────────────────────────────
 @Composable
 fun MCard(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MDarkGray,
+    backgroundColor: Color = MSurface,
     borderColor: Color = MBorderGray,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
         modifier = modifier
-            .background(backgroundColor, shape = RectangleShape)
-            .border(1.dp, borderColor, shape = RectangleShape)
+            .clip(CardShape)
+            .background(backgroundColor, CardShape)
+            .border(1.dp, borderColor, CardShape)
             .padding(16.dp),
         content = content
     )
 }
 
+// ── Button ──────────────────────────────────────────────────────────────────
 @Composable
 fun MButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    backgroundColor: Color = Color.Transparent,
+    backgroundColor: Color = MBlueDark,
     contentColor: Color = MTextWhite,
-    borderColor: Color = MTextWhite
+    borderColor: Color = Color.Transparent
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier
-            .height(48.dp)
-            .border(
-                1.dp,
-                if (enabled) borderColor else MBorderGray,
-                shape = RectangleShape
-            ),
-        shape = RectangleShape,
+        modifier = modifier.height(50.dp),
+        shape = ButtonShape,
         colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor,
+            containerColor = if (backgroundColor == Color.Transparent) MBlueDark else backgroundColor,
             contentColor = if (enabled) contentColor else MTextMuted,
-            disabledContainerColor = Color.Transparent,
+            disabledContainerColor = MBorderGray.copy(alpha = 0.3f),
             disabledContentColor = MTextMuted
         ),
         enabled = enabled,
-        contentPadding = PaddingValues(horizontal = 16.dp)
+        border = if (borderColor != Color.Transparent) {
+            androidx.compose.foundation.BorderStroke(1.dp, borderColor)
+        } else null,
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp
+        ),
+        contentPadding = PaddingValues(horizontal = 20.dp)
     ) {
         Text(
-            text = text.uppercase(),
+            text = text,
             style = MaterialTheme.typography.labelLarge.copy(
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp,
-                fontFamily = FontFamily.Monospace
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.5.sp
             )
         )
     }
 }
 
+// ── Text Field ──────────────────────────────────────────────────────────────
 @Composable
 fun MTextField(
     value: String,
@@ -133,34 +129,33 @@ fun MTextField(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = label.uppercase(),
+            text = label,
             color = MTextMuted,
             style = MaterialTheme.typography.labelSmall.copy(
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp,
-                fontFamily = FontFamily.Monospace
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.5.sp
             ),
-            modifier = Modifier.padding(bottom = 4.dp)
+            modifier = Modifier.padding(bottom = 6.dp)
         )
-        TextField(
+        OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, MBorderGray, RectangleShape),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = MDarkGray,
-                unfocusedContainerColor = MBlack,
-                disabledContainerColor = MBlack,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MSurface,
+                unfocusedContainerColor = MDarkGray,
+                disabledContainerColor = MDarkGray,
                 focusedTextColor = MTextWhite,
                 unfocusedTextColor = MTextWhite,
                 disabledTextColor = MTextMuted,
-                cursorColor = MTextWhite,
-                focusedIndicatorColor = MTextWhite,
-                unfocusedIndicatorColor = MBorderGray,
-                disabledIndicatorColor = Color.Transparent
+                cursorColor = MBlueLight,
+                focusedBorderColor = MBlueLight,
+                unfocusedBorderColor = MBorderGray,
+                disabledBorderColor = MBorderGray,
+                focusedLabelColor = MBlueLight,
+                unfocusedLabelColor = MTextMuted
             ),
-            shape = RectangleShape,
             singleLine = singleLine,
             enabled = enabled,
             visualTransformation = visualTransformation,
@@ -169,67 +164,64 @@ fun MTextField(
     }
 }
 
+// ── Priority Badge ───────────────────────────────────────────────────────────
 @Composable
 fun PriorityBadge(priority: String) {
-    val (SwahiliText, color) = when (priority.lowercase()) {
-        "low" -> Pair("NDOGO", Color(0xFF4CAF50))
-        "medium" -> Pair("WASTANI", Color(0xFFFFC107))
-        "high" -> Pair("KUBWA", Color(0xFFFF9800))
-        "critical" -> Pair("DHARURA", Color(0xFFF44336))
-        else -> Pair(priority.uppercase(), MTextMuted)
+    val (label, color) = when (priority.lowercase()) {
+        "low"      -> Pair("NDOGO", Color(0xFF34C759))
+        "medium"   -> Pair("WASTANI", Color(0xFFFF9F0A))
+        "high"     -> Pair("KUBWA", Color(0xFFFF6B00))
+        "critical" -> Pair("DHARURA", Color(0xFFFF3B30))
+        else       -> Pair(priority.uppercase(), MTextMuted)
     }
-
     Box(
         modifier = Modifier
-            .background(color.copy(alpha = 0.1f), shape = RectangleShape)
-            .border(1.dp, color, shape = RectangleShape)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .clip(ChipShape)
+            .background(color.copy(alpha = 0.15f))
+            .padding(horizontal = 10.dp, vertical = 4.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = SwahiliText,
+            text = label,
             color = color,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp,
-            fontFamily = FontFamily.Monospace
+            letterSpacing = 0.5.sp
         )
     }
 }
 
+// ── Status Badge ─────────────────────────────────────────────────────────────
 @Composable
 fun StatusBadge(status: String) {
-    val (SwahiliText, color) = when (status.lowercase()) {
-        "pending_village" -> Pair("INASUBIRI IDHINI YA MWENYEKITI", MBlueLight)
-        "village_approved" -> Pair("IMEIDHINISHWA NA MWENYEKITI", MBlueDark)
-        "forwarded_to_district" -> Pair("IMETUMWA KWA WILAYA", Color(0xFF9C27B0))
-        "rejected" -> Pair("IMEKATALIWA", Color(0xFFF44336))
-        "assigned" -> Pair("IMEPEWA WAFANYAKAZI", Color(0xFF00BCD4))
-        "in_progress" -> Pair("INAFANYWA KAZI", Color(0xFFFFEB3B))
-        "resolved" -> Pair("IMETATULIWA", Color(0xFF4CAF50))
-        "closed" -> Pair("IMEFUNGWA", Color(0xFF9E9E9E))
-        "safe" -> Pair("SALAMA", Color(0xFF4CAF50))
-        "caution" -> Pair("TAHADHARI", Color(0xFFFFC107))
-        "unsafe" -> Pair("HATARINI", Color(0xFFF44336))
-        "under_repair" -> Pair("INATENGENEZWA", Color(0xFFFF9800))
-        "dry" -> Pair("KAVU", Color(0xFF795548))
-        else -> Pair(status.uppercase(), MTextMuted)
+    val (label, color) = when (status.lowercase()) {
+        "pending_village"         -> Pair("Inasubiri", MBlueLight)
+        "village_approved"        -> Pair("Imeidhinishwa", Color(0xFF30D158))
+        "forwarded_to_district"   -> Pair("Wilaya", Color(0xFFBF5AF2))
+        "rejected"                -> Pair("Imekataliwa", Color(0xFFFF3B30))
+        "assigned"                -> Pair("Imepewa", Color(0xFF64D2FF))
+        "in_progress"             -> Pair("Inafanywa", Color(0xFFFFD60A))
+        "resolved"                -> Pair("Imetatuliwa", Color(0xFF30D158))
+        "closed"                  -> Pair("Imefungwa", MTextMuted)
+        "safe"                    -> Pair("Salama", Color(0xFF30D158))
+        "caution"                 -> Pair("Tahadhari", Color(0xFFFF9F0A))
+        "unsafe"                  -> Pair("Hatarini", Color(0xFFFF3B30))
+        "under_repair"            -> Pair("Inatengenezwa", Color(0xFFFF6B00))
+        "dry"                     -> Pair("Kavu", Color(0xFF8E8E93))
+        else                      -> Pair(status.replace("_"," ").uppercase(), MTextMuted)
     }
-
     Box(
         modifier = Modifier
-            .background(color.copy(alpha = 0.1f), shape = RectangleShape)
-            .border(1.dp, color, shape = RectangleShape)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .clip(ChipShape)
+            .background(color.copy(alpha = 0.15f))
+            .padding(horizontal = 10.dp, vertical = 4.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = SwahiliText,
+            text = label,
             color = color,
-            fontSize = 9.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 0.5.sp,
-            fontFamily = FontFamily.Monospace,
+            fontSize = 10.sp,
+            fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
         )
     }

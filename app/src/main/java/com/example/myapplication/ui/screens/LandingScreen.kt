@@ -103,9 +103,9 @@ fun LandingScreen(
                     .padding(horizontal = 16.dp, vertical = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                StatBox(value = "500+", label = "VYANZO VYA MAJI", color = MBlueLight)
-                StatBox(value = "120", label = "VIJIJI", color = Color(0xFF4CAF50))
-                StatBox(value = "3", label = "MIKOA", color = MRed)
+                StatBox(value = "500+", label = "VYANZO VYA MAJI", color = MBlueLight, modifier = Modifier.weight(1f))
+                StatBox(value = "120", label = "VIJIJI", color = Color(0xFF4CAF50), modifier = Modifier.weight(1f))
+                StatBox(value = "3", label = "MIKOA", color = MRed, modifier = Modifier.weight(1f))
             }
         }
 
@@ -221,10 +221,9 @@ fun LandingScreen(
 }
 
 @Composable
-private fun StatBox(value: String, label: String, color: Color) {
+private fun StatBox(value: String, label: String, color: Color, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
-            .weight(1f)
+        modifier = modifier
             .border(1.dp, color.copy(alpha = 0.5f), RectangleShape)
             .background(color.copy(alpha = 0.08f))
             .padding(12.dp),
