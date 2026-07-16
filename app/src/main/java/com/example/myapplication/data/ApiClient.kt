@@ -44,8 +44,65 @@ object ApiClient {
         WaterSource(3, "Bomba la Shule", "borehole", 2, "Kijiji B", -6.782, 39.252, "caution", 7.0, 12, 0.2, 2.5, "2026-07-12", 4, "officer1", "2026-01-10", "2026-08-10", 2020, null)
     )
 
-    private val damageReports = mutableListOf<DamageReport>()
-    private var nextReportId = 1
+    private val damageReports = mutableListOf<DamageReport>(
+        DamageReport(
+            id = 1, waterSourceId = 2, waterSourceName = "Mto Msimbazi",
+            reportedById = 2, reportedByName = "citizen1",
+            reportDate = "2026-07-14", title = "Maji Yenye Rangi ya Njano",
+            description = "Maji yamebadilika rangi na hayana harufu nzuri. Wananchi hawakunywa.",
+            priority = "high", status = "pending_village",
+            latitude = -6.815, longitude = 39.285, images = emptyList(),
+            assignedToId = null, assignedToName = null, resolvedAt = null,
+            resolutionNotes = null, villageApprovedById = null, villageApprovedAt = null,
+            forwardedById = null, forwardedAt = null, rejectionReason = null
+        ),
+        DamageReport(
+            id = 2, waterSourceId = 3, waterSourceName = "Bomba la Shule",
+            reportedById = 2, reportedByName = "citizen1",
+            reportDate = "2026-07-13", title = "Bomba Limevunjika Kasoro",
+            description = "Bomba kuu limevunjika na maji yanapotea. Shule haina maji tangu jana.",
+            priority = "critical", status = "village_approved",
+            latitude = -6.782, longitude = 39.252, images = emptyList(),
+            assignedToId = 4, assignedToName = "officer1", resolvedAt = null,
+            resolutionNotes = null, villageApprovedById = 3, villageApprovedAt = "2026-07-13",
+            forwardedById = null, forwardedAt = null, rejectionReason = null
+        ),
+        DamageReport(
+            id = 3, waterSourceId = 1, waterSourceName = "Kisima cha Kati",
+            reportedById = 2, reportedByName = "citizen1",
+            reportDate = "2026-07-12", title = "Kisima Kimezama Ndani",
+            description = "Kizingiti cha kisima kimevunjika. Hatari kwa watoto wanaozunguka eneo.",
+            priority = "medium", status = "assigned",
+            latitude = -6.812, longitude = 39.282, images = emptyList(),
+            assignedToId = 4, assignedToName = "officer1", resolvedAt = null,
+            resolutionNotes = null, villageApprovedById = 3, villageApprovedAt = "2026-07-12",
+            forwardedById = null, forwardedAt = null, rejectionReason = null
+        ),
+        DamageReport(
+            id = 4, waterSourceId = 2, waterSourceName = "Mto Msimbazi",
+            reportedById = 2, reportedByName = "citizen1",
+            reportDate = "2026-07-10", title = "Taka Karibu na Chanzo",
+            description = "Kuna takataka nyingi zimezingira chanzo cha maji. Inachafua mazingira.",
+            priority = "low", status = "resolved",
+            latitude = -6.815, longitude = 39.285, images = emptyList(),
+            assignedToId = 4, assignedToName = "officer1",
+            resolvedAt = "2026-07-11", resolutionNotes = "Taka zimeondolewa na timu ya usafi.",
+            villageApprovedById = 3, villageApprovedAt = "2026-07-10",
+            forwardedById = null, forwardedAt = null, rejectionReason = null
+        ),
+        DamageReport(
+            id = 5, waterSourceId = 3, waterSourceName = "Bomba la Shule",
+            reportedById = 2, reportedByName = "citizen1",
+            reportDate = "2026-07-09", title = "Msururu wa Maji Usiku",
+            description = "Maji yanakimbia usiku kutoka kwa bomba. Hasara kubwa ya maji kwa kijiji.",
+            priority = "high", status = "in_progress",
+            latitude = -6.782, longitude = 39.252, images = emptyList(),
+            assignedToId = 4, assignedToName = "officer1", resolvedAt = null,
+            resolutionNotes = null, villageApprovedById = 3, villageApprovedAt = "2026-07-09",
+            forwardedById = null, forwardedAt = null, rejectionReason = null
+        )
+    )
+    private var nextReportId = 6
 
     private val qualityReports = mutableListOf<QualityReport>()
     private var nextQualityId = 1
