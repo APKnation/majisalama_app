@@ -294,7 +294,7 @@ fun MainAppContainer() {
                 }
             },
             bottomBar = {
-                val showNav = !isFullScreen && ApiClient.accessToken != null
+                val showNav = !isFullScreen
                 if (showNav) {
                     NavigationBar(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,

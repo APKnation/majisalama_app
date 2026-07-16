@@ -17,11 +17,14 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = OceanDarkTertiary,
     background = OceanDarkBackground,
     surface = OceanDarkSurface,
+    surfaceVariant = OceanDarkSurfaceVariant,
     onPrimary = OceanDarkBackground,
     onSecondary = OceanDarkBackground,
     onTertiary = OceanDarkBackground,
     onBackground = OceanDarkOnSurface,
-    onSurface = OceanDarkOnSurface
+    onSurface = OceanDarkOnSurface,
+    onSurfaceVariant = OceanDarkOnSurfaceVariant,
+    error = WaterAlert
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -30,11 +33,14 @@ private val LightColorScheme = lightColorScheme(
     tertiary = OceanTertiary,
     background = OceanBackgroundLight,
     surface = OceanSurfaceLight,
+    surfaceVariant = OceanSurfaceVariantLight,
     onPrimary = OceanBackgroundLight,
     onSecondary = OceanBackgroundLight,
     onTertiary = OceanBackgroundLight,
     onBackground = OceanOnSurfaceLight,
-    onSurface = OceanOnSurfaceLight
+    onSurface = OceanOnSurfaceLight,
+    onSurfaceVariant = OceanOnSurfaceVariantLight,
+    error = WaterAlert
 )
 
 @Composable
