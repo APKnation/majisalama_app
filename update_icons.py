@@ -23,20 +23,23 @@ except Exception as e:
     print(f"Error opening image: {e}")
     exit(1)
 
+# Handle Pillow version compatibility
+try:
+    resample_method = Image.Resampling.LANCZOS
+except AttributeError:
+    resample_method = Image.LANCZOS
+
 for folder, (legacy_size, adaptive_size) in mipmaps.items():
     folder_path = os.path.join(res_dir, folder)
     os.makedirs(folder_path, exist_ok=True)
     
     # 1. Create legacy icon (ic_launcher.png and ic_launcher_round.png)
-    legacy_img = img.resize((legacy_size, legacy_size), Image.Resampling.LANCZOS)
+    legacy_img = img.resize((legacy_size, legacy_size), resample_method)
     legacy_img.save(os.path.join(folder_path, "ic_launcher.png"))
     legacy_img.save(os.path.join(folder_path, "ic_launcher_round.png"))
     
     # 2. Create foreground for adaptive icon (ic_launcher_foreground.png)
-    # The generated icon already has a background, but we can just use it as the foreground.
-    # Adaptive icons scale the foreground down, so the logo will be centered.
-    adaptive_img = img.resize((adaptive_size, adaptive_size), Image.Resampling.LANCZOS)
+    adaptive_img = img.resize((adaptive_size, adaptive_size), resample_method)
     adaptive_img.save(os.path.join(folder_path, "ic_launcher_foreground.png"))
 
 print("Icons resized and saved successfully.")
-
