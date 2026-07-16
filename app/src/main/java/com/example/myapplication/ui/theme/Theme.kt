@@ -5,64 +5,106 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
+// ── Dark Color Scheme ─────────────────────────────────────────────────────────
 private val DarkColorScheme = darkColorScheme(
-    primary = OceanDarkPrimary,
-    secondary = OceanDarkSecondary,
-    tertiary = OceanDarkTertiary,
-    background = OceanDarkBackground,
-    surface = OceanDarkSurface,
-    surfaceVariant = OceanDarkSurfaceVariant,
-    onPrimary = OceanDarkBackground,
-    onSecondary = OceanDarkBackground,
-    onTertiary = OceanDarkBackground,
-    onBackground = OceanDarkOnSurface,
-    onSurface = OceanDarkOnSurface,
-    onSurfaceVariant = OceanDarkOnSurfaceVariant,
-    error = WaterAlert
+    primary                = DarkPrimary,
+    onPrimary              = DarkBackground,
+    primaryContainer       = DarkPrimaryContainer,
+    onPrimaryContainer     = DarkOnPrimaryContainer,
+    inversePrimary         = DarkInversePrimary,
+
+    secondary              = DarkSecondary,
+    onSecondary            = DarkBackground,
+    secondaryContainer     = DarkSecondaryContainer,
+    onSecondaryContainer   = DarkOnPrimaryContainer,
+
+    tertiary               = DarkTertiary,
+    onTertiary             = DarkBackground,
+    tertiaryContainer      = DarkTertiaryContainer,
+    onTertiaryContainer    = DarkOnPrimaryContainer,
+
+    background             = DarkBackground,
+    onBackground           = DarkOnBackground,
+
+    surface                = DarkSurface,
+    onSurface              = DarkOnSurface,
+    surfaceVariant         = DarkSurfaceVariant,
+    onSurfaceVariant       = DarkOnSurfaceVariant,
+    surfaceContainer       = DarkSurfaceContainer,
+
+    outline                = DarkOutline,
+    outlineVariant         = DarkOutlineVariant,
+
+    error                  = ColorDanger,
+    onError                = DarkBackground
 )
 
+// ── Light Color Scheme ────────────────────────────────────────────────────────
 private val LightColorScheme = lightColorScheme(
-    primary = OceanPrimary,
-    secondary = OceanSecondary,
-    tertiary = OceanTertiary,
-    background = OceanBackgroundLight,
-    surface = OceanSurfaceLight,
-    surfaceVariant = OceanSurfaceVariantLight,
-    onPrimary = OceanBackgroundLight,
-    onSecondary = OceanBackgroundLight,
-    onTertiary = OceanBackgroundLight,
-    onBackground = OceanOnSurfaceLight,
-    onSurface = OceanOnSurfaceLight,
-    onSurfaceVariant = OceanOnSurfaceVariantLight,
-    error = WaterAlert
+    primary                = MajiPrimary,
+    onPrimary              = LightBackground,
+    primaryContainer       = LightPrimaryContainer,
+    onPrimaryContainer     = LightOnPrimaryContainer,
+    inversePrimary         = LightInversePrimary,
+
+    secondary              = MajiSecondary,
+    onSecondary            = LightBackground,
+    secondaryContainer     = LightSecondaryContainer,
+    onSecondaryContainer   = LightOnPrimaryContainer,
+
+    tertiary               = MajiTertiary,
+    onTertiary             = LightBackground,
+    tertiaryContainer      = LightTertiaryContainer,
+    onTertiaryContainer    = LightOnPrimaryContainer,
+
+    background             = LightBackground,
+    onBackground           = LightOnBackground,
+
+    surface                = LightSurface,
+    onSurface              = LightOnSurface,
+    surfaceVariant         = LightSurfaceVariant,
+    onSurfaceVariant       = LightOnSurfaceVariant,
+    surfaceContainer       = LightSurfaceContainer,
+
+    outline                = LightOutline,
+    outlineVariant         = LightOutlineVariant,
+
+    error                  = ColorDanger,
+    onError                = LightBackground
 )
 
+// ── Theme Composable ──────────────────────────────────────────────────────────
 @Composable
 fun MyApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    // Dynamic color disabled — always use our branded palette
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    // Sync the status-bar colour with our surface so it looks native
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.surface.toArgb()
+            WindowCompat.getInsetsController(window, view)
+                .isAppearanceLightStatusBars = !darkTheme
+        }
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
-        content = content
+        typography  = MajiTypography,
+        shapes      = MajiShapes,
+        content     = content
     )
 }

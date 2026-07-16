@@ -18,51 +18,59 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.*
-import androidx.compose.material3.MaterialTheme
 
-// ── Shared UI Properties ──────────────────────────────────────────────────
-val CardShape = RoundedCornerShape(24.dp)
-val ChipShape = RoundedCornerShape(12.dp)
+// ── Shape constants (reference values — composables use MaterialTheme.shapes.*) ─
+val CardShape   = RoundedCornerShape(32.dp)
+val ChipShape   = RoundedCornerShape(8.dp)
 val ButtonShape = RoundedCornerShape(16.dp)
 
-// ── Spacer (Replaces MStripesDivider) ─────────────────────────────────────
+// ── Stripe Divider ────────────────────────────────────────────────────────────
+/**
+ * Soft accent divider — replaces the old racing-stripe aesthetic with a
+ * smooth, semi-transparent line that adapts to the current color scheme.
+ */
 @Composable
 fun MStripesDivider(
     modifier: Modifier = Modifier,
     height: Dp = 3.dp
 ) {
-    // We keep the name to prevent breaking other files, but make it a soft solid line
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(height)
-            .clip(RoundedCornerShape(height / 2))
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+            .clip(MaterialTheme.shapes.extraSmall)
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.4f))
     )
 }
 
-// ── Card ────────────────────────────────────────────────────────────────────
+// ── Card ──────────────────────────────────────────────────────────────────────
+/**
+ * Standard surface card with soft rounded corners and no harsh border.
+ */
 @Composable
 fun MCard(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(32.dp),
-        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        modifier  = modifier.fillMaxWidth(),
+        shape     = MaterialTheme.shapes.extraLarge,
+        colors    = CardDefaults.cardColors(containerColor = backgroundColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = null // No stiff borders for a modern, soft look
+        border    = null
     ) {
         Column(
-            modifier = Modifier.padding(24.dp),
-            content = content
+            modifier = Modifier.padding(20.dp),
+            content  = content
         )
     }
 }
 
-// ── Button ──────────────────────────────────────────────────────────────────
+// ── Button ────────────────────────────────────────────────────────────────────
+/**
+ * Primary / ghost button with consistent 56 dp touch target height.
+ */
 @Composable
 fun MButton(
     text: String,
@@ -74,34 +82,38 @@ fun MButton(
     borderColor: Color = Color.Transparent
 ) {
     Button(
-        onClick = onClick,
-        modifier = modifier.height(56.dp),
-        shape = ButtonShape,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (backgroundColor == Color.Transparent) OceanPrimary else backgroundColor,
-            contentColor = if (enabled) contentColor else WaterMuted,
+        onClick  = onClick,
+        modifier = modifier.height(52.dp),
+        shape    = MaterialTheme.shapes.medium,
+        colors   = ButtonDefaults.buttonColors(
+            containerColor        = if (backgroundColor == Color.Transparent) OceanPrimary else backgroundColor,
+            contentColor          = if (enabled) contentColor else WaterMuted,
             disabledContainerColor = WaterMuted.copy(alpha = 0.2f),
-            disabledContentColor = WaterMuted
+            disabledContentColor  = WaterMuted
         ),
-        enabled = enabled,
-        border = if (borderColor != Color.Transparent) {
-            androidx.compose.foundation.BorderStroke(1.dp, borderColor)
-        } else null,
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp, pressedElevation = 4.dp),
-        contentPadding = PaddingValues(horizontal = 24.dp)
+        enabled  = enabled,
+        border   = if (borderColor != Color.Transparent)
+            androidx.compose.foundation.BorderStroke(1.dp, borderColor) else null,
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 2.dp,
+            pressedElevation = 5.dp
+        ),
+        contentPadding = PaddingValues(horizontal = 20.dp)
     ) {
         Text(
-            text = text,
+            text  = text,
             style = MaterialTheme.typography.labelLarge.copy(
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.5.sp,
-                fontSize = 16.sp
+                fontWeight    = FontWeight.Bold,
+                letterSpacing = 0.5.sp
             )
         )
     }
 }
 
-// ── Text Field ──────────────────────────────────────────────────────────────
+// ── Text Field ────────────────────────────────────────────────────────────────
+/**
+ * Labelled outlined text field matching the design system.
+ */
 @Composable
 fun MTextField(
     value: String,
@@ -115,98 +127,92 @@ fun MTextField(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = label,
+            text  = label,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 0.5.sp
-            ),
-            modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+            modifier = Modifier.padding(bottom = 6.dp, start = 4.dp)
         )
         OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.surface,
+            value             = value,
+            onValueChange     = onValueChange,
+            modifier          = Modifier.fillMaxWidth(),
+            shape             = MaterialTheme.shapes.small,
+            colors            = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor   = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                disabledContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                disabledTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                cursorColor = MaterialTheme.colorScheme.primary,
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                disabledBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                disabledContainerColor  = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
+                focusedTextColor        = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor      = MaterialTheme.colorScheme.onSurface,
+                disabledTextColor       = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                cursorColor             = MaterialTheme.colorScheme.primary,
+                focusedBorderColor      = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor    = MaterialTheme.colorScheme.outline,
+                disabledBorderColor     = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
             ),
-            singleLine = singleLine,
-            enabled = enabled,
-            visualTransformation = visualTransformation,
-            keyboardOptions = keyboardOptions
+            singleLine            = singleLine,
+            enabled               = enabled,
+            visualTransformation  = visualTransformation,
+            keyboardOptions       = keyboardOptions
         )
     }
 }
 
-// ── Priority Badge ───────────────────────────────────────────────────────────
+// ── Priority Badge ────────────────────────────────────────────────────────────
 @Composable
 fun PriorityBadge(priority: String) {
     val (label, color) = when (priority.lowercase()) {
-        "low"      -> Pair("NDOGO", WaterAqua)
+        "low"      -> Pair("NDOGO",   WaterAqua)
         "medium"   -> Pair("WASTANI", WaterWarning)
-        "high"     -> Pair("KUBWA", WaterAlert)
+        "high"     -> Pair("KUBWA",   WaterAlert)
         "critical" -> Pair("DHARURA", WaterAlert)
         else       -> Pair(priority.uppercase(), WaterMuted)
     }
     Box(
         modifier = Modifier
-            .clip(ChipShape)
+            .clip(MaterialTheme.shapes.extraSmall)
             .background(color.copy(alpha = 0.15f))
-            .padding(horizontal = 12.dp, vertical = 6.dp),
+            .padding(horizontal = 10.dp, vertical = 5.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = label,
-            color = color,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 0.5.sp
+            text          = label,
+            color         = color,
+            style         = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
         )
     }
 }
 
-// ── Status Badge ─────────────────────────────────────────────────────────────
+// ── Status Badge ──────────────────────────────────────────────────────────────
 @Composable
 fun StatusBadge(status: String) {
     val (label, color) = when (status.lowercase()) {
-        "pending_village"         -> Pair("Inasubiri", OceanSecondary)
-        "village_approved"        -> Pair("Imeidhinishwa", WaterAqua)
-        "forwarded_to_district"   -> Pair("Wilaya", OceanPrimary)
-        "rejected"                -> Pair("Imekataliwa", WaterAlert)
-        "assigned"                -> Pair("Imepewa", OceanTertiary)
-        "in_progress"             -> Pair("Inafanywa", WaterWarning)
-        "resolved"                -> Pair("Imetatuliwa", WaterAqua)
-        "closed"                  -> Pair("Imefungwa", WaterMuted)
-        "safe"                    -> Pair("Salama", WaterAqua)
-        "caution"                 -> Pair("Tahadhari", WaterWarning)
-        "unsafe"                  -> Pair("Hatarini", WaterAlert)
-        "under_repair"            -> Pair("Inatengenezwa", WaterWarning)
-        "dry"                     -> Pair("Kavu", WaterMuted)
-        else                      -> Pair(status.replace("_"," ").uppercase(), WaterMuted)
+        "pending_village"       -> Pair("Inasubiri",    MajiSecondary)
+        "village_approved"      -> Pair("Imeidhinishwa", WaterAqua)
+        "forwarded_to_district" -> Pair("Wilaya",        MajiPrimary)
+        "rejected"              -> Pair("Imekataliwa",   WaterAlert)
+        "assigned"              -> Pair("Imepewa",       MajiTertiary)
+        "in_progress"           -> Pair("Inafanywa",     WaterWarning)
+        "resolved"              -> Pair("Imetatuliwa",   WaterAqua)
+        "closed"                -> Pair("Imefungwa",     WaterMuted)
+        "safe"                  -> Pair("Salama",        WaterAqua)
+        "caution"               -> Pair("Tahadhari",     WaterWarning)
+        "unsafe"                -> Pair("Hatarini",      WaterAlert)
+        "under_repair"          -> Pair("Inatengenezwa", WaterWarning)
+        "dry"                   -> Pair("Kavu",          WaterMuted)
+        else                    -> Pair(status.replace("_", " ").uppercase(), WaterMuted)
     }
     Box(
         modifier = Modifier
-            .clip(ChipShape)
+            .clip(MaterialTheme.shapes.extraSmall)
             .background(color.copy(alpha = 0.15f))
-            .padding(horizontal = 12.dp, vertical = 6.dp),
+            .padding(horizontal = 10.dp, vertical = 5.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = label,
-            color = color,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
+            text          = label,
+            color         = color,
+            style         = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+            textAlign     = TextAlign.Center
         )
     }
 }
