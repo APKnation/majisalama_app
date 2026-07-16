@@ -10,7 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -273,7 +273,7 @@ fun ParameterDisplay(
     val color = if (isSafe) Color(0xFF4CAF50) else Color(0xFFF44336)
     Column(
         modifier = Modifier
-            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.background)
             .padding(8.dp)
             .width(130.dp),

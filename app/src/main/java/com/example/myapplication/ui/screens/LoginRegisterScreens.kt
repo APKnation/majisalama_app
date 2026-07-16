@@ -13,7 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -67,8 +67,8 @@ fun LoginScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceVariant, RectangleShape)
-                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -112,7 +112,7 @@ fun LoginScreen(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .border(1.dp, demo.color, RectangleShape)
+                            .border(1.dp, demo.color, RoundedCornerShape(16.dp))
                             .background(demo.color.copy(alpha = 0.1f))
                             .clickable(enabled = !isLoading) {
                                 username = demo.username
@@ -260,8 +260,8 @@ fun RegisterScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceVariant, RectangleShape)
-                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -363,7 +363,7 @@ fun RegisterScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                             .background(MaterialTheme.colorScheme.background)
                             .clickable { if (!isLoading) roleDropdownExpanded = true }
                             .padding(14.dp)
@@ -390,7 +390,7 @@ fun RegisterScreen(
                             modifier = Modifier
                                 .fillMaxWidth(0.8f)
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                         ) {
                             roles.forEach { r ->
                                 DropdownMenuItem(
@@ -423,7 +423,7 @@ fun RegisterScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                                 .background(MaterialTheme.colorScheme.background)
                                 .clickable { if (!isLoading) villageDropdownExpanded = true }
                                 .padding(14.dp)
@@ -450,7 +450,7 @@ fun RegisterScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(0.8f)
                                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                             ) {
                                 villages.forEach { v ->
                                     DropdownMenuItem(

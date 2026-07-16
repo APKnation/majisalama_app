@@ -17,7 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -113,7 +113,7 @@ fun PredictorScreen(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -170,7 +170,7 @@ fun PredictorScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                             .background(MaterialTheme.colorScheme.background)
                             .clickable { if (!isLoading) districtExpanded = true }
                             .padding(8.dp)
@@ -186,7 +186,7 @@ fun PredictorScreen(
                         DropdownMenu(
                             expanded = districtExpanded,
                             onDismissRequest = { districtExpanded = false },
-                            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant).border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant).border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                         ) {
                             districts.forEach { d ->
                                 DropdownMenuItem(
@@ -207,7 +207,7 @@ fun PredictorScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                             .background(MaterialTheme.colorScheme.background)
                             .clickable { if (!isLoading) monthExpanded = true }
                             .padding(8.dp)
@@ -223,7 +223,7 @@ fun PredictorScreen(
                         DropdownMenu(
                             expanded = monthExpanded,
                             onDismissRequest = { monthExpanded = false },
-                            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant).border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant).border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                         ) {
                             months.forEach { m ->
                                 DropdownMenuItem(
@@ -253,7 +253,7 @@ fun PredictorScreen(
                         textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                             .background(MaterialTheme.colorScheme.background)
                             .padding(8.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -268,7 +268,7 @@ fun PredictorScreen(
                         textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                             .background(MaterialTheme.colorScheme.background)
                             .padding(8.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -283,7 +283,7 @@ fun PredictorScreen(
                         textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                             .background(MaterialTheme.colorScheme.background)
                             .padding(8.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -348,8 +348,8 @@ fun ChatBubble(chatMessage: ChatMessage) {
         Column(
             modifier = Modifier
                 .widthIn(max = 280.dp)
-                .background(bgColor, RectangleShape)
-                .border(1.dp, borderColors, RectangleShape)
+                .background(bgColor, RoundedCornerShape(16.dp))
+                .border(1.dp, borderColors, RoundedCornerShape(16.dp))
                 .padding(10.dp)
         ) {
             Text(

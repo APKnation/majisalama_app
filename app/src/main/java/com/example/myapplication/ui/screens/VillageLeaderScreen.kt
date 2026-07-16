@@ -13,7 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -108,7 +108,7 @@ fun VillageLeaderScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
-                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
         ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
@@ -368,7 +368,7 @@ fun LeaderReportCard(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                                 .background(MaterialTheme.colorScheme.background)
                                 .clickable { workerDropdownExpanded = true }
                                 .padding(10.dp)
@@ -395,7 +395,7 @@ fun LeaderReportCard(
                                 modifier = Modifier
                                     .fillMaxWidth(0.6f)
                                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                             ) {
                                 workers.forEach { w ->
                                     DropdownMenuItem(

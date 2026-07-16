@@ -12,7 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -136,7 +136,7 @@ fun ReportDamageScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                                     .background(MaterialTheme.colorScheme.surfaceVariant)
                                     .padding(14.dp)
                             ) {
@@ -152,7 +152,7 @@ fun ReportDamageScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                                     .background(MaterialTheme.colorScheme.background)
                                     .clickable { if (!isLoading) sourceDropdownExpanded = true }
                                     .padding(14.dp)
@@ -179,7 +179,7 @@ fun ReportDamageScreen(
                                     modifier = Modifier
                                         .fillMaxWidth(0.8f)
                                         .background(MaterialTheme.colorScheme.surfaceVariant)
-                                        .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                                 ) {
                                     sources.forEach { s ->
                                         DropdownMenuItem(
@@ -212,7 +212,7 @@ fun ReportDamageScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                                 .background(MaterialTheme.colorScheme.background)
                                 .clickable { if (!isLoading) priorityDropdownExpanded = true }
                                 .padding(14.dp)
@@ -239,7 +239,7 @@ fun ReportDamageScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(0.8f)
                                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                             ) {
                                 priorities.forEach { p ->
                                     DropdownMenuItem(

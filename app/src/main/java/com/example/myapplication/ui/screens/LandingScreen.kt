@@ -12,8 +12,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -113,10 +114,7 @@ fun LandingScreen(
         // ── Features Section ──────────────────────────────────────────────
         item {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = "HUDUMA ZETU",
@@ -125,28 +123,42 @@ fun LandingScreen(
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 2.sp,
                     fontFamily = FontFamily.Monospace,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 4.dp)
                 )
-                MStripesDivider(height = 2.dp, modifier = Modifier.padding(bottom = 8.dp))
+                MStripesDivider(height = 2.dp, modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 12.dp))
 
-                FeatureCard(
-                    icon = Icons.Default.Star,
-                    title = "UFUATILIAJI WA UBORA",
-                    description = "Fuatilia hali ya ubora wa maji katika vyanzo vyote kwa wakati halisi.",
-                    iconColor = MaterialTheme.colorScheme.secondary
-                )
-                FeatureCard(
-                    icon = Icons.Default.Notifications,
-                    title = "RIPOTI ZA HARAKA",
-                    description = "Ripoti uharibifu wa maji na ufuatiliaji wao hadi usuluhishaji.",
-                    iconColor = MaterialTheme.colorScheme.error
-                )
-                FeatureCard(
-                    icon = Icons.Default.Info,
-                    title = "AI PREDICTOR",
-                    description = "Tumia akili bandia kutabiri mahitaji ya maji katika eneo lako.",
-                    iconColor = Color(0xFF4CAF50)
-                )
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    item {
+                        FeatureCard(
+                            icon = Icons.Default.Star,
+                            title = "UFUATILIAJI WA UBORA",
+                            description = "Fuatilia hali ya ubora wa maji katika vyanzo vyote kwa wakati halisi.",
+                            iconColor = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.width(280.dp)
+                        )
+                    }
+                    item {
+                        FeatureCard(
+                            icon = Icons.Default.Notifications,
+                            title = "RIPOTI ZA HARAKA",
+                            description = "Ripoti uharibifu wa maji na ufuatiliaji wao hadi usuluhishaji.",
+                            iconColor = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.width(280.dp)
+                        )
+                    }
+                    item {
+                        FeatureCard(
+                            icon = Icons.Default.Info,
+                            title = "AI PREDICTOR",
+                            description = "Tumia akili bandia kutabiri mahitaji ya maji katika eneo lako.",
+                            iconColor = Color(0xFF4CAF50),
+                            modifier = Modifier.width(280.dp)
+                        )
+                    }
+                }
             }
         }
 
@@ -183,7 +195,7 @@ fun LandingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape)
+                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -225,7 +237,7 @@ fun LandingScreen(
 private fun StatBox(value: String, label: String, color: Color, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .border(1.dp, color.copy(alpha = 0.5f), RectangleShape)
+            .border(1.dp, color.copy(alpha = 0.5f), RoundedCornerShape(16.dp))
             .background(color.copy(alpha = 0.08f))
             .padding(12.dp),
         contentAlignment = Alignment.Center
@@ -238,8 +250,8 @@ private fun StatBox(value: String, label: String, color: Color, modifier: Modifi
 }
 
 @Composable
-private fun FeatureCard(icon: ImageVector, title: String, description: String, iconColor: Color) {
-    MCard(modifier = Modifier.fillMaxWidth()) {
+private fun FeatureCard(icon: ImageVector, title: String, description: String, iconColor: Color, modifier: Modifier = Modifier) {
+    MCard(modifier = modifier) {
         Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(imageVector = icon, contentDescription = title, tint = iconColor, modifier = Modifier.size(32.dp))
             Column {
@@ -256,7 +268,7 @@ private fun RoleRow(role: String, desc: String, color: Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, color.copy(alpha = 0.4f), RectangleShape)
+            .border(1.dp, color.copy(alpha = 0.4f), RoundedCornerShape(16.dp))
             .background(color.copy(alpha = 0.07f))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,

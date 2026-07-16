@@ -17,7 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -245,7 +245,7 @@ fun DashboardScreen(
                                 value = latText,
                                 onValueChange = { latText = it },
                                 textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
-                                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape).background(MaterialTheme.colorScheme.background).padding(8.dp),
+                                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.background).padding(8.dp),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                         }
@@ -255,7 +255,7 @@ fun DashboardScreen(
                                 value = lngText,
                                 onValueChange = { lngText = it },
                                 textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
-                                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape).background(MaterialTheme.colorScheme.background).padding(8.dp),
+                                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.background).padding(8.dp),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                         }
@@ -265,7 +265,7 @@ fun DashboardScreen(
                                 value = radiusText,
                                 onValueChange = { radiusText = it },
                                 textStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface),
-                                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape).background(MaterialTheme.colorScheme.background).padding(8.dp),
+                                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.background).padding(8.dp),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                         }
@@ -290,7 +290,7 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Box(
-                        modifier = Modifier.weight(1f).border(1.dp, MaterialTheme.colorScheme.outline, RectangleShape).background(MaterialTheme.colorScheme.surfaceVariant).padding(8.dp),
+                        modifier = Modifier.weight(1f).border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.surfaceVariant).padding(8.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -299,7 +299,7 @@ fun DashboardScreen(
                         }
                     }
                     Box(
-                        modifier = Modifier.weight(1f).border(1.dp, Color(0xFF4CAF50), RectangleShape).background(MaterialTheme.colorScheme.surfaceVariant).padding(8.dp),
+                        modifier = Modifier.weight(1f).border(1.dp, Color(0xFF4CAF50), RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.surfaceVariant).padding(8.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -308,7 +308,7 @@ fun DashboardScreen(
                         }
                     }
                     Box(
-                        modifier = Modifier.weight(1f).border(1.dp, Color(0xFFF44336), RectangleShape).background(MaterialTheme.colorScheme.surfaceVariant).padding(8.dp),
+                        modifier = Modifier.weight(1f).border(1.dp, Color(0xFFF44336), RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.surfaceVariant).padding(8.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
