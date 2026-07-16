@@ -75,6 +75,7 @@ fun MainAppContainer() {
     fun navigateTo(screen: Screen) { backStack.add(screen) }
     fun navigateBack() { if (backStack.size > 1) backStack.removeAt(backStack.size - 1) }
     fun navigateToRoot(screen: Screen) { backStack.clear(); backStack.add(screen) }
+    fun navigateReplace(screen: Screen) { if (backStack.size > 1) backStack.removeAt(backStack.size - 1); backStack.add(screen) }
     fun closeDrawer() { scope.launch { drawerState.close() } }
 
     fun getRoleHomeRoute(): Screen {
@@ -368,15 +369,15 @@ fun MainAppContainer() {
                 when (currentScreen) {
                     is Screen.Landing -> LandingScreen(
                         onNavigateToLogin = { navigateTo(Screen.Login) },
-                        onNavigateToRegister = { navigateTo(Screen.Register) }
+                        onNavigateToRegister = { navigateReplace(Screen.Register) }
                     )
                     is Screen.Login -> LoginScreen(
                         onLoginSuccess = { navigateToRoot(getRoleHomeRoute()) },
-                        onNavigateToRegister = { navigateTo(Screen.Register) }
+                        onNavigateToRegister = { navigateReplace(Screen.Register) }
                     )
                     is Screen.Register -> RegisterScreen(
                         onRegisterSuccess = { navigateToRoot(getRoleHomeRoute()) },
-                        onNavigateToLogin = { navigateBack() }
+                        onNavigateToLogin = { navigateReplace(Screen.Login) }
                     )
                     is Screen.Dashboard -> DashboardScreen(
                         onNavigateToSourceDetails = { id -> navigateTo(Screen.WaterSourceDetails(id)) },
