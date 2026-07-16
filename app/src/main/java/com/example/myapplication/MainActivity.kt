@@ -298,8 +298,7 @@ fun MainAppContainer() {
                 if (showNav) {
                     NavigationBar(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        tonalElevation = 0.dp,
-                        modifier = Modifier.height(68.dp)
+                        tonalElevation = 0.dp
                     ) {
                         NavigationBarItem(
                             selected = isRootScreen &&
