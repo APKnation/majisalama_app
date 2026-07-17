@@ -217,7 +217,8 @@ object ApiClient {
         simulateNetwork()
         try {
             val source = waterSources.find { it.id == waterSourceId } ?: throw Exception("Chanzo hakijapatikana")
-            val reporter = currentUser ?: throw Exception("Unahitaji kuingia")
+            val reporterId = currentUser?.id
+            val reporterName = currentUser?.username ?: "Mwananchi (Anonymous)"
             
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val today = dateFormat.format(Date())
@@ -226,8 +227,8 @@ object ApiClient {
                 id = nextReportId++,
                 waterSourceId = source.id,
                 waterSourceName = source.name,
-                reportedById = reporter.id,
-                reportedByName = reporter.username,
+                reportedById = reporterId,
+                reportedByName = reporterName,
                 reportDate = today,
                 title = title,
                 description = description,
