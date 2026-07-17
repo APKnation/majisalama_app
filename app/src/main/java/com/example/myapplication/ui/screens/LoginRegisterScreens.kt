@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -48,7 +49,8 @@ private val demoAccounts = listOf(
 @Composable
 fun LoginScreen(
     onLoginSuccess: (User) -> Unit,
-    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
+    onNavigateToHome: () -> Unit
 ) {
     // Pre-fill with admin defaults so testers can log in immediately
     var username by remember { mutableStateOf("admin") }
@@ -64,6 +66,20 @@ fun LoginScreen(
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
+        // Top-left Home Button
+        IconButton(
+            onClick = onNavigateToHome,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = "Back to Home",
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -202,6 +218,17 @@ fun LoginScreen(
                         .clickable { onNavigateToRegister() }
                         .padding(8.dp)
                 )
+
+                Text(
+                    text = "Rudi Nyumbani (Back to Home)",
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .clickable { onNavigateToHome() }
+                        .padding(8.dp)
+                )
             }
         }
     }
@@ -211,7 +238,8 @@ fun LoginScreen(
 @Composable
 fun RegisterScreen(
     onRegisterSuccess: (User) -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToHome: () -> Unit
 ) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -257,6 +285,20 @@ fun RegisterScreen(
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
+        // Top-left Home Button
+        IconButton(
+            onClick = onNavigateToHome,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = "Back to Home",
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -514,6 +556,17 @@ fun RegisterScreen(
                         fontFamily = FontFamily.Monospace,
                         modifier = Modifier
                             .clickable { onNavigateToLogin() }
+                            .padding(8.dp)
+                    )
+
+                    Text(
+                        text = "Rudi Nyumbani (Back to Home)",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace,
+                        modifier = Modifier
+                            .clickable { onNavigateToHome() }
                             .padding(8.dp)
                     )
                 }

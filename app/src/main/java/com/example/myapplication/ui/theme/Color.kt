@@ -35,7 +35,7 @@ val WaterSafe    = BlueOcean
 val WaterCaution = BlueDeep
 val WaterDanger  = BlueNight
 val WaterFixed   = BlueWave
-val ButtonAccent = Color(0xFF00B4D8)  // Vibrant Cyan for unique buttons
+val ButtonAccent = Color(0xFFDE2B5B)  // Vibrant Red/Pink for buttons and FAB
 
 // ── Backwards-compatible aliases used across existing screens ──────────
 val WaterAqua        = WaterSafe

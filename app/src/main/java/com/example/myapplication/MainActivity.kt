@@ -301,123 +301,182 @@ fun MainAppContainer() {
                 }
             },
             bottomBar = {
-                // Show bottom nav on Landing (guest nav) and all authenticated screens
                 if (!isFullScreen) {
-                    NavigationBar(
-                        containerColor = BlueAbyss,
-                        tonalElevation = 8.dp
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(86.dp) // Taller to accommodate the FAB
                     ) {
-                        if (isLandingScreen) {
-                            // ── Guest navigation (public Landing + Taarfia pages) ─────
-                            NavigationBarItem(
-                                selected = currentScreen is Screen.Landing,
-                                onClick = { navigateToRoot(Screen.Landing) },
-                                icon = { Icon(Icons.Default.Home, contentDescription = "Nyumbani") },
-                                label = { Text("Nyumbani", fontSize = 10.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = BlueAbyss,
-                                    selectedTextColor = WhitePure,
-                                    indicatorColor = WhitePure,
-                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
-                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
-                                )
-                            )
-                            NavigationBarItem(
-                                selected = currentScreen is Screen.Taarfia,
-                                onClick = { navigateTo(Screen.Taarfia) },
-                                icon = { Icon(Icons.Default.ReportProblem, contentDescription = "Taarifa") },
-                                label = { Text("Taarifa", fontSize = 10.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = BlueAbyss,
-                                    selectedTextColor = WhitePure,
-                                    indicatorColor = WhitePure,
-                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
-                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
-                                )
-                            )
-                            NavigationBarItem(
-                                selected = false,
-                                onClick = { navigateTo(Screen.Login) },
-                                icon = { Icon(Icons.Default.Login, contentDescription = "Ingia") },
-                                label = { Text("Ingia", fontSize = 10.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = BlueAbyss,
-                                    selectedTextColor = WhitePure,
-                                    indicatorColor = WhitePure,
-                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
-                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
-                                )
-                            )
-                            NavigationBarItem(
-                                selected = false,
-                                onClick = { navigateTo(Screen.Register) },
-                                icon = { Icon(Icons.Default.PersonAdd, contentDescription = "Jiandikishe") },
-                                label = { Text("Jiandikishe", fontSize = 10.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = BlueAbyss,
-                                    selectedTextColor = WhitePure,
-                                    indicatorColor = WhitePure,
-                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
-                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
-                                )
-                            )
-                        } else {
-                            // ── Authenticated navigation ───────────────────────
-                            NavigationBarItem(
-                                selected = isRootScreen &&
-                                    currentScreen != Screen.Profile &&
-                                    currentScreen != Screen.Predictor,
-                                onClick = { navigateToRoot(getRoleHomeRoute()) },
-                                icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                                label = { Text("Home", fontSize = 10.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = BlueAbyss,
-                                    selectedTextColor = WhitePure,
-                                    indicatorColor = WhitePure,
-                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
-                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
-                                )
-                            )
-                            NavigationBarItem(
-                                selected = currentScreen is Screen.ReportDamage,
-                                onClick = { navigateToRoot(Screen.ReportDamage(null)) },
-                                icon = { Icon(Icons.Default.ReportProblem, contentDescription = "Uharibifu") },
-                                label = { Text("Ripoti", fontSize = 10.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = BlueAbyss,
-                                    selectedTextColor = WhitePure,
-                                    indicatorColor = WhitePure,
-                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
-                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
-                                )
-                            )
-                            NavigationBarItem(
-                                selected = currentScreen is Screen.Predictor,
-                                onClick = { navigateToRoot(Screen.Predictor) },
-                                icon = { Icon(Icons.Default.AutoAwesome, contentDescription = "AI") },
-                                label = { Text("AI", fontSize = 10.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = BlueAbyss,
-                                    selectedTextColor = WhitePure,
-                                    indicatorColor = WhitePure,
-                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
-                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
-                                )
-                            )
-                            NavigationBarItem(
-                                selected = currentScreen is Screen.Profile,
-                                onClick = { navigateToRoot(Screen.Profile) },
-                                icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-                                label = { Text("Profile", fontSize = 10.sp) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = BlueAbyss,
-                                    selectedTextColor = WhitePure,
-                                    indicatorColor = WhitePure,
-                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
-                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
-                                )
-                            )
+                        // Background of the nav bar (BlueAbyss)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(64.dp)
+                                .align(Alignment.BottomCenter)
+                                .background(BlueAbyss),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (isLandingScreen) {
+                                // ── Guest Navigation ──
+                                Row(modifier = Modifier.weight(1f)) {
+                                    NavigationBarItem(
+                                        selected = currentScreen is Screen.Landing,
+                                        onClick = { navigateToRoot(Screen.Landing) },
+                                        icon = { Icon(Icons.Default.Home, contentDescription = "Nyumbani") },
+                                        label = { Text("Nyumbani", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = ButtonAccent,
+                                            selectedTextColor = ButtonAccent,
+                                            indicatorColor = Color.Transparent,
+                                            unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                            unselectedTextColor = WhitePure.copy(alpha = 0.6f)
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentScreen is Screen.Taarfia,
+                                        onClick = { navigateTo(Screen.Taarfia) },
+                                        icon = { Icon(Icons.Default.ListAlt, contentDescription = "Taarifa") },
+                                        label = { Text("Taarifa", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = ButtonAccent,
+                                            selectedTextColor = ButtonAccent,
+                                            indicatorColor = Color.Transparent,
+                                            unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                            unselectedTextColor = WhitePure.copy(alpha = 0.6f)
+                                        )
+                                    )
+                                }
+                                
+                                Spacer(modifier = Modifier.width(64.dp)) // Space for FAB
+                                
+                                Row(modifier = Modifier.weight(1f)) {
+                                    NavigationBarItem(
+                                        selected = false,
+                                        onClick = { navigateTo(Screen.Login) },
+                                        icon = { Icon(Icons.Default.Login, contentDescription = "Ingia") },
+                                        label = { Text("Ingia", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = ButtonAccent,
+                                            selectedTextColor = ButtonAccent,
+                                            indicatorColor = Color.Transparent,
+                                            unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                            unselectedTextColor = WhitePure.copy(alpha = 0.6f)
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = false,
+                                        onClick = { navigateTo(Screen.Register) },
+                                        icon = { Icon(Icons.Default.PersonAdd, contentDescription = "Jiandikishe") },
+                                        label = { Text("Jiandikishe", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = ButtonAccent,
+                                            selectedTextColor = ButtonAccent,
+                                            indicatorColor = Color.Transparent,
+                                            unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                            unselectedTextColor = WhitePure.copy(alpha = 0.6f)
+                                        )
+                                    )
+                                }
+                            } else {
+                                // ── Authenticated Navigation ──
+                                Row(modifier = Modifier.weight(1f)) {
+                                    NavigationBarItem(
+                                        selected = isRootScreen && currentScreen != Screen.Profile && currentScreen != Screen.Predictor,
+                                        onClick = { navigateToRoot(getRoleHomeRoute()) },
+                                        icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                                        label = { Text("Home", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = ButtonAccent,
+                                            selectedTextColor = ButtonAccent,
+                                            indicatorColor = Color.Transparent,
+                                            unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                            unselectedTextColor = WhitePure.copy(alpha = 0.6f)
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentScreen is Screen.Predictor,
+                                        onClick = { navigateToRoot(Screen.Predictor) },
+                                        icon = { Icon(Icons.Default.AutoAwesome, contentDescription = "AI") },
+                                        label = { Text("AI", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = ButtonAccent,
+                                            selectedTextColor = ButtonAccent,
+                                            indicatorColor = Color.Transparent,
+                                            unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                            unselectedTextColor = WhitePure.copy(alpha = 0.6f)
+                                        )
+                                    )
+                                }
+                                
+                                Spacer(modifier = Modifier.width(64.dp)) // Space for FAB
+                                
+                                Row(modifier = Modifier.weight(1f)) {
+                                    NavigationBarItem(
+                                        selected = currentScreen is Screen.ReportDamage && ApiClient.currentUser?.role != "citizen",
+                                        onClick = { /* Optional right action depending on role */ },
+                                        icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                                        label = { Text("Mipangilio", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = ButtonAccent,
+                                            selectedTextColor = ButtonAccent,
+                                            indicatorColor = Color.Transparent,
+                                            unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                            unselectedTextColor = WhitePure.copy(alpha = 0.6f)
+                                        )
+                                    )
+                                    NavigationBarItem(
+                                        selected = currentScreen is Screen.Profile,
+                                        onClick = { navigateToRoot(Screen.Profile) },
+                                        icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
+                                        label = { Text("Profile", fontSize = 10.sp) },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = ButtonAccent,
+                                            selectedTextColor = ButtonAccent,
+                                            indicatorColor = Color.Transparent,
+                                            unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                            unselectedTextColor = WhitePure.copy(alpha = 0.6f)
+                                        )
+                                    )
+                                }
+                            }
                         }
+
+                        // Fake Cutout + Central FAB
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .size(72.dp)
+                                .clip(androidx.compose.foundation.shape.CircleShape)
+                                .background(MaterialTheme.colorScheme.background) // Creates the cutout illusion
+                                .padding(6.dp), // Cutout border thickness
+                            contentAlignment = Alignment.Center
+                        ) {
+                            FloatingActionButton(
+                                onClick = { navigateToRoot(Screen.ReportDamage(null)) },
+                                containerColor = ButtonAccent,
+                                contentColor = WhitePure,
+                                shape = androidx.compose.foundation.shape.CircleShape,
+                                modifier = Modifier.fillMaxSize(),
+                                elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 2.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ReportProblem,
+                                    contentDescription = "Report",
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
+                        }
+                        } // Close the 86.dp Box
+                        
+                        // Fill the system nav bar area with BlueAbyss so the bar naturally extends to the edge
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(BlueAbyss)
+                                .windowInsetsPadding(WindowInsets.navigationBars)
+                        )
                     }
                 }
             },
@@ -441,11 +500,13 @@ fun MainAppContainer() {
                     )
                     is Screen.Login -> LoginScreen(
                         onLoginSuccess = { navigateToRoot(getRoleHomeRoute()) },
-                        onNavigateToRegister = { navigateReplace(Screen.Register) }
+                        onNavigateToRegister = { navigateReplace(Screen.Register) },
+                        onNavigateToHome = { navigateToRoot(Screen.Landing) }
                     )
                     is Screen.Register -> RegisterScreen(
                         onRegisterSuccess = { navigateToRoot(getRoleHomeRoute()) },
-                        onNavigateToLogin = { navigateReplace(Screen.Login) }
+                        onNavigateToLogin = { navigateReplace(Screen.Login) },
+                        onNavigateToHome = { navigateToRoot(Screen.Landing) }
                     )
                     is Screen.Dashboard -> DashboardScreen(
                         onNavigateToSourceDetails = { id -> navigateTo(Screen.WaterSourceDetails(id)) },
