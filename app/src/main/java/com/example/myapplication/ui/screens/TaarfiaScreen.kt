@@ -25,7 +25,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun TaarfiaScreen(
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToReportDamage: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     var reports by remember { mutableStateOf<List<DamageReport>>(emptyList()) }
@@ -68,7 +69,7 @@ fun TaarfiaScreen(
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
             )
             Text(
-                text = "${reports.size} ripoti zimepatikana • Ingia ili kuripoti",
+                text = "${reports.size} ripoti zimepatikana • Ripoti uharibifu sasa",
                 color = WhitePure.copy(alpha = 0.7f),
                 style = MaterialTheme.typography.bodySmall
             )
@@ -176,14 +177,14 @@ fun TaarfiaScreen(
                             )
                             Spacer(Modifier.height(8.dp))
                             Text(
-                                text = "Ingia ili kuripoti uharibifu au kufuatilia kwa undani",
+                                text = "Unaweza kuripoti uharibifu moja kwa moja. Ingia ili kufuatilia kwa undani.",
                                 color = WhitePure,
                                 style = MaterialTheme.typography.bodySmall,
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
                             Spacer(Modifier.height(12.dp))
                             Button(
-                                onClick = onNavigateToLogin,
+                                onClick = onNavigateToReportDamage,
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = WhitePure,
                                     contentColor = BlueAbyss
@@ -191,13 +192,13 @@ fun TaarfiaScreen(
                                 shape = RoundedCornerShape(10.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Login,
+                                    imageVector = Icons.Default.ReportProblem,
                                     contentDescription = null,
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(Modifier.width(6.dp))
                                 Text(
-                                    "Ingia",
+                                    "Ripoti Uharibifu Sasa",
                                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                                 )
                             }
