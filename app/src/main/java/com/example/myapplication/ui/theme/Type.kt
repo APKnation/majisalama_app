@@ -6,6 +6,23 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.googlefonts.Font
+import com.example.myapplication.R
+
+// ── Google Fonts Provider ──────────────────────────────────────────────────────
+private val provider = GoogleFont.Provider(
+    providerAuthority = "com.google.android.gms.fonts",
+    providerPackage   = "com.google.android.gms",
+    certificates      = R.array.com_google_android_gms_fonts_certs
+)
+
+// ── Playfair Display — elegant serif for hero banners ─────────────────────────
+val PlayfairDisplay = FontFamily(
+    Font(googleFont = GoogleFont("Playfair Display"), fontProvider = provider, weight = FontWeight.Normal),
+    Font(googleFont = GoogleFont("Playfair Display"), fontProvider = provider, weight = FontWeight.Bold),
+    Font(googleFont = GoogleFont("Playfair Display"), fontProvider = provider, weight = FontWeight.ExtraBold)
+)
 
 /**
  * Majisalama Typography System — Full Material3 type scale.
