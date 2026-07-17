@@ -432,10 +432,12 @@ fun MainAppContainer() {
                 when (currentScreen) {
                     is Screen.Landing -> LandingScreen(
                         onNavigateToLogin = { navigateTo(Screen.Login) },
-                        onNavigateToRegister = { navigateReplace(Screen.Register) }
+                        onNavigateToRegister = { navigateReplace(Screen.Register) },
+                        onNavigateToReportDamage = { navigateTo(Screen.ReportDamage(null)) }
                     )
                     is Screen.Taarfia -> TaarfiaScreen(
-                        onNavigateToLogin = { navigateTo(Screen.Login) }
+                        onNavigateToLogin = { navigateTo(Screen.Login) },
+                        onNavigateToReportDamage = { navigateTo(Screen.ReportDamage(null)) }
                     )
                     is Screen.Login -> LoginScreen(
                         onLoginSuccess = { navigateToRoot(getRoleHomeRoute()) },

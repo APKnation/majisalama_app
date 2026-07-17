@@ -31,7 +31,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun LandingScreen(
     onNavigateToLogin: () -> Unit,
-    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
+    onNavigateToReportDamage: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     var recentReports by remember { mutableStateOf<List<DamageReport>>(emptyList()) }
@@ -138,7 +139,10 @@ fun LandingScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .height(105.dp)
-                                        .clickable { onNavigateToLogin() },
+                                        .clickable { 
+                                            if (action.title == "Ripoti") onNavigateToReportDamage() 
+                                            else onNavigateToLogin() 
+                                        },
                                     colors = CardDefaults.cardColors(containerColor = WhitePure),
                                     shape = RoundedCornerShape(12.dp),
                                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
