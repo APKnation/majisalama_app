@@ -33,6 +33,7 @@ sealed class Screen {
     object Landing : Screen()
     object Login : Screen()
     object Register : Screen()
+    object Taarfia : Screen()   // Public reports list tab
     object Dashboard : Screen()
     data class WaterSourceDetails(val sourceId: Int) : Screen()
     data class ReportDamage(val sourceId: Int?) : Screen()
@@ -97,7 +98,8 @@ fun MainAppContainer() {
                        currentScreen is Screen.Register
 
     // ── Landing is public — hide top bar but SHOW bottom nav ─────────────
-    val isLandingScreen = currentScreen is Screen.Landing
+    val isLandingScreen = currentScreen is Screen.Landing ||
+                          currentScreen is Screen.Taarfia
 
     // ── Screens where we show a hamburger menu icon ────────────────────────
     val isRootScreen = currentScreen is Screen.Dashboard ||
@@ -306,12 +308,25 @@ fun MainAppContainer() {
                         tonalElevation = 8.dp
                     ) {
                         if (isLandingScreen) {
-                            // ── Guest navigation (public Landing page) ────────
+                            // ── Guest navigation (public Landing + Taarfia pages) ─────
                             NavigationBarItem(
-                                selected = true,
-                                onClick = { /* already here */ },
+                                selected = currentScreen is Screen.Landing,
+                                onClick = { navigateToRoot(Screen.Landing) },
                                 icon = { Icon(Icons.Default.Home, contentDescription = "Nyumbani") },
                                 label = { Text("Nyumbani", fontSize = 10.sp) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = BlueAbyss,
+                                    selectedTextColor = WhitePure,
+                                    indicatorColor = WhitePure,
+                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
+                                )
+                            )
+                            NavigationBarItem(
+                                selected = currentScreen is Screen.Taarfia,
+                                onClick = { navigateTo(Screen.Taarfia) },
+                                icon = { Icon(Icons.Default.ReportProblem, contentDescription = "Taarifa") },
+                                label = { Text("Taarifa", fontSize = 10.sp) },
                                 colors = NavigationBarItemDefaults.colors(
                                     selectedIconColor = BlueAbyss,
                                     selectedTextColor = WhitePure,
@@ -418,6 +433,9 @@ fun MainAppContainer() {
                     is Screen.Landing -> LandingScreen(
                         onNavigateToLogin = { navigateTo(Screen.Login) },
                         onNavigateToRegister = { navigateReplace(Screen.Register) }
+                    )
+                    is Screen.Taarfia -> TaarfiaScreen(
+                        onNavigateToLogin = { navigateTo(Screen.Login) }
                     )
                     is Screen.Login -> LoginScreen(
                         onLoginSuccess = { navigateToRoot(getRoleHomeRoute()) },

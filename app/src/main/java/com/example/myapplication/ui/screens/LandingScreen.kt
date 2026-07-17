@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.data.ApiClient
 import com.example.myapplication.data.DamageReport
 import com.example.myapplication.data.WaterSource
-import com.example.myapplication.ui.components.StatusBadge
 import com.example.myapplication.ui.theme.*
 import kotlinx.coroutines.launch
 
@@ -35,30 +35,27 @@ fun LandingScreen(
 ) {
     val scope = rememberCoroutineScope()
     var recentReports by remember { mutableStateOf<List<DamageReport>>(emptyList()) }
-    var waterSources by remember { mutableStateOf<List<WaterSource>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         scope.launch {
             val reportResult = ApiClient.getDamageReports()
             if (reportResult.isSuccess) recentReports = reportResult.getOrThrow()
-
-            val sourceResult = ApiClient.getWaterSources()
-            if (sourceResult.isSuccess) waterSources = sourceResult.getOrThrow()
         }
     }
 
+    // Root column: header + scrollable body + pinned bottom panel
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BlueMist) // Light blue background
+            .background(BlueMist)
     ) {
-        // ── Custom Header matching the reference ──────────────────────────────
+        // ── Custom Top Bar ────────────────────────────────────────────────────
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(BlueAbyss)
-                .padding(horizontal = 16.dp, vertical = 16.dp)
-                .statusBarsPadding(),
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -66,7 +63,7 @@ fun LandingScreen(
                 imageVector = Icons.Default.Menu,
                 contentDescription = "Menu",
                 tint = WhitePure,
-                modifier = Modifier.size(28.dp).clickable { onNavigateToLogin() }
+                modifier = Modifier.size(26.dp).clickable { onNavigateToLogin() }
             )
             Text(
                 text = "MajiSalama",
@@ -77,48 +74,50 @@ fun LandingScreen(
                 imageVector = Icons.Default.PowerSettingsNew,
                 contentDescription = "Login",
                 tint = WhitePure,
-                modifier = Modifier.size(28.dp).clickable { onNavigateToLogin() }
+                modifier = Modifier.size(26.dp).clickable { onNavigateToLogin() }
             )
         }
 
-        // ── Main Scrollable Content ───────────────────────────────────────────
+        // ── Scrollable Main Content ────────────────────────────────────────────
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp, start = 20.dp, end = 20.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),  // Takes all space except the pinned bottom panel
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // ── Hero Banner ───────────────────────────
+            // Hero Banner
             item {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(180.dp)
+                        .height(160.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .background(BlueDeep),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
-                        modifier = Modifier.padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(24.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.WaterDrop,
                             contentDescription = null,
                             tint = WhitePure,
-                            modifier = Modifier.size(48.dp)
+                            modifier = Modifier.size(40.dp)
                         )
                         Spacer(Modifier.height(8.dp))
                         Text(
-                            text = "Tunza Maji,\nTunza Uhai.",
+                            text = "Tunza Maji, Tunza Uhai.",
                             color = WhitePure,
                             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                             textAlign = TextAlign.Center
                         )
                     }
                 }
-                Spacer(Modifier.height(24.dp))
             }
 
-            // ── 2-Column Grid for Actions ─────────────────────────────────────
+            // 2-Column Action Grid
             item {
                 val actions = listOf(
                     ActionItem("Ripoti", "Ripoti uharibifu sasa", Icons.Default.ReportProblem),
@@ -128,24 +127,21 @@ fun LandingScreen(
                     ActionItem("Maoni", "Toa maoni yako!", Icons.Default.ThumbUp),
                     ActionItem("Mipangilio", "Sanidi mipangilio", Icons.Default.Settings)
                 )
-
-                Column {
-                    val rows = actions.chunked(2)
-                    for (row in rows) {
+                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    actions.chunked(2).forEach { row ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            horizontalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
-                            for (action in row) {
+                            row.forEach { action ->
                                 Card(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .height(110.dp)
+                                        .height(105.dp)
                                         .clickable { onNavigateToLogin() },
                                     colors = CardDefaults.cardColors(containerColor = WhitePure),
                                     shape = RoundedCornerShape(12.dp),
-                                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                                    border = null
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                                 ) {
                                     Column(
                                         modifier = Modifier
@@ -158,7 +154,7 @@ fun LandingScreen(
                                             imageVector = action.icon,
                                             contentDescription = action.title,
                                             tint = BlueAbyss,
-                                            modifier = Modifier.size(32.dp)
+                                            modifier = Modifier.size(30.dp)
                                         )
                                         Spacer(Modifier.height(8.dp))
                                         Text(
@@ -167,7 +163,6 @@ fun LandingScreen(
                                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                                             textAlign = TextAlign.Center
                                         )
-                                        Spacer(Modifier.height(2.dp))
                                         Text(
                                             text = action.subtitle,
                                             color = SubtleOnWhite,
@@ -178,46 +173,74 @@ fun LandingScreen(
                                     }
                                 }
                             }
-                            if (row.size == 1) {
-                                Spacer(modifier = Modifier.weight(1f))
-                            }
+                            if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
                         }
-                        Spacer(Modifier.height(16.dp))
                     }
                 }
-                Spacer(Modifier.height(16.dp))
-            }
+        }
 
-            // ── Recent Reports Section ────────────────────────────────────────
-            item {
+        // ── Recent Reports Header ──────────────────────────────────────────────
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.ReportProblem,
+                        contentDescription = null,
+                        tint = BlueOcean,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = "Ripoti za Hivi Karibuni",
+                        color = BlueNight,
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
                 Text(
-                    text = "Ripoti za Hivi Karibuni",
-                    color = BlueNight,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(bottom = 12.dp)
+                    text = "Ingia ili kuona zaidi →",
+                    color = BlueOcean,
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.clickable { onNavigateToLogin() }
                 )
             }
+        }
 
-            if (recentReports.isEmpty()) {
-                item {
+        // ── Recent Reports List ───────────────────────────────────────────────
+        if (recentReports.isEmpty()) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = "Hakuna ripoti bado",
                         color = SubtleOnWhite,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
-            } else {
-                items(recentReports.take(5)) { report -> // Show top 5 recent
+            }
+        } else {
+            items(recentReports) { report ->
+                Box(modifier = Modifier.padding(horizontal = 20.dp)) {
                     com.example.myapplication.ui.components.CleanReportCard(
                         report = report,
                         onClick = onNavigateToLogin
                     )
-                    Spacer(Modifier.height(12.dp))
                 }
             }
         }
+        
+        item { Spacer(modifier = Modifier.height(20.dp)) }
     }
+}
 }
 
 data class ActionItem(val title: String, val subtitle: String, val icon: ImageVector)
