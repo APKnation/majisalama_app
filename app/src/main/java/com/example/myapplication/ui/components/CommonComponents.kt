@@ -80,7 +80,7 @@ fun MButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    backgroundColor: Color = OceanPrimary,
+    backgroundColor: Color = ButtonAccent,
     contentColor: Color = Color.White,
     borderColor: Color = Color.Transparent
 ) {
@@ -89,7 +89,7 @@ fun MButton(
         modifier = modifier.height(52.dp),
         shape    = MaterialTheme.shapes.medium,
         colors   = ButtonDefaults.buttonColors(
-            containerColor        = if (backgroundColor == Color.Transparent) OceanPrimary else backgroundColor,
+            containerColor        = if (backgroundColor == Color.Transparent) ButtonAccent else backgroundColor,
             contentColor          = if (enabled) contentColor else WaterMuted,
             disabledContainerColor = WaterMuted.copy(alpha = 0.2f),
             disabledContentColor  = WaterMuted
