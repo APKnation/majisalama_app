@@ -128,57 +128,18 @@ fun DistrictOfficerScreen(
 
 @Composable
 fun DistrictReportCard(report: DamageReport) {
-    MCard(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = report.title.uppercase(),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace
-                )
-                Text(
-                    text = "Chanzo: ${report.waterSourceName}",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 2.dp)
-                )
-                Text(
-                    text = "Tarehe: ${report.reportDate}",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 11.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-            }
-            Column(horizontalAlignment = Alignment.End) {
-                PriorityBadge(priority = report.priority)
-                Spacer(modifier = Modifier.height(4.dp))
-                StatusBadge(status = report.status)
-            }
+    CleanReportCard(
+        report = report,
+        actions = {
+            // Read-only district view — show escalation time
+            Spacer(modifier = Modifier.height(8.dp))
+            MStripesDivider(height = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
+            Text(
+                text = "Imeletwa na Kijiji: ${report.forwardedAt ?: "Haijulikani"}",
+                color = com.example.myapplication.ui.theme.SubtleOnWhite,
+                fontSize = 10.sp,
+                fontFamily = FontFamily.Monospace
+            )
         }
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = report.description,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 13.sp
-        )
-        
-        // As a district officer, they might review it and allocate budget, etc.
-        // For now, this is a read-only view of escalated tasks.
-        Spacer(modifier = Modifier.height(12.dp))
-        MStripesDivider(height = 1.dp)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Imeletwa na Kijiji: ${report.forwardedAt ?: "Haijulikani"}",
-            color = MaterialTheme.colorScheme.secondary,
-            fontSize = 10.sp,
-            fontFamily = FontFamily.Monospace
-        )
-    }
+    )
 }

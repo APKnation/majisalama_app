@@ -172,160 +172,98 @@ fun OfficerReportCard(
     var isOperating by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    MCard(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
+    CleanReportCard(
+        report = report,
+        actions = {
+            if (report.status == "resolved" && report.resolutionNotes != null && report.resolutionNotes.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = report.title.uppercase(),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace
-                )
-                Text(
-                    text = "Chanzo: ${report.waterSourceName}",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    text = "Maelezo ya Utatuzi: ${report.resolutionNotes}",
+                    color = com.example.myapplication.ui.theme.BlueOcean,
                     fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 2.dp)
-                )
-                Text(
-                    text = "Tarehe: ${report.reportDate}",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace
                 )
             }
-            Column(horizontalAlignment = Alignment.End) {
-                PriorityBadge(priority = report.priority)
-                Spacer(modifier = Modifier.height(4.dp))
-                StatusBadge(status = report.status)
-            }
-        }
 
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Mtoa Taarifa: ${report.reportedByName}",
-            color = MaterialTheme.colorScheme.secondary,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
-        )
+            if (report.status == "assigned" || report.status == "in_progress") {
+                Spacer(modifier = Modifier.height(12.dp))
+                MStripesDivider(height = 1.dp, modifier = Modifier.padding(bottom = 12.dp))
 
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = report.description,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 13.sp,
-            maxLines = if (isExpanding) Int.MAX_VALUE else 2
-        )
-
-        if (report.description.length > 80) {
-            Text(
-                text = if (isExpanding) "SOMA KIPUNGUZO (LESS)" else "SOMA ZAIDI (MORE)",
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Monospace,
-                modifier = Modifier
-                    .clickable { isExpanding = !isExpanding }
-                    .padding(vertical = 4.dp)
-            )
-        }
-
-        if (report.status == "resolved" && report.resolutionNotes != null && report.resolutionNotes.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Maelezo ya Utatuzi: ${report.resolutionNotes}",
-                color = Color(0xFF4CAF50),
-                fontSize = 12.sp,
-                fontFamily = FontFamily.Monospace
-            )
-        }
-
-        // Action controls
-        if (report.status == "assigned" || report.status == "in_progress") {
-            Spacer(modifier = Modifier.height(12.dp))
-            MStripesDivider(height = 1.dp, modifier = Modifier.padding(bottom = 12.dp))
-
-            if (isOperating) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
-            } else if (showResolveInput) {
-                MTextField(
-                    value = resolutionNotes,
-                    onValueChange = { resolutionNotes = it },
-                    label = "Maelezo ya Utatuzi (Notes)",
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    MButton(
-                        text = "THIBITISHA UTATUZI",
-                        onClick = {
-                            if (resolutionNotes.isBlank()) return@MButton
-                            isOperating = true
-                            scope.launch {
-                                val res = ApiClient.resolveDamageReport(report.id, resolutionNotes)
-                                isOperating = false
-                                if (res.isSuccess) {
-                                    onActionSuccess()
-                                }
-                            }
-                        },
-                        borderColor = Color(0xFF4CAF50),
-                        contentColor = Color(0xFF4CAF50)
+                if (isOperating) {
+                    CircularProgressIndicator(
+                        color = com.example.myapplication.ui.theme.BlueAbyss,
+                        modifier = Modifier.size(20.dp)
                     )
-                    MButton(
-                        text = "GHAIRI",
-                        onClick = { showResolveInput = false }
+                } else if (showResolveInput) {
+                    MTextField(
+                        value = resolutionNotes,
+                        onValueChange = { resolutionNotes = it },
+                        label = "Maelezo ya Utatuzi (Notes)",
+                        modifier = Modifier.padding(bottom = 12.dp)
                     )
-                }
-            } else {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (report.status == "assigned") {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         MButton(
-                            text = "ANZA KAZI (START WORK)",
+                            text = "THIBITISHA UTATUZI",
                             onClick = {
+                                if (resolutionNotes.isBlank()) return@MButton
                                 isOperating = true
                                 scope.launch {
-                                    val res = ApiClient.startWorkDamageReport(report.id)
+                                    val res = ApiClient.resolveDamageReport(report.id, resolutionNotes)
                                     isOperating = false
-                                    if (res.isSuccess) {
-                                        onActionSuccess()
-                                    }
+                                    if (res.isSuccess) onActionSuccess()
                                 }
                             },
-                            borderColor = Color(0xFFFFEB3B),
-                            contentColor = Color(0xFFFFEB3B)
+                            backgroundColor = com.example.myapplication.ui.theme.BlueOcean,
+                            contentColor = com.example.myapplication.ui.theme.WhitePure,
+                            borderColor = com.example.myapplication.ui.theme.BlueOcean
                         )
-                        MButton(
-                            text = "TUMA WILAYANI (FORWARD)",
-                            onClick = {
-                                isOperating = true
-                                scope.launch {
-                                    val res = ApiClient.forwardToDistrict(report.id)
-                                    isOperating = false
-                                    if (res.isSuccess) {
-                                        onActionSuccess()
+                        MButton(text = "GHAIRI", onClick = { showResolveInput = false })
+                    }
+                } else {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        if (report.status == "assigned") {
+                            MButton(
+                                text = "ANZA KAZI",
+                                onClick = {
+                                    isOperating = true
+                                    scope.launch {
+                                        val res = ApiClient.startWorkDamageReport(report.id)
+                                        isOperating = false
+                                        if (res.isSuccess) onActionSuccess()
                                     }
-                                }
-                            },
-                            borderColor = Color(0xFF9C27B0),
-                            contentColor = Color(0xFF9C27B0)
-                        )
-                    } else if (report.status == "in_progress") {
-                        MButton(
-                            text = "TATUA RIPOTI (RESOLVE)",
-                            onClick = { showResolveInput = true },
-                            borderColor = Color(0xFF4CAF50),
-                            contentColor = Color(0xFF4CAF50)
-                        )
+                                },
+                                backgroundColor = com.example.myapplication.ui.theme.BlueDeep,
+                                contentColor = com.example.myapplication.ui.theme.WhitePure,
+                                borderColor = com.example.myapplication.ui.theme.BlueDeep
+                            )
+                            MButton(
+                                text = "TUMA WILAYANI",
+                                onClick = {
+                                    isOperating = true
+                                    scope.launch {
+                                        val res = ApiClient.forwardToDistrict(report.id)
+                                        isOperating = false
+                                        if (res.isSuccess) onActionSuccess()
+                                    }
+                                },
+                                backgroundColor = com.example.myapplication.ui.theme.BlueNight,
+                                contentColor = com.example.myapplication.ui.theme.WhitePure,
+                                borderColor = com.example.myapplication.ui.theme.BlueNight
+                            )
+                        } else if (report.status == "in_progress") {
+                            MButton(
+                                text = "TATUA RIPOTI",
+                                onClick = { showResolveInput = true },
+                                backgroundColor = com.example.myapplication.ui.theme.BlueOcean,
+                                contentColor = com.example.myapplication.ui.theme.WhitePure,
+                                borderColor = com.example.myapplication.ui.theme.BlueOcean
+                            )
+                        }
                     }
                 }
             }
         }
-    }
+    )
 }
 
 // Separate Screen for Logging quality report
