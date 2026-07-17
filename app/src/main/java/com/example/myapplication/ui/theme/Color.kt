@@ -2,72 +2,89 @@ package com.example.myapplication.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// ── Brand Core ────────────────────────────────────────────────────────────────
-// Deep ocean blues — the heart of the Majisalama identity
-val MajiPrimary        = Color(0xFF0077B6)   // Deep ocean blue
-val MajiPrimaryDark    = Color(0xFF005F99)   // Pressed / hover state
-val MajiSecondary      = Color(0xFF00B4D8)   // Bright cyan
-val MajiTertiary       = Color(0xFF48CAE4)   // Light aqua
+// ══════════════════════════════════════════════════════
+// MAJISALAMA — Blue + White Water Color Palette
+// ══════════════════════════════════════════════════════
 
-// ── Light Mode ────────────────────────────────────────────────────────────────
-val LightBackground         = Color(0xFFF0F8FF)   // Alice blue — soft, clean
-val LightSurface            = Color(0xFFFFFFFF)   // Pure white card surface
-val LightSurfaceVariant     = Color(0xFFDCEEF7)   // Muted blue-grey panel
-val LightSurfaceContainer   = Color(0xFFE8F4FB)   // Subtle container
-val LightOnBackground       = Color(0xFF001E2E)   // Near-black, high contrast
-val LightOnSurface          = Color(0xFF012A3A)   // Deep navy text
-val LightOnSurfaceVariant   = Color(0xFF3D6175)   // Secondary text
-val LightOutline            = Color(0xFF8FBDD3)   // Subtle border
-val LightOutlineVariant     = Color(0xFFB8D8E8)   // Very subtle border
+// Blue spectrum (light → deep ocean)
+val BlueMist    = Color(0xFFEBF5FB)   // page background
+val BlueIce     = Color(0xFFBBDEFB)   // chip / badge bg
+val BlueFoam    = Color(0xFF90CAF9)   // border / subtle
+val BlueWave    = Color(0xFF42A5F5)   // accent highlights
+val BlueOcean   = Color(0xFF1E88E5)   // icons / active
+val BlueDeep    = Color(0xFF1565C0)   // secondary elements
+val BlueAbyss   = Color(0xFF0D47A1)   // top bar / buttons
+val BlueNight   = Color(0xFF0A3D7C)   // darkest / headers
 
-val LightPrimaryContainer   = Color(0xFFCBE8FF)   // Chip / badge container
-val LightSecondaryContainer = Color(0xFFB8EBF7)
-val LightTertiaryContainer  = Color(0xFFCAF0F8)
-val LightOnPrimaryContainer = Color(0xFF001D30)
-val LightInversePrimary     = Color(0xFF8ECFF3)
+// White spectrum
+val WhitePure   = Color(0xFFFFFFFF)
+val WhiteSoft   = Color(0xFFF8FBFF)
+val WhiceIce    = Color(0xFFF0F8FF)   // Alice blue
 
-// ── Dark Mode ─────────────────────────────────────────────────────────────────
-val DarkBackground          = Color(0xFF071520)   // Very deep sea — true dark
-val DarkSurface             = Color(0xFF0D2233)   // Elevated surface layer
-val DarkSurfaceVariant      = Color(0xFF112E44)   // Card / panel layer
-val DarkSurfaceContainer    = Color(0xFF17384F)   // Input / inner container
-val DarkOnBackground        = Color(0xFFDFF2FF)   // Bright near-white text
-val DarkOnSurface           = Color(0xFFCFE8F7)   // Main body text
-val DarkOnSurfaceVariant    = Color(0xFF8FBDD3)   // Secondary / hint text
-val DarkOutline             = Color(0xFF2D5A73)   // Subtle border
-val DarkOutlineVariant      = Color(0xFF1E4059)   // Very subtle border
+// Text
+val OnBlue          = Color(0xFFFFFFFF)   // white text on blue bg
+val OnWhite         = Color(0xFF0D47A1)   // blue text on white bg
+val SubtleOnWhite   = Color(0xFF5B85AA)   // muted text on white
 
-val DarkPrimary             = Color(0xFF48CAE4)   // Vibrant aqua on dark
-val DarkPrimaryDark         = Color(0xFF2EB8D0)
-val DarkSecondary           = Color(0xFF90E0EF)   // Soft light blue
-val DarkTertiary            = Color(0xFFADE8F4)   // Pale sky
+// Gradient endpoints for splash / hero
+val GradientTop    = Color(0xFF1565C0)
+val GradientBottom = Color(0xFF0A3D7C)
 
-val DarkPrimaryContainer    = Color(0xFF003F5C)
-val DarkSecondaryContainer  = Color(0xFF004D66)
-val DarkTertiaryContainer   = Color(0xFF005E7A)
-val DarkOnPrimaryContainer  = Color(0xFFB3E8F9)
-val DarkInversePrimary      = Color(0xFF0077B6)
+// Semantic aliases (all blue tones — water-only palette)
+val WaterSafe    = BlueOcean
+val WaterCaution = BlueDeep
+val WaterDanger  = BlueNight
+val WaterFixed   = BlueWave
 
-// ── Semantic / Status Colors ──────────────────────────────────────────────────
-val ColorSuccess    = Color(0xFF2EC4B6)   // Teal-green — "safe" / resolved
-val ColorWarning    = Color(0xFFFF9F1C)   // Warm amber — caution / in-progress
-val ColorDanger     = Color(0xFFE63946)   // Vivid red — alert / critical
-val ColorInfo       = Color(0xFF4895EF)   // Bright blue — informational
-val ColorMuted      = Color(0xFF8D99AE)   // Grey — disabled / secondary
+// ── Backwards-compatible aliases used across existing screens ──────────
+val WaterAqua        = WaterSafe
+val WaterWarning     = WaterCaution
+val WaterAlert       = WaterDanger
+val WaterMuted       = BlueFoam
+val OceanPrimary     = BlueAbyss
+val OceanSecondary   = BlueOcean
+val OceanTertiary    = BlueWave
+val MajiPrimary      = BlueAbyss
+val MajiSecondary    = BlueOcean
+val MajiTertiary     = BlueWave
+val ColorDanger      = BlueNight
+val ColorWarning     = BlueDeep
+val ColorSuccess     = BlueOcean
+val ColorInfo        = BlueWave
+val ColorMuted       = BlueFoam
+val GradientOceanStart = GradientBottom
+val GradientOceanEnd   = GradientTop
 
-// ── Gradient Helpers ─────────────────────────────────────────────────────────
-// Use these as brush start/end in hero sections
-val GradientOceanStart  = Color(0xFF023E8A)   // Deep navy
-val GradientOceanEnd    = Color(0xFF0096C7)   // Mid ocean
-
-// ── Backwards-compatible aliases (used in status/priority badges) ─────────────
-val WaterAqua    = ColorSuccess
-val WaterWarning = ColorWarning
-val WaterAlert   = ColorDanger
-val WaterMuted   = ColorMuted
-val OceanPrimary       = MajiPrimary
-val OceanSecondary     = MajiSecondary
-val OceanTertiary      = MajiTertiary
-val OceanDarkPrimary   = DarkPrimary
-val OceanDarkSecondary = DarkSecondary
-val OceanDarkTertiary  = DarkTertiary
+// Dark aliases (kept for backwards compat, not used in light theme)
+val DarkBackground       = BlueNight
+val DarkSurface          = Color(0xFF0D2746)
+val DarkSurfaceVariant   = Color(0xFF112E5A)
+val DarkSurfaceContainer = Color(0xFF17385E)
+val DarkOnBackground     = WhitePure
+val DarkOnSurface        = Color(0xFFDCEEFF)
+val DarkOnSurfaceVariant = BlueFoam
+val DarkOutline          = Color(0xFF2A4D80)
+val DarkOutlineVariant   = Color(0xFF1E3D6B)
+val DarkPrimary          = BlueWave
+val DarkPrimaryDark      = BlueOcean
+val DarkSecondary        = BlueFoam
+val DarkTertiary         = BlueIce
+val DarkPrimaryContainer    = Color(0xFF003F6B)
+val DarkSecondaryContainer  = Color(0xFF004D80)
+val DarkTertiaryContainer   = Color(0xFF005E9A)
+val DarkOnPrimaryContainer  = Color(0xFFB3D8FF)
+val DarkInversePrimary      = BlueAbyss
+val LightBackground         = WhiceIce
+val LightSurface            = WhitePure
+val LightSurfaceVariant     = BlueMist
+val LightSurfaceContainer   = WhiteSoft
+val LightOnBackground       = OnWhite
+val LightOnSurface          = OnWhite
+val LightOnSurfaceVariant   = SubtleOnWhite
+val LightOutline            = BlueFoam
+val LightOutlineVariant     = BlueIce
+val LightPrimaryContainer   = BlueIce
+val LightSecondaryContainer = BlueMist
+val LightTertiaryContainer  = BlueIce
+val LightOnPrimaryContainer = BlueNight
+val LightInversePrimary     = BlueWave

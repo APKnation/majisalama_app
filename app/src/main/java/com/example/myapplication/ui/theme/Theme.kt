@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -12,73 +11,42 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-// ── Dark Color Scheme ─────────────────────────────────────────────────────────
-private val DarkColorScheme = darkColorScheme(
-    primary                = DarkPrimary,
-    onPrimary              = DarkBackground,
-    primaryContainer       = DarkPrimaryContainer,
-    onPrimaryContainer     = DarkOnPrimaryContainer,
-    inversePrimary         = DarkInversePrimary,
-
-    secondary              = DarkSecondary,
-    onSecondary            = DarkBackground,
-    secondaryContainer     = DarkSecondaryContainer,
-    onSecondaryContainer   = DarkOnPrimaryContainer,
-
-    tertiary               = DarkTertiary,
-    onTertiary             = DarkBackground,
-    tertiaryContainer      = DarkTertiaryContainer,
-    onTertiaryContainer    = DarkOnPrimaryContainer,
-
-    background             = DarkBackground,
-    onBackground           = DarkOnBackground,
-
-    surface                = DarkSurface,
-    onSurface              = DarkOnSurface,
-    surfaceVariant         = DarkSurfaceVariant,
-    onSurfaceVariant       = DarkOnSurfaceVariant,
-    surfaceContainer       = DarkSurfaceContainer,
-
-    outline                = DarkOutline,
-    outlineVariant         = DarkOutlineVariant,
-
-    error                  = ColorDanger,
-    onError                = DarkBackground
-)
-
-// ── Light Color Scheme ────────────────────────────────────────────────────────
+// ── Only using Light Color Scheme for the clean Blue/White look ──────────────
 private val LightColorScheme = lightColorScheme(
-    primary                = MajiPrimary,
-    onPrimary              = LightBackground,
-    primaryContainer       = LightPrimaryContainer,
-    onPrimaryContainer     = LightOnPrimaryContainer,
-    inversePrimary         = LightInversePrimary,
+    primary                = BlueAbyss,
+    onPrimary              = WhitePure,
+    primaryContainer       = BlueDeep,
+    onPrimaryContainer     = WhitePure,
+    inversePrimary         = BlueWave,
 
-    secondary              = MajiSecondary,
-    onSecondary            = LightBackground,
-    secondaryContainer     = LightSecondaryContainer,
-    onSecondaryContainer   = LightOnPrimaryContainer,
+    secondary              = BlueOcean,
+    onSecondary            = WhitePure,
+    secondaryContainer     = BlueIce,
+    onSecondaryContainer   = BlueAbyss,
 
-    tertiary               = MajiTertiary,
-    onTertiary             = LightBackground,
-    tertiaryContainer      = LightTertiaryContainer,
-    onTertiaryContainer    = LightOnPrimaryContainer,
+    tertiary               = BlueWave,
+    onTertiary             = WhitePure,
+    tertiaryContainer      = BlueFoam,
+    onTertiaryContainer    = BlueNight,
 
-    background             = LightBackground,
-    onBackground           = LightOnBackground,
+    background             = BlueMist, // Very light blue background
+    onBackground           = BlueNight, // Dark blue text
 
-    surface                = LightSurface,
-    onSurface              = LightOnSurface,
-    surfaceVariant         = LightSurfaceVariant,
-    onSurfaceVariant       = LightOnSurfaceVariant,
-    surfaceContainer       = LightSurfaceContainer,
+    surface                = WhitePure, // White cards
+    onSurface              = BlueAbyss, // Dark blue text on cards
+    surfaceVariant         = WhiteSoft, // Slightly off-white for subtle variation
+    onSurfaceVariant       = SubtleOnWhite, // Muted blue text
+    surfaceContainer       = WhitePure,
 
-    outline                = LightOutline,
-    outlineVariant         = LightOutlineVariant,
+    outline                = BlueIce, // Very subtle blue outline
+    outlineVariant         = BlueMist,
 
-    error                  = ColorDanger,
-    onError                = LightBackground
+    error                  = BlueNight, // Keeping semantic colors blue-themed per request
+    onError                = WhitePure
 )
+
+// Fallback dark scheme (forces light colors anyway to maintain the strict blue/white brand)
+private val DarkColorScheme = LightColorScheme
 
 // ── Theme Composable ──────────────────────────────────────────────────────────
 @Composable
@@ -88,16 +56,17 @@ fun MyApplicationTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    // Force light scheme to maintain the clean blue/white look
+    val colorScheme = LightColorScheme
 
-    // Sync the status-bar colour with our surface so it looks native
+    // Sync the status-bar colour with our primary color (deep blue) for the header
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.surface.toArgb()
+            window.statusBarColor = colorScheme.primary.toArgb()
             WindowCompat.getInsetsController(window, view)
-                .isAppearanceLightStatusBars = !darkTheme
+                .isAppearanceLightStatusBars = false // White icons on dark blue status bar
         }
     }
 

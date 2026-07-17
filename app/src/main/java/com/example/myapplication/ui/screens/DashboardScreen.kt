@@ -379,44 +379,72 @@ fun WaterSourceCard(
     source: WaterSource,
     onClick: () -> Unit
 ) {
-    MCard(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(containerColor = WhitePure),
+        shape = MaterialTheme.shapes.small,
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
                 Text(
                     text = source.name.uppercase(),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp,
-                    fontFamily = FontFamily.Monospace
+                    color = BlueOcean,
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
                 )
-                Text(
-                    text = "Aina: ${source.sourceTypeDisplay} | Kijiji: ${source.villageName}",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                
-                // Show last tested ph parameter preview
+                StatusBadge(status = source.status)
+            }
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = "Kijiji: ${source.villageName}",
+                color = BlueNight,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "Aina: ${source.sourceTypeDisplay}",
+                color = SubtleOnWhite,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
+            Spacer(Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 if (source.phLevel != null) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Science,
+                            contentDescription = null,
+                            tint = SubtleOnWhite,
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = "pH: ${source.phLevel} | Bacteria: ${source.bacteriaCount ?: 0} CFU",
+                            color = SubtleOnWhite,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                } else {
                     Text(
-                        text = "pH: ${source.phLevel} | Bacteria: ${source.bacteriaCount ?: 0} CFU",
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 11.sp,
-                        fontFamily = FontFamily.Monospace,
-                        modifier = Modifier.padding(top = 4.dp)
+                        text = "Haijapimwa",
+                        color = SubtleOnWhite,
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
             }
-            StatusBadge(status = source.status)
         }
     }
 }

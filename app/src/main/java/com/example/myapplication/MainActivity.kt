@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.data.ApiClient
 import com.example.myapplication.ui.components.*
 import com.example.myapplication.ui.screens.*
-import com.example.myapplication.ui.theme.MyApplicationTheme
+import com.example.myapplication.ui.theme.*
 import kotlinx.coroutines.launch
 import androidx.compose.material3.MaterialTheme
 
@@ -302,8 +302,8 @@ fun MainAppContainer() {
                 // Show bottom nav on Landing (guest nav) and all authenticated screens
                 if (!isFullScreen) {
                     NavigationBar(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        tonalElevation = 0.dp
+                        containerColor = BlueAbyss,
+                        tonalElevation = 8.dp
                     ) {
                         if (isLandingScreen) {
                             // ── Guest navigation (public Landing page) ────────
@@ -313,11 +313,11 @@ fun MainAppContainer() {
                                 icon = { Icon(Icons.Default.Home, contentDescription = "Nyumbani") },
                                 label = { Text("Nyumbani", fontSize = 10.sp) },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    selectedIconColor = BlueAbyss,
+                                    selectedTextColor = WhitePure,
+                                    indicatorColor = WhitePure,
+                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
                                 )
                             )
                             NavigationBarItem(
@@ -326,11 +326,11 @@ fun MainAppContainer() {
                                 icon = { Icon(Icons.Default.Login, contentDescription = "Ingia") },
                                 label = { Text("Ingia", fontSize = 10.sp) },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = MaterialTheme.colorScheme.secondary,
-                                    selectedTextColor = MaterialTheme.colorScheme.secondary,
-                                    indicatorColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f),
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    selectedIconColor = BlueAbyss,
+                                    selectedTextColor = WhitePure,
+                                    indicatorColor = WhitePure,
+                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
                                 )
                             )
                             NavigationBarItem(
@@ -339,11 +339,11 @@ fun MainAppContainer() {
                                 icon = { Icon(Icons.Default.PersonAdd, contentDescription = "Jiandikishe") },
                                 label = { Text("Jiandikishe", fontSize = 10.sp) },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = MaterialTheme.colorScheme.tertiary,
-                                    selectedTextColor = MaterialTheme.colorScheme.tertiary,
-                                    indicatorColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    selectedIconColor = BlueAbyss,
+                                    selectedTextColor = WhitePure,
+                                    indicatorColor = WhitePure,
+                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
                                 )
                             )
                         } else {
@@ -356,11 +356,11 @@ fun MainAppContainer() {
                                 icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
                                 label = { Text("Home", fontSize = 10.sp) },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = MaterialTheme.colorScheme.secondary,
-                                    selectedTextColor = MaterialTheme.colorScheme.secondary,
-                                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    selectedIconColor = BlueAbyss,
+                                    selectedTextColor = WhitePure,
+                                    indicatorColor = WhitePure,
+                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
                                 )
                             )
                             NavigationBarItem(
@@ -369,11 +369,11 @@ fun MainAppContainer() {
                                 icon = { Icon(Icons.Default.ReportProblem, contentDescription = "Uharibifu") },
                                 label = { Text("Ripoti", fontSize = 10.sp) },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = MaterialTheme.colorScheme.error,
-                                    selectedTextColor = MaterialTheme.colorScheme.error,
-                                    indicatorColor = MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    selectedIconColor = BlueAbyss,
+                                    selectedTextColor = WhitePure,
+                                    indicatorColor = WhitePure,
+                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
                                 )
                             )
                             NavigationBarItem(
@@ -382,11 +382,11 @@ fun MainAppContainer() {
                                 icon = { Icon(Icons.Default.AutoAwesome, contentDescription = "AI") },
                                 label = { Text("AI", fontSize = 10.sp) },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = Color(0xFF30D158),
-                                    selectedTextColor = Color(0xFF30D158),
-                                    indicatorColor = Color(0xFF30D158).copy(alpha = 0.15f),
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    selectedIconColor = BlueAbyss,
+                                    selectedTextColor = WhitePure,
+                                    indicatorColor = WhitePure,
+                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
                                 )
                             )
                             NavigationBarItem(
@@ -395,11 +395,11 @@ fun MainAppContainer() {
                                 icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
                                 label = { Text("Profile", fontSize = 10.sp) },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = MaterialTheme.colorScheme.onSurface,
-                                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
-                                    indicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    selectedIconColor = BlueAbyss,
+                                    selectedTextColor = WhitePure,
+                                    indicatorColor = WhitePure,
+                                    unselectedIconColor = WhitePure.copy(alpha = 0.6f),
+                                    unselectedTextColor = WhitePure.copy(alpha = 0.6f)
                                 )
                             )
                         }

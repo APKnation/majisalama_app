@@ -216,3 +216,78 @@ fun StatusBadge(status: String) {
         )
     }
 }
+
+// ── Clean Report Card ─────────────────────────────────────────────────────────
+@Composable
+fun CleanReportCard(
+    report: com.example.myapplication.data.DamageReport,
+    onClick: () -> Unit = {},
+    actions: @Composable () -> Unit = {}
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(containerColor = WhitePure),
+        shape = MaterialTheme.shapes.small,
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    text = report.waterSourceName.uppercase(),
+                    color = BlueOcean,
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = report.reportDate,
+                    color = SubtleOnWhite,
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = report.title,
+                color = BlueNight,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = report.description,
+                color = SubtleOnWhite,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 2,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
+            Spacer(Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                StatusBadge(status = report.status)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.Person,
+                        contentDescription = null,
+                        tint = SubtleOnWhite,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = report.reportedByName,
+                        color = SubtleOnWhite,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+            }
+            actions()
+        }
+    }
+}
