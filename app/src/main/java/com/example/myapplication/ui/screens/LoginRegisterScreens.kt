@@ -219,16 +219,7 @@ fun LoginScreen(
                         .padding(8.dp)
                 )
 
-                Text(
-                    text = "Rudi Nyumbani (Back to Home)",
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace,
-                    modifier = Modifier
-                        .clickable { onNavigateToHome() }
-                        .padding(8.dp)
-                )
+
             }
         }
     }
@@ -559,16 +550,7 @@ fun RegisterScreen(
                             .padding(8.dp)
                     )
 
-                    Text(
-                        text = "Rudi Nyumbani (Back to Home)",
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace,
-                        modifier = Modifier
-                            .clickable { onNavigateToHome() }
-                            .padding(8.dp)
-                    )
+
                 }
             }
         }
