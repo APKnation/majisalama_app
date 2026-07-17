@@ -380,7 +380,7 @@ fun MainAppContainer() {
                                 // ── Authenticated Navigation ──
                                 Row(modifier = Modifier.weight(1f)) {
                                     NavigationBarItem(
-                                        selected = isRootScreen && currentScreen != Screen.Profile && currentScreen != Screen.Predictor,
+                                        selected = isRootScreen && currentScreen != Screen.Profile,
                                         onClick = { navigateToRoot(getRoleHomeRoute()) },
                                         icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
                                         label = { Text("Home", fontSize = 10.sp) },
