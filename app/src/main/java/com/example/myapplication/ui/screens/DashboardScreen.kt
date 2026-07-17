@@ -38,8 +38,7 @@ import androidx.compose.material3.MaterialTheme
 @Composable
 fun DashboardScreen(
     onNavigateToSourceDetails: (Int) -> Unit,
-    onNavigateToReportDamage: (Int?) -> Unit,
-    onNavigateToPredictor: () -> Unit
+    onNavigateToReportDamage: (Int?) -> Unit
 ) {
     var searchQueries by remember { mutableStateOf("") }
     var sources by remember { mutableStateOf<List<WaterSource>>(emptyList()) }
@@ -141,8 +140,8 @@ fun DashboardScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 MButton(
-                    text = "PREDICT DEMAND (AI)",
-                    onClick = onNavigateToPredictor,
+                    text = "VYANZO KARIBU",
+                    onClick = { useNearbyFilter = true },
                     modifier = Modifier.weight(1f)
                 )
                 MButton(

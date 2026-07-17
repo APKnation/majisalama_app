@@ -42,7 +42,6 @@ sealed class Screen {
     object DistrictOfficerPanel : Screen()
     object AdminPanel : Screen()
     data class LogQuality(val sourceId: Int) : Screen()
-    object Predictor : Screen()
     object Profile : Screen()
 }
 
@@ -107,8 +106,7 @@ fun MainAppContainer() {
                        currentScreen is Screen.VillageLeaderPanel ||
                        currentScreen is Screen.WaterOfficerPanel ||
                        currentScreen is Screen.DistrictOfficerPanel ||
-                       currentScreen is Screen.Profile ||
-                       currentScreen is Screen.Predictor
+                       currentScreen is Screen.Profile
 
     // ── Build role-appropriate drawer items ────────────────────────────────
     val user = ApiClient.currentUser
@@ -136,7 +134,6 @@ fun MainAppContainer() {
                 add(DrawerItem(Icons.Default.Home, "Nyumbani", Screen.Dashboard))
             }
         }
-        add(DrawerItem(Icons.Default.AutoAwesome, "AI Predictor", Screen.Predictor))
         add(DrawerItem(Icons.Default.ReportProblem, "Ripoti Uharibifu", Screen.ReportDamage(null)))
         add(DrawerItem(Icons.Default.Person, "Wasifu Wangu", Screen.Profile))
     }
@@ -395,11 +392,11 @@ fun MainAppContainer() {
                                             unselectedTextColor = WhitePure.copy(alpha = 0.6f)
                                         )
                                     )
-                                    NavigationBarItem(
-                                        selected = currentScreen is Screen.Predictor,
-                                        onClick = { navigateToRoot(Screen.Predictor) },
-                                        icon = { Icon(Icons.Default.AutoAwesome, contentDescription = "AI") },
-                                        label = { Text("AI", fontSize = 10.sp) },
+                                     NavigationBarItem(
+                                        selected = currentScreen is Screen.Taarfia,
+                                        onClick = { navigateTo(Screen.Taarfia) },
+                                        icon = { Icon(Icons.Default.ListAlt, contentDescription = "Taarifa") },
+                                        label = { Text("Taarifa", fontSize = 10.sp) },
                                         colors = NavigationBarItemDefaults.colors(
                                             selectedIconColor = ButtonAccent,
                                             selectedTextColor = ButtonAccent,
@@ -407,7 +404,7 @@ fun MainAppContainer() {
                                             unselectedIconColor = WhitePure.copy(alpha = 0.6f),
                                             unselectedTextColor = WhitePure.copy(alpha = 0.6f)
                                         )
-                                    )
+                                     )
                                 }
                                 
                                 Spacer(modifier = Modifier.width(64.dp)) // Space for FAB
@@ -510,15 +507,13 @@ fun MainAppContainer() {
                     )
                     is Screen.Dashboard -> DashboardScreen(
                         onNavigateToSourceDetails = { id -> navigateTo(Screen.WaterSourceDetails(id)) },
-                        onNavigateToReportDamage = { id -> navigateTo(Screen.ReportDamage(id)) },
-                        onNavigateToPredictor = { navigateTo(Screen.Predictor) }
+                        onNavigateToReportDamage = { id -> navigateTo(Screen.ReportDamage(id)) }
                     )
                     is Screen.AdminPanel -> AdminScreen(
                         onNavigateToCitizen = { navigateTo(Screen.Dashboard) },
                         onNavigateToLeader = { navigateTo(Screen.VillageLeaderPanel) },
                         onNavigateToOfficer = { navigateTo(Screen.WaterOfficerPanel) },
-                        onNavigateToDistrict = { navigateTo(Screen.DistrictOfficerPanel) },
-                        onNavigateToPredictor = { navigateTo(Screen.Predictor) }
+                        onNavigateToDistrict = { navigateTo(Screen.DistrictOfficerPanel) }
                     )
                     is Screen.DistrictOfficerPanel -> DistrictOfficerScreen(
                         onNavigateBack = { navigateBack() }
@@ -529,9 +524,7 @@ fun MainAppContainer() {
                     is Screen.WaterOfficerPanel -> WaterOfficerScreen(
                         onNavigateBack = { navigateBack() }
                     )
-                    is Screen.Predictor -> PredictorScreen(
-                        onNavigateBack = { navigateBack() }
-                    )
+
                     is Screen.Profile -> ProfileScreen(
                         onNavigateBack = { navigateBack() },
                         onLogout = {
@@ -568,7 +561,6 @@ private fun screenTitle(screen: Screen): String = when (screen) {
     is Screen.VillageLeaderPanel   -> "Paneli ya Kiongozi"
     is Screen.WaterOfficerPanel    -> "Paneli ya Afisa Maji"
     is Screen.DistrictOfficerPanel -> "Paneli ya Wilaya"
-    is Screen.Predictor            -> "AI Predictor"
     is Screen.Profile              -> "Wasifu Wangu"
     is Screen.ReportDamage         -> "Ripoti Uharibifu"
     is Screen.WaterSourceDetails   -> "Maelezo ya Chanzo"

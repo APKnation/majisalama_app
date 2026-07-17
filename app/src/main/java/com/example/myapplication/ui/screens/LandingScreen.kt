@@ -137,7 +137,7 @@ fun LandingScreen(
                 val actions = listOf(
                     ActionItem("Ripoti", "Ripoti uharibifu sasa", Icons.Default.ReportProblem),
                     ActionItem("Vyanzo", "Tafuta chanzo karibu", Icons.Default.LocationOn),
-                    ActionItem("AI Predict", "Utabiri wa mahitaji", Icons.Default.AutoAwesome),
+                    ActionItem("Taarifa", "Ripoti za umma", Icons.AutoMirrored.Filled.ListAlt),
                     ActionItem("Ripoti Zangu", "Taarifa za uharibifu", Icons.AutoMirrored.Filled.ListAlt),
                     ActionItem("Maoni", "Toa maoni yako!", Icons.Default.ThumbUp),
                     ActionItem("Mipangilio", "Sanidi mipangilio", Icons.Default.Settings)

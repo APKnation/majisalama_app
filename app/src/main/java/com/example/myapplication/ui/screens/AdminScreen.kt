@@ -31,8 +31,7 @@ fun AdminScreen(
     onNavigateToCitizen: () -> Unit,
     onNavigateToLeader: () -> Unit,
     onNavigateToOfficer: () -> Unit,
-    onNavigateToDistrict: () -> Unit,
-    onNavigateToPredictor: () -> Unit
+    onNavigateToDistrict: () -> Unit
 ) {
     val user = ApiClient.currentUser
     val scope = rememberCoroutineScope()
@@ -200,65 +199,7 @@ fun AdminScreen(
             }
         }
 
-        // ── Divider ───────────────────────────────────────────────────────────
-        item { Spacer(Modifier.height(20.dp)) }
-
-        // ── AI Predictor Full-Width Tile ──────────────────────────────────────
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .clickable(onClick = onNavigateToPredictor),
-                colors = CardDefaults.cardColors(containerColor = BlueAbyss),
-                shape = RoundedCornerShape(14.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .clip(CircleShape)
-                                .background(BlueDeep),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AutoAwesome,
-                                contentDescription = null,
-                                tint = WhitePure,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        Spacer(Modifier.width(14.dp))
-                        Column {
-                            Text(
-                                text = "AI Predictor",
-                                color = WhitePure,
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                            )
-                            Text(
-                                text = "Utabiri wa mahitaji ya maji",
-                                color = WhitePure.copy(alpha = 0.7f),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                    }
-                    Icon(
-                        imageVector = Icons.Default.ChevronRight,
-                        contentDescription = null,
-                        tint = WhitePure.copy(alpha = 0.7f),
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-        }
+        item { Spacer(Modifier.height(24.dp)) }
     }
 }
 
