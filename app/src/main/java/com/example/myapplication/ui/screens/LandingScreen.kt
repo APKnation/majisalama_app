@@ -197,51 +197,102 @@ fun LandingScreen(
                 }
         }
 
-        // ── Secondary Image Banner (tank2.png) ────────────────────────────────
+        // ── "How It Works" Feature Section (tank2.png) ───────────────────────
         item {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .height(240.dp)
+                    .clip(RoundedCornerShape(20.dp))
             ) {
+                // tank2.png — community water infrastructure photo
                 Image(
                     painter = painterResource(id = R.drawable.tank2),
-                    contentDescription = "Water infrastructure banner",
+                    contentDescription = "Wananchi wakitumia huduma ya maji safi",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
-                // Dark teal gradient overlay
+
+                // Full gradient overlay: transparent at top → deep teal at bottom
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(
                             androidx.compose.ui.graphics.Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color(0xFF005F73).copy(alpha = 0.80f)
+                                colorStops = arrayOf(
+                                    0.0f to Color(0xFF003049).copy(alpha = 0.30f),
+                                    0.45f to Color(0xFF005F73).copy(alpha = 0.65f),
+                                    1.0f to Color(0xFF001D2E).copy(alpha = 0.92f)
                                 )
                             )
                         )
                 )
-                // Bottom-left label
+
+                // Content overlaid on the image
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(14.dp)
+                        .padding(18.dp)
                 ) {
+                    // Section badge
+                    Surface(
+                        color = ButtonAccent.copy(alpha = 0.90f),
+                        shape = RoundedCornerShape(6.dp)
+                    ) {
+                        Text(
+                            text = "  JINSI INAVYOFANYA KAZI  ",
+                            color = WhitePure,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = 1.5.sp
+                            ),
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+                    }
+
+                    Spacer(Modifier.height(8.dp))
+
+                    // Headline
                     Text(
-                        text = "Miundombinu ya Maji",
+                        text = "Angalia, Ripoti, Fuatilia",
                         color = WhitePure,
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                        letterSpacing = 1.sp
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.ExtraBold
+                        )
                     )
+
+                    Spacer(Modifier.height(6.dp))
+
+                    // Description
                     Text(
-                        text = "Ripoti Uharibifu →",
-                        color = WhitePure,
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.ExtraBold),
-                        modifier = Modifier.clickable { onNavigateToReportDamage() }
+                        text = "Piga picha ya uharibifu wa mfumo wa maji, tuma ripoti moja kwa moja kupitia programu hii, na fuatilia maendeleo hadi tatizo lishughulikiwe.",
+                        color = WhitePure.copy(alpha = 0.88f),
+                        style = MaterialTheme.typography.bodySmall,
+                        lineHeight = 18.sp
                     )
+
+                    Spacer(Modifier.height(14.dp))
+
+                    // CTA Button
+                    Button(
+                        onClick = onNavigateToReportDamage,
+                        colors = ButtonDefaults.buttonColors(containerColor = ButtonAccent),
+                        shape = RoundedCornerShape(10.dp),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ReportProblem,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = WhitePure
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = "Ripoti Uharibifu Sasa",
+                            color = WhitePure,
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
                 }
             }
         }
