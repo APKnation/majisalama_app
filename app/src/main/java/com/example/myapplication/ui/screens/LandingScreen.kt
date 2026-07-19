@@ -119,15 +119,18 @@ fun LandingScreen(
                                 )
                             )
                     )
-                    // Tagline at the bottom
+                    // Tagline centered on the image
                     Text(
                         text = "Tunza Maji, Tunza Uhai.",
                         color = WhitePure,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        textAlign = TextAlign.Start,
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontFamily = PlayfairDisplay,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        textAlign = TextAlign.Center,
                         modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(16.dp)
+                            .align(Alignment.Center)
+                            .padding(horizontal = 24.dp)
                     )
                 }
             }
