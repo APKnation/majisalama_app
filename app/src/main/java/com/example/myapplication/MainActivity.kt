@@ -43,6 +43,7 @@ sealed class Screen {
     object AdminPanel : Screen()
     data class LogQuality(val sourceId: Int) : Screen()
     object Profile : Screen()
+    object AddWaterSource : Screen()
 }
 
 class MainActivity : ComponentActivity() {
@@ -513,10 +514,12 @@ fun MainAppContainer() {
                         onNavigateToCitizen = { navigateTo(Screen.Dashboard) },
                         onNavigateToLeader = { navigateTo(Screen.VillageLeaderPanel) },
                         onNavigateToOfficer = { navigateTo(Screen.WaterOfficerPanel) },
-                        onNavigateToDistrict = { navigateTo(Screen.DistrictOfficerPanel) }
+                        onNavigateToDistrict = { navigateTo(Screen.DistrictOfficerPanel) },
+                        onNavigateToAddWaterSource = { navigateTo(Screen.AddWaterSource) }
                     )
                     is Screen.DistrictOfficerPanel -> DistrictOfficerScreen(
-                        onNavigateBack = { navigateBack() }
+                        onNavigateBack = { navigateBack() },
+                        onNavigateToAddWaterSource = { navigateTo(Screen.AddWaterSource) }
                     )
                     is Screen.VillageLeaderPanel -> VillageLeaderScreen(
                         onNavigateBack = { navigateBack() }
@@ -548,6 +551,10 @@ fun MainAppContainer() {
                         onNavigateBack = { navigateBack() },
                         onSuccess = { navigateBack() }
                     )
+                    is Screen.AddWaterSource -> AddWaterSourceScreen(
+                        onNavigateBack = { navigateBack() },
+                        onSuccess = { navigateBack() }
+                    )
                 }
             }
         }
@@ -565,6 +572,7 @@ private fun screenTitle(screen: Screen): String = when (screen) {
     is Screen.ReportDamage         -> "Ripoti Uharibifu"
     is Screen.WaterSourceDetails   -> "Maelezo ya Chanzo"
     is Screen.LogQuality           -> "Ukaguzi wa Ubora"
+    is Screen.AddWaterSource       -> "Ongeza Chanzo"
     is Screen.Register             -> "Jiandikishe"
     else                           -> "WaterTrack"
 }

@@ -29,9 +29,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun AdminScreen(
     onNavigateToCitizen: () -> Unit,
-    onNavigateToLeader: () -> Unit,
     onNavigateToOfficer: () -> Unit,
-    onNavigateToDistrict: () -> Unit
+    onNavigateToDistrict: () -> Unit,
+    onNavigateToAddWaterSource: () -> Unit
 ) {
     val user = ApiClient.currentUser
     val scope = rememberCoroutineScope()
@@ -195,6 +195,18 @@ fun AdminScreen(
                         accent = BlueNight,
                         onClick = onNavigateToDistrict
                     )
+                }
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                    AdminNavTile(
+                        modifier = Modifier.weight(1f),
+                        icon = Icons.Default.Add,
+                        title = "Ongeza Chanzo",
+                        subtitle = "Sajili Chanzo Kipya",
+                        accent = Color(0xFF4CAF50),
+                        onClick = onNavigateToAddWaterSource
+                    )
+                    Spacer(modifier = Modifier.weight(1f)) // Empty placeholder to keep the grid aligned
                 }
             }
         }
