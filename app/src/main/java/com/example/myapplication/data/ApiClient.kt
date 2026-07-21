@@ -145,6 +145,42 @@ object ApiClient {
         }
     }
 
+    suspend fun addVillage(
+        name: String,
+        district: String,
+        region: String,
+        population: Int = 0,
+        latitude: Double? = null,
+        longitude: Double? = null
+    ): Result<Village> = withContext(Dispatchers.IO) {
+        try {
+            val docRef = db.collection("villages").document()
+            val newId = Math.abs(docRef.id.hashCode())
+            
+            val villageMap = hashMapOf(
+                "id" to newId,
+                "name" to name,
+                "district" to district,
+                "region" to region,
+                "population" to population,
+                "latitude" to latitude,
+                "longitude" to longitude
+            )
+            
+            docRef.set(villageMap).await()
+            
+            val newVillage = Village(
+                id = newId, name = name, district = district, region = region,
+                population = population, latitude = latitude, longitude = longitude
+            )
+            
+            Result.success(newVillage)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error adding village", e)
+            Result.failure(e)
+        }
+    }
+
     suspend fun getWaterSources(villageId: Int? = null): Result<List<WaterSource>> = withContext(Dispatchers.IO) {
         try {
             val query = if (villageId != null) {
