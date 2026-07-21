@@ -28,7 +28,8 @@ import androidx.compose.material3.MaterialTheme
 @Composable
 fun DistrictOfficerScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToAddWaterSource: () -> Unit
+    onNavigateToAddWaterSource: () -> Unit,
+    onNavigateToAddVillage: () -> Unit
 ) {
     var reports by remember { mutableStateOf<List<DamageReport>>(emptyList()) }
     var workers by remember { mutableStateOf<List<User>>(emptyList()) }
@@ -103,13 +104,22 @@ fun DistrictOfficerScreen(
                     onClick = { loadDistrictData() },
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                MButton(
-                    text = "+ ONGEZA CHANZO",
-                    onClick = onNavigateToAddWaterSource,
-                    backgroundColor = Color(0xFF4CAF50),
-                    contentColor = Color.White,
-                    borderColor = Color(0xFF4CAF50)
-                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    MButton(
+                        text = "+ CHANZO",
+                        onClick = onNavigateToAddWaterSource,
+                        backgroundColor = Color(0xFF4CAF50),
+                        contentColor = Color.White,
+                        borderColor = Color(0xFF4CAF50)
+                    )
+                    MButton(
+                        text = "+ KIJIJI",
+                        onClick = onNavigateToAddVillage,
+                        backgroundColor = Color(0xFFFF9800),
+                        contentColor = Color.White,
+                        borderColor = Color(0xFFFF9800)
+                    )
+                }
             }
         }
 
