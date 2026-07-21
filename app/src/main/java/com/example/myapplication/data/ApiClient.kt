@@ -45,9 +45,14 @@ object ApiClient {
     suspend fun login(username: String, securePassword: String): Result<User> = withContext(Dispatchers.IO) {
         try {
             // Note: Firebase Auth uses email for sign-in by default
-            // If the user inputs a non-email username, we could query Firestore to find the email,
-            // but for this integration we assume 'username' field on the UI is actually the email.
-            val email = if (username.contains("@")) username else "$username@example.com"
+            // If the user inputs a non-email username, we query Firestore to find the email.
+            val email = if (username.contains("@")) {
+                username
+            } else {
+                val querySnapshot = db.collection("users").whereEqualTo("username", username).get().await()
+                val userDoc = querySnapshot.documents.firstOrNull()
+                userDoc?.getString("email") ?: "$username@example.com"
+            }
             val result = auth.signInWithEmailAndPassword(email, securePassword).await()
             val authUser = result.user ?: throw Exception("Login failed")
 

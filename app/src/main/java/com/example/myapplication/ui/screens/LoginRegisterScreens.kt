@@ -40,9 +40,7 @@ private data class DemoAccount(
 
 private val demoAccounts = listOf(
     DemoAccount("ADMIN",          "admin",          "admin123",   androidx.compose.ui.graphics.Color(0xFFE22718)),
-    DemoAccount("CITIZEN",        "citizen1",       "pass1234",   androidx.compose.ui.graphics.Color(0xFF4CAF50)),
-    DemoAccount("LEADER",         "leader1",        "pass1234",   androidx.compose.ui.graphics.Color(0xFF1C69D4)),
-    DemoAccount("WATER OFFICER",  "officer1",       "pass1234",   androidx.compose.ui.graphics.Color(0xFF0066B1))
+    DemoAccount("CITIZEN",        "citizen1",       "pass1234",   androidx.compose.ui.graphics.Color(0xFF4CAF50))
 )
 // ────────────────────────────────────────────────────────────────────────────
 
