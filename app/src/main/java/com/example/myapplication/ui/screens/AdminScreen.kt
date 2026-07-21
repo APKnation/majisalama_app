@@ -32,7 +32,8 @@ fun AdminScreen(
     onNavigateToLeader: () -> Unit,
     onNavigateToOfficer: () -> Unit,
     onNavigateToDistrict: () -> Unit,
-    onNavigateToAddWaterSource: () -> Unit
+    onNavigateToAddWaterSource: () -> Unit,
+    onNavigateToAddVillage: () -> Unit
 ) {
     val user = ApiClient.currentUser
     val scope = rememberCoroutineScope()
@@ -207,7 +208,14 @@ fun AdminScreen(
                         accent = Color(0xFF4CAF50),
                         onClick = onNavigateToAddWaterSource
                     )
-                    Spacer(modifier = Modifier.weight(1f)) // Empty placeholder to keep the grid aligned
+                    AdminNavTile(
+                        modifier = Modifier.weight(1f),
+                        icon = Icons.Default.Add,
+                        title = "Ongeza Kijiji",
+                        subtitle = "Sajili Kijiji Kipya",
+                        accent = Color(0xFFFF9800),
+                        onClick = onNavigateToAddVillage
+                    )
                 }
             }
         }

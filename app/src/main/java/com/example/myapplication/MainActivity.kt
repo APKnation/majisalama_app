@@ -44,6 +44,7 @@ sealed class Screen {
     data class LogQuality(val sourceId: Int) : Screen()
     object Profile : Screen()
     object AddWaterSource : Screen()
+    object AddVillage : Screen()
 }
 
 class MainActivity : ComponentActivity() {
@@ -515,11 +516,13 @@ fun MainAppContainer() {
                         onNavigateToLeader = { navigateTo(Screen.VillageLeaderPanel) },
                         onNavigateToOfficer = { navigateTo(Screen.WaterOfficerPanel) },
                         onNavigateToDistrict = { navigateTo(Screen.DistrictOfficerPanel) },
-                        onNavigateToAddWaterSource = { navigateTo(Screen.AddWaterSource) }
+                        onNavigateToAddWaterSource = { navigateTo(Screen.AddWaterSource) },
+                        onNavigateToAddVillage = { navigateTo(Screen.AddVillage) }
                     )
                     is Screen.DistrictOfficerPanel -> DistrictOfficerScreen(
                         onNavigateBack = { navigateBack() },
-                        onNavigateToAddWaterSource = { navigateTo(Screen.AddWaterSource) }
+                        onNavigateToAddWaterSource = { navigateTo(Screen.AddWaterSource) },
+                        onNavigateToAddVillage = { navigateTo(Screen.AddVillage) }
                     )
                     is Screen.VillageLeaderPanel -> VillageLeaderScreen(
                         onNavigateBack = { navigateBack() }
@@ -555,6 +558,10 @@ fun MainAppContainer() {
                         onNavigateBack = { navigateBack() },
                         onSuccess = { navigateBack() }
                     )
+                    is Screen.AddVillage -> AddVillageScreen(
+                        onNavigateBack = { navigateBack() },
+                        onSuccess = { navigateBack() }
+                    )
                 }
             }
         }
@@ -573,6 +580,7 @@ private fun screenTitle(screen: Screen): String = when (screen) {
     is Screen.WaterSourceDetails   -> "Maelezo ya Chanzo"
     is Screen.LogQuality           -> "Ukaguzi wa Ubora"
     is Screen.AddWaterSource       -> "Ongeza Chanzo"
+    is Screen.AddVillage           -> "Ongeza Kijiji"
     is Screen.Register             -> "Jiandikishe"
     else                           -> "WaterTrack"
 }
