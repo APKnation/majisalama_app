@@ -16,6 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import com.example.myapplication.data.User
 import com.example.myapplication.data.ApiClient
 import com.example.myapplication.data.DamageReport
 import com.example.myapplication.ui.components.*
@@ -150,10 +153,6 @@ fun DistrictOfficerScreen(
         }
     }
 }
-
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import com.example.myapplication.data.User
 
 @Composable
 fun DistrictReportCard(

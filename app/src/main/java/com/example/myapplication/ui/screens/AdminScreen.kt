@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AdminScreen(
     onNavigateToCitizen: () -> Unit,
+    onNavigateToLeader: () -> Unit,
     onNavigateToOfficer: () -> Unit,
     onNavigateToDistrict: () -> Unit,
     onNavigateToAddWaterSource: () -> Unit
