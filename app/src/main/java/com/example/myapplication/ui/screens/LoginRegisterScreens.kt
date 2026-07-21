@@ -28,21 +28,7 @@ import com.example.myapplication.ui.components.*
 import kotlinx.coroutines.launch
 import androidx.compose.material3.MaterialTheme
 
-// ─── Default Demo Credentials ───────────────────────────────────────────────
-// These match the Django seeded / superuser accounts.
-// Remove or replace before production release.
-private data class DemoAccount(
-    val label: String,
-    val username: String,
-    val password: String,
-    val color: androidx.compose.ui.graphics.Color
-)
 
-private val demoAccounts = listOf(
-    DemoAccount("ADMIN",          "admin",          "admin123",   androidx.compose.ui.graphics.Color(0xFFE22718)),
-    DemoAccount("CITIZEN",        "citizen1",       "pass1234",   androidx.compose.ui.graphics.Color(0xFF4CAF50))
-)
-// ────────────────────────────────────────────────────────────────────────────
 
 @Composable
 fun LoginScreen(
@@ -50,9 +36,8 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToHome: () -> Unit
 ) {
-    // Pre-fill with admin defaults so testers can log in immediately
-    var username by remember { mutableStateOf("admin") }
-    var password by remember { mutableStateOf("admin123") }
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
@@ -106,48 +91,7 @@ fun LoginScreen(
 
             MStripesDivider(modifier = Modifier.padding(bottom = 12.dp))
 
-            // ── Demo Quick-Login Buttons ─────────────────────────────────
-            Text(
-                text = "DEMO ACCOUNTS (SKIP TYPING)",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 9.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp,
-                fontFamily = FontFamily.Monospace,
-                modifier = Modifier.padding(bottom = 6.dp)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                demoAccounts.forEach { demo ->
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .border(1.dp, demo.color, RoundedCornerShape(16.dp))
-                            .background(demo.color.copy(alpha = 0.1f))
-                            .clickable(enabled = !isLoading) {
-                                username = demo.username
-                                password = demo.password
-                                errorMessage = null
-                            }
-                            .padding(vertical = 6.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = demo.label,
-                            color = demo.color,
-                            fontSize = 8.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            letterSpacing = 0.5.sp,
-                            fontFamily = FontFamily.Monospace
-                        )
-                    }
-                }
-            }
-            // ─────────────────────────────────────────────────────────────
+
 
             if (errorMessage != null) {
                 Text(
