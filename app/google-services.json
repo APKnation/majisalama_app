@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "54753845755",
+    "project_id": "majisalama-app",
+    "storage_bucket": "majisalama-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:54753845755:android:9d130439e0c2d690036b5e",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwOXAbct840vPkdMAYljft2mtZzGTOTnE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
