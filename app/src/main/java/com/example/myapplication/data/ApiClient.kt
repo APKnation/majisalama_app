@@ -193,6 +193,60 @@ object ApiClient {
         Result.success(filtered)
     }
 
+    suspend fun addWaterSource(
+        name: String,
+        sourceType: String,
+        villageId: Int,
+        villageName: String,
+        latitude: Double?,
+        longitude: Double?
+    ): Result<WaterSource> = withContext(Dispatchers.IO) {
+        try {
+            val docRef = db.collection("waterSources").document()
+            val newId = Math.abs(docRef.id.hashCode())
+            
+            val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+            
+            val sourceMap = hashMapOf(
+                "id" to newId,
+                "name" to name,
+                "sourceType" to sourceType,
+                "villageId" to villageId,
+                "villageName" to villageName,
+                "latitude" to latitude,
+                "longitude" to longitude,
+                "status" to "safe",
+                "phLevel" to null,
+                "bacteriaCount" to null,
+                "ironLevel" to null,
+                "turbidity" to null,
+                "lastTested" to null,
+                "managedById" to currentUser?.id,
+                "managedByName" to currentUser?.username,
+                "lastCleaned" to today,
+                "nextCleaning" to null,
+                "constructionYear" to Calendar.getInstance().get(Calendar.YEAR),
+                "imageUrl" to null
+            )
+            
+            docRef.set(sourceMap).await()
+            
+            val newSource = WaterSource(
+                id = newId, name = name, sourceType = sourceType, villageId = villageId,
+                villageName = villageName, latitude = latitude, longitude = longitude,
+                status = "safe", phLevel = null, bacteriaCount = null, ironLevel = null,
+                turbidity = null, lastTested = null, managedById = currentUser?.id,
+                managedByName = currentUser?.username, lastCleaned = today, nextCleaning = null,
+                constructionYear = Calendar.getInstance().get(Calendar.YEAR), imageUrl = null
+            )
+            
+            Result.success(newSource)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error adding water source", e)
+            Result.failure(e)
+        }
+    }
+
     suspend fun getDamageReports(): Result<List<DamageReport>> = withContext(Dispatchers.IO) {
         try {
             val snapshot = db.collection("damageReports").get().await()
