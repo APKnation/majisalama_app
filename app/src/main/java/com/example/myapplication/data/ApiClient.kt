@@ -46,13 +46,16 @@ object ApiClient {
         try {
             // Note: Firebase Auth uses email for sign-in by default
             // If the user inputs a non-email username, we query Firestore to find the email.
-            val email = if (username.contains("@")) {
-                username
+            val cleanUsername = username.trim()
+            val email = if (cleanUsername.contains("@")) {
+                cleanUsername
             } else {
-                val querySnapshot = db.collection("users").whereEqualTo("username", username).get().await()
+                val querySnapshot = db.collection("users").whereEqualTo("username", cleanUsername).get().await()
                 val userDoc = querySnapshot.documents.firstOrNull()
-                userDoc?.getString("email") ?: "$username@example.com"
+                userDoc?.getString("email") ?: throw Exception("Akaunti haijapatikana na username hii (Account not found).")
             }
+            
+            Log.d(TAG, "Attempting login for email: \$email")
             val result = auth.signInWithEmailAndPassword(email, securePassword).await()
             val authUser = result.user ?: throw Exception("Login failed")
 
