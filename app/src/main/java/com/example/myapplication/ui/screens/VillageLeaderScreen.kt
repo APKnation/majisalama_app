@@ -205,10 +205,11 @@ fun LeaderReportCard(
     onShowSweetAlert: (SweetAlertData) -> Unit
 ) {
     var rejectionReason by remember { mutableStateOf("") }
-    var showRejectInput by remember { mutableStateOf(false) }
+    var showRejectInput by remember { mutableStateOf("") }
 
     var resolutionNotes by remember { mutableStateOf("") }
     var showResolveInput by remember { mutableStateOf(false) }
+    var showRejectForm by remember { mutableStateOf(false) }
 
     var selectedWorker by remember { mutableStateOf<User?>(null) }
     var workerDropdownExpanded by remember { mutableStateOf(false) }
@@ -262,7 +263,7 @@ fun LeaderReportCard(
 
                 if (isOperating) {
                     CircularProgressIndicator(color = com.example.myapplication.ui.theme.BlueNight, modifier = Modifier.size(20.dp))
-                } else if (showRejectInput) {
+                } else if (showRejectForm) {
                     MTextField(
                         value = rejectionReason,
                         onValueChange = { rejectionReason = it },
@@ -280,12 +281,20 @@ fun LeaderReportCard(
                                     isOperating = false
                                     if (res.isSuccess) {
                                         onActionSuccess()
-                                        showRejectInput = false
+                                        showRejectForm = false
                                         onShowSweetAlert(
                                             SweetAlertData(
                                                 title = "Imekataliwa",
                                                 message = "Ripoti imekataliwa na kuwekewa sababu.",
                                                 type = SweetAlertType.WARNING
+                                            )
+                                        )
+                                    } else {
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imeshindwa",
+                                                message = res.exceptionOrNull()?.message ?: "Imeshindwa kukataa ripoti.",
+                                                type = SweetAlertType.ERROR
                                             )
                                         )
                                     }
@@ -296,74 +305,70 @@ fun LeaderReportCard(
                         )
                         MButton(
                             text = "GHAIRI",
-                            onClick = { showRejectInput = false }
+                            onClick = { showRejectForm = false }
                         )
                     }
                 } else {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        // Approve button executes directly -> shows Success Alert
                         MButton(
                             text = "IDHINISHA",
                             onClick = {
-                                onShowSweetAlert(
-                                    SweetAlertData(
-                                        title = "Thibitisha Idhini",
-                                        message = "Je, una uhakika unataka kuidhinisha ripoti hii kama Mwenyekiti?",
-                                        type = SweetAlertType.CONFIRM,
-                                        confirmButtonText = "Ndio, Idhinisha",
-                                        cancelButtonText = "Ghairi",
-                                        onConfirm = {
-                                            isOperating = true
-                                            scope.launch {
-                                                val res = ApiClient.approveDamageReport(report.id)
-                                                isOperating = false
-                                                if (res.isSuccess) {
-                                                    onActionSuccess()
-                                                    onShowSweetAlert(
-                                                        SweetAlertData(
-                                                            title = "Imefanikiwa!",
-                                                            message = "Ripoti imeidhinishwa kikamilifu na Mwenyekiti.",
-                                                            type = SweetAlertType.SUCCESS
-                                                        )
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    )
-                                )
+                                isOperating = true
+                                scope.launch {
+                                    val res = ApiClient.approveDamageReport(report.id)
+                                    isOperating = false
+                                    if (res.isSuccess) {
+                                        onActionSuccess()
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imefanikiwa!",
+                                                message = "Ripoti imeidhinishwa kikamilifu na Mwenyekiti.",
+                                                type = SweetAlertType.SUCCESS
+                                            )
+                                        )
+                                    } else {
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imeshindwa",
+                                                message = res.exceptionOrNull()?.message ?: "Imeshindwa kuidhinisha ripoti.",
+                                                type = SweetAlertType.ERROR
+                                            )
+                                        )
+                                    }
+                                }
                             },
                             borderColor = Color(0xFF4CAF50),
                             contentColor = WhitePure,
                             backgroundColor = Color(0xFF4CAF50)
                         )
+                        // Forward button executes directly -> shows Success Alert
                         MButton(
                             text = "PELEKA WILAYANI",
                             onClick = {
-                                onShowSweetAlert(
-                                    SweetAlertData(
-                                        title = "Peleka Wilayani",
-                                        message = "Je, una uhakika unataka kupeleka ripoti hii kwa Afisa wa Wilaya?",
-                                        type = SweetAlertType.CONFIRM,
-                                        confirmButtonText = "Ndio, Peleka",
-                                        cancelButtonText = "Ghairi",
-                                        onConfirm = {
-                                            isOperating = true
-                                            scope.launch {
-                                                val res = ApiClient.forwardToDistrict(report.id)
-                                                isOperating = false
-                                                if (res.isSuccess) {
-                                                    onActionSuccess()
-                                                    onShowSweetAlert(
-                                                        SweetAlertData(
-                                                            title = "Imetumwa Wilayani",
-                                                            message = "Ripoti imewasilishwa Wilayani kwa hatua zaidi.",
-                                                            type = SweetAlertType.SUCCESS
-                                                        )
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    )
-                                )
+                                isOperating = true
+                                scope.launch {
+                                    val res = ApiClient.forwardToDistrict(report.id)
+                                    isOperating = false
+                                    if (res.isSuccess) {
+                                        onActionSuccess()
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imetumwa Wilayani",
+                                                message = "Ripoti imewasilishwa Wilayani kwa hatua zaidi.",
+                                                type = SweetAlertType.SUCCESS
+                                            )
+                                        )
+                                    } else {
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imeshindwa",
+                                                message = res.exceptionOrNull()?.message ?: "Imeshindwa kupeleka wilayani.",
+                                                type = SweetAlertType.ERROR
+                                            )
+                                        )
+                                    }
+                                }
                             },
                             borderColor = BlueOcean,
                             contentColor = WhitePure,
@@ -371,7 +376,7 @@ fun LeaderReportCard(
                         )
                         MButton(
                             text = "KATAA",
-                            onClick = { showRejectInput = true },
+                            onClick = { showRejectForm = true },
                             borderColor = MaterialTheme.colorScheme.error,
                             contentColor = MaterialTheme.colorScheme.error
                         )
@@ -410,6 +415,14 @@ fun LeaderReportCard(
                                                 title = "Imetatuliwa!",
                                                 message = "Ripoti imetatuliwa na kuwekewa maelezo ya utatuzi.",
                                                 type = SweetAlertType.SUCCESS
+                                            )
+                                        )
+                                    } else {
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imeshindwa",
+                                                message = res.exceptionOrNull()?.message ?: "Imeshindwa kutatua ripoti.",
+                                                type = SweetAlertType.ERROR
                                             )
                                         )
                                     }
@@ -487,32 +500,29 @@ fun LeaderReportCard(
                                     text = "ASSIGN",
                                     onClick = {
                                         val wk = selectedWorker ?: return@MButton
-                                        onShowSweetAlert(
-                                            SweetAlertData(
-                                                title = "Thibitisha Afisa",
-                                                message = "Je, una uhakika unataka kumpanga ${wk.username} kushughulikia tatizo hili?",
-                                                type = SweetAlertType.CONFIRM,
-                                                confirmButtonText = "Ndio, Panga",
-                                                cancelButtonText = "Ghairi",
-                                                onConfirm = {
-                                                    isOperating = true
-                                                    scope.launch {
-                                                        val res = ApiClient.assignDamageReport(report.id, wk.id)
-                                                        isOperating = false
-                                                        if (res.isSuccess) {
-                                                            onActionSuccess()
-                                                            onShowSweetAlert(
-                                                                SweetAlertData(
-                                                                    title = "Umefanikiwa!",
-                                                                    message = "Afisa ${wk.username} amepangiwa majukumu kikamilifu.",
-                                                                    type = SweetAlertType.SUCCESS
-                                                                )
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            )
-                                        )
+                                        isOperating = true
+                                        scope.launch {
+                                            val res = ApiClient.assignDamageReport(report.id, wk.id)
+                                            isOperating = false
+                                            if (res.isSuccess) {
+                                                onActionSuccess()
+                                                onShowSweetAlert(
+                                                    SweetAlertData(
+                                                        title = "Umefanikiwa!",
+                                                        message = "Afisa ${wk.username} amepangiwa majukumu kikamilifu.",
+                                                        type = SweetAlertType.SUCCESS
+                                                    )
+                                                )
+                                            } else {
+                                                onShowSweetAlert(
+                                                    SweetAlertData(
+                                                        title = "Imeshindwa",
+                                                        message = res.exceptionOrNull()?.message ?: "Imeshindwa kupanga afisa.",
+                                                        type = SweetAlertType.ERROR
+                                                    )
+                                                )
+                                            }
+                                        }
                                     },
                                     borderColor = com.example.myapplication.ui.theme.BlueOcean,
                                     contentColor = com.example.myapplication.ui.theme.WhitePure,
@@ -526,32 +536,29 @@ fun LeaderReportCard(
                                 MButton(
                                     text = "PELEKA WILAYANI",
                                     onClick = {
-                                        onShowSweetAlert(
-                                            SweetAlertData(
-                                                title = "Peleka Wilayani",
-                                                message = "Je, una uhakika unataka kupeleka ripoti hii kwa Afisa wa Wilaya?",
-                                                type = SweetAlertType.CONFIRM,
-                                                confirmButtonText = "Ndio, Peleka",
-                                                cancelButtonText = "Ghairi",
-                                                onConfirm = {
-                                                    isOperating = true
-                                                    scope.launch {
-                                                        val res = ApiClient.forwardToDistrict(report.id)
-                                                        isOperating = false
-                                                        if (res.isSuccess) {
-                                                            onActionSuccess()
-                                                            onShowSweetAlert(
-                                                                SweetAlertData(
-                                                                    title = "Imetumwa Wilayani",
-                                                                    message = "Ripoti imewasilishwa Wilayani kwa hatua zaidi.",
-                                                                    type = SweetAlertType.SUCCESS
-                                                                )
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            )
-                                        )
+                                        isOperating = true
+                                        scope.launch {
+                                            val res = ApiClient.forwardToDistrict(report.id)
+                                            isOperating = false
+                                            if (res.isSuccess) {
+                                                onActionSuccess()
+                                                onShowSweetAlert(
+                                                    SweetAlertData(
+                                                        title = "Imetumwa Wilayani",
+                                                        message = "Ripoti imewasilishwa Wilayani kwa hatua zaidi.",
+                                                        type = SweetAlertType.SUCCESS
+                                                    )
+                                                )
+                                            } else {
+                                                onShowSweetAlert(
+                                                    SweetAlertData(
+                                                        title = "Imeshindwa",
+                                                        message = res.exceptionOrNull()?.message ?: "Imeshindwa kupeleka wilayani.",
+                                                        type = SweetAlertType.ERROR
+                                                    )
+                                                )
+                                            }
+                                        }
                                     },
                                     borderColor = BlueOcean,
                                     contentColor = WhitePure,
