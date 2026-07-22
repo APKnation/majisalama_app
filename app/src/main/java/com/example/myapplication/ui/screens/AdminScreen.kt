@@ -1,9 +1,12 @@
 package com.example.myapplication.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -15,17 +18,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.data.ApiClient
 import com.example.myapplication.data.DamageReport
-import com.example.myapplication.data.WaterSource
+import com.example.myapplication.data.User
 import com.example.myapplication.ui.components.*
 import com.example.myapplication.ui.theme.*
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminScreen(
     onNavigateToCitizen: () -> Unit,
@@ -38,23 +43,63 @@ fun AdminScreen(
     val user = ApiClient.currentUser
     val scope = rememberCoroutineScope()
 
-    var totalReports by remember { mutableStateOf(0) }
-    var pendingReports by remember { mutableStateOf(0) }
-    var resolvedReports by remember { mutableStateOf(0) }
+    var reports by remember { mutableStateOf<List<DamageReport>>(emptyList()) }
+    var workers by remember { mutableStateOf<List<User>>(emptyList()) }
     var totalSources by remember { mutableStateOf(0) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    
+    // selectedTab: 0 -> Zote, 1 -> Zinazosubiri, 2 -> Zimetatuliwa, 3 -> Zimekataliwa
+    var selectedTab by remember { mutableStateOf(0) }
+
+    val loadAdminData = {
+        isLoading = true
+        errorMessage = null
+        scope.launch {
+            try {
+                val rpt = ApiClient.getDamageReports()
+                if (rpt.isSuccess) {
+                    reports = rpt.getOrThrow()
+                } else {
+                    errorMessage = rpt.exceptionOrNull()?.message
+                }
+
+                val wrk = ApiClient.getWaterOfficers()
+                if (wrk.isSuccess) {
+                    workers = wrk.getOrThrow()
+                }
+
+                val src = ApiClient.getWaterSources()
+                if (src.isSuccess) {
+                    totalSources = src.getOrThrow().size
+                }
+            } catch (e: Exception) {
+                errorMessage = e.message
+            } finally {
+                isLoading = false
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
-        scope.launch {
-            val rpt = ApiClient.getDamageReports()
-            if (rpt.isSuccess) {
-                val list = rpt.getOrThrow()
-                totalReports  = list.size
-                pendingReports  = list.count { it.status.contains("pending") }
-                resolvedReports = list.count { it.status == "resolved" || it.status == "closed" }
-            }
-            val src = ApiClient.getWaterSources()
-            if (src.isSuccess) totalSources = src.getOrThrow().size
+        loadAdminData()
+    }
+
+    val totalReports = reports.size
+    val pendingReports = reports.count {
+        it.status == "pending_village" || it.status == "pending" || it.status == "forwarded_to_district"
+    }
+    val resolvedReports = reports.count { it.status == "resolved" || it.status == "closed" }
+    val rejectedReports = reports.count { it.status == "rejected" }
+
+    val filteredReports = when (selectedTab) {
+        0 -> reports
+        1 -> reports.filter {
+            it.status == "pending_village" || it.status == "pending" || it.status == "forwarded_to_district"
         }
+        2 -> reports.filter { it.status == "resolved" || it.status == "closed" }
+        3 -> reports.filter { it.status == "rejected" }
+        else -> reports
     }
 
     LazyColumn(
@@ -120,28 +165,36 @@ fun AdminScreen(
                     value = totalReports.toString(),
                     label = "Ripoti\nZote",
                     icon = Icons.Default.ListAlt,
-                    iconTint = BlueOcean
+                    iconTint = BlueOcean,
+                    isSelected = selectedTab == 0,
+                    onClick = { selectedTab = 0 }
                 )
                 AdminStatCard(
                     modifier = Modifier.weight(1f),
                     value = pendingReports.toString(),
                     label = "Zinasubiri\nIdhini",
                     icon = Icons.Default.HourglassTop,
-                    iconTint = BlueDeep
+                    iconTint = BlueDeep,
+                    isSelected = selectedTab == 1,
+                    onClick = { selectedTab = 1 }
                 )
                 AdminStatCard(
                     modifier = Modifier.weight(1f),
                     value = resolvedReports.toString(),
                     label = "Zimetatuliwa",
                     icon = Icons.Default.CheckCircle,
-                    iconTint = BlueAbyss
+                    iconTint = BlueAbyss,
+                    isSelected = selectedTab == 2,
+                    onClick = { selectedTab = 2 }
                 )
                 AdminStatCard(
                     modifier = Modifier.weight(1f),
                     value = totalSources.toString(),
                     label = "Vyanzo\nvya Maji",
                     icon = Icons.Default.WaterDrop,
-                    iconTint = BlueOcean
+                    iconTint = BlueOcean,
+                    isSelected = false,
+                    onClick = onNavigateToCitizen
                 )
             }
         }
@@ -220,6 +273,129 @@ fun AdminScreen(
             }
         }
 
+        // ── Report Management Section Header ────────────────────────────────
+        item {
+            Spacer(Modifier.height(24.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "USIMAMIZI WA RIPOTI",
+                        color = BlueNight,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Text(
+                        text = "Angalia na uteleze majukumu ya admin kwa ripoti",
+                        color = SubtleOnWhite,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                MButton(
+                    text = "REFRESH",
+                    onClick = { loadAdminData() }
+                )
+            }
+            Spacer(Modifier.height(10.dp))
+        }
+
+        // ── Report Filter Tabs ────────────────────────────────────────────────
+        item {
+            val tabs = listOf(
+                "ZOTE ($totalReports)",
+                "ZINASUBIRI ($pendingReports)",
+                "ZIMETATULIWA ($resolvedReports)",
+                "ZIMEKATALIWA ($rejectedReports)"
+            )
+            PrimaryScrollableTabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = WhitePure,
+                contentColor = BlueNight,
+                edgePadding = 20.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                    .border(1.dp, BlueFoam, RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(16.dp))
+            ) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = {
+                            Text(
+                                text = title,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.Monospace
+                            )
+                        }
+                    )
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+        }
+
+        // ── Report List Items ────────────────────────────────────────────────
+        if (isLoading) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = BlueOcean)
+                }
+            }
+        } else if (errorMessage != null) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = errorMessage!!,
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            }
+        } else if (filteredReports.isEmpty()) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Hakuna ripoti katika kundi hili.",
+                        color = SubtleOnWhite,
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            }
+        } else {
+            items(filteredReports) { report ->
+                Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)) {
+                    AdminReportCard(
+                        report = report,
+                        workers = workers,
+                        onActionSuccess = { loadAdminData() }
+                    )
+                }
+            }
+        }
+
         item { Spacer(Modifier.height(24.dp)) }
     }
 }
@@ -231,13 +407,18 @@ private fun AdminStatCard(
     value: String,
     label: String,
     icon: ImageVector,
-    iconTint: Color
+    iconTint: Color,
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
     Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = WhitePure),
+        modifier = modifier.clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) BlueOcean.copy(alpha = 0.15f) else WhitePure
+        ),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+        border = if (isSelected) BorderStroke(2.dp, BlueOcean) else null,
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 6.dp else 3.dp)
     ) {
         Column(
             modifier = Modifier
@@ -260,8 +441,10 @@ private fun AdminStatCard(
             )
             Text(
                 text = label,
-                color = SubtleOnWhite,
-                style = MaterialTheme.typography.labelSmall,
+                color = if (isSelected) BlueOcean else SubtleOnWhite,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                ),
                 textAlign = TextAlign.Center,
                 lineHeight = 14.sp
             )
@@ -322,4 +505,343 @@ private fun AdminNavTile(
             }
         }
     }
+}
+
+// ── Admin Report Card ─────────────────────────────────────────────────────────
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AdminReportCard(
+    report: DamageReport,
+    workers: List<User>,
+    onActionSuccess: () -> Unit
+) {
+    var selectedWorker by remember { mutableStateOf<User?>(null) }
+    var workerDropdownExpanded by remember { mutableStateOf(false) }
+    var isOperating by remember { mutableStateOf(false) }
+
+    var showRejectInput by remember { mutableStateOf(false) }
+    var rejectionReason by remember { mutableStateOf("") }
+
+    var showResolveInput by remember { mutableStateOf(false) }
+    var resolutionNotes by remember { mutableStateOf("") }
+
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(workers) {
+        if (workers.isNotEmpty() && selectedWorker == null) {
+            selectedWorker = workers.first()
+        }
+    }
+
+    CleanReportCard(
+        report = report,
+        actions = {
+            Spacer(modifier = Modifier.height(8.dp))
+            MStripesDivider(height = 1.dp, modifier = Modifier.padding(vertical = 6.dp))
+
+            // Extra metadata
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "Imeripotiwa na: ${report.reportedByName}",
+                    color = BlueNight,
+                    fontSize = 11.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+                if (report.assignedToName != null) {
+                    Text(
+                        text = "Afisa Maji: ${report.assignedToName}",
+                        color = Color(0xFF00BCD4),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+                if (report.rejectionReason?.isNotEmpty() == true) {
+                    Text(
+                        text = "Sababu ya Kukataliwa: ${report.rejectionReason}",
+                        color = Color.Red,
+                        fontSize = 11.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+                if (report.resolutionNotes?.isNotEmpty() == true) {
+                    Text(
+                        text = "Maelezo ya Utatuzi: ${report.resolutionNotes}",
+                        color = Color(0xFF4CAF50),
+                        fontSize = 11.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            if (isOperating) {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = BlueOcean, modifier = Modifier.size(24.dp))
+                }
+            } else {
+                Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    
+                    // 1. Assign Water Officer section
+                    if (workers.isNotEmpty() && report.status != "resolved" && report.status != "closed") {
+                        Text(
+                            text = "PANGA AFISA WA MAJI (ASSIGN WORKER):",
+                            color = BlueNight,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.Monospace
+                        )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .border(1.dp, BlueFoam, RoundedCornerShape(12.dp))
+                                    .background(WhitePure)
+                                    .clickable { workerDropdownExpanded = true }
+                                    .padding(8.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = selectedWorker?.username ?: "Chagua Mfanyakazi",
+                                        color = BlueNight,
+                                        fontSize = 12.sp
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowDropDown,
+                                        contentDescription = "Dropdown",
+                                        tint = BlueNight
+                                    )
+                                }
+                                DropdownMenu(
+                                    expanded = workerDropdownExpanded,
+                                    onDismissRequest = { workerDropdownExpanded = false },
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.7f)
+                                        .background(WhitePure)
+                                ) {
+                                    workers.forEach { w ->
+                                        DropdownMenuItem(
+                                            text = { Text(w.username, color = BlueNight) },
+                                            onClick = {
+                                                selectedWorker = w
+                                                workerDropdownExpanded = false
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+
+                            MButton(
+                                text = "ASSIGN",
+                                onClick = {
+                                    val wk = selectedWorker ?: return@MButton
+                                    isOperating = true
+                                    scope.launch {
+                                        val res = ApiClient.assignDamageReport(report.id, wk.id)
+                                        isOperating = false
+                                        if (res.isSuccess) onActionSuccess()
+                                    }
+                                },
+                                backgroundColor = BlueOcean,
+                                contentColor = WhitePure,
+                                borderColor = BlueOcean
+                            )
+                        }
+                    }
+
+                    // 2. Reject input form if active
+                    if (showRejectInput) {
+                        MTextField(
+                            value = rejectionReason,
+                            onValueChange = { rejectionReason = it },
+                            label = "Sababu ya Kukataa Ripoti",
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            MButton(
+                                text = "THIBITISHA KATAA",
+                                onClick = {
+                                    if (rejectionReason.isBlank()) return@MButton
+                                    isOperating = true
+                                    scope.launch {
+                                        val res = ApiClient.rejectDamageReport(report.id, rejectionReason)
+                                        isOperating = false
+                                        if (res.isSuccess) onActionSuccess()
+                                    }
+                                },
+                                backgroundColor = Color.Red,
+                                contentColor = WhitePure,
+                                borderColor = Color.Red
+                            )
+                            MButton(
+                                text = "GHAFILA (CANCEL)",
+                                onClick = { showRejectInput = false }
+                            )
+                        }
+                    }
+
+                    // 3. Resolve input form if active
+                    if (showResolveInput) {
+                        MTextField(
+                            value = resolutionNotes,
+                            onValueChange = { resolutionNotes = it },
+                            label = "Maelezo ya Utatuzi wa Matatizo",
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            MButton(
+                                text = "THIBITISHA TATIJO",
+                                onClick = {
+                                    if (resolutionNotes.isBlank()) return@MButton
+                                    isOperating = true
+                                    scope.launch {
+                                        val res = ApiClient.resolveDamageReport(report.id, resolutionNotes)
+                                        isOperating = false
+                                        if (res.isSuccess) onActionSuccess()
+                                    }
+                                },
+                                backgroundColor = Color(0xFF4CAF50),
+                                contentColor = WhitePure,
+                                borderColor = Color(0xFF4CAF50)
+                            )
+                            MButton(
+                                text = "GHAFILA (CANCEL)",
+                                onClick = { showResolveInput = false }
+                            )
+                        }
+                    }
+
+                    // 4. Delete confirm form if active
+                    if (showDeleteConfirm) {
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(10.dp)) {
+                                Text(
+                                    text = "Je, una uhakika unataka kufuta ripoti hii kabisa?",
+                                    color = Color.Red,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    MButton(
+                                        text = "NDIO, FUTA",
+                                        onClick = {
+                                            isOperating = true
+                                            scope.launch {
+                                                val res = ApiClient.deleteDamageReport(report.id)
+                                                isOperating = false
+                                                if (res.isSuccess) onActionSuccess()
+                                            }
+                                        },
+                                        backgroundColor = Color.Red,
+                                        contentColor = WhitePure,
+                                        borderColor = Color.Red
+                                    )
+                                    MButton(
+                                        text = "HAPANA",
+                                        onClick = { showDeleteConfirm = false }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // Main Action Buttons Row for Admin
+                    if (!showRejectInput && !showResolveInput && !showDeleteConfirm) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            // Approve Button (if pending)
+                            if (report.status == "pending_village" || report.status == "pending") {
+                                MButton(
+                                    text = "IDHINISHA",
+                                    onClick = {
+                                        isOperating = true
+                                        scope.launch {
+                                            val res = ApiClient.approveDamageReport(report.id)
+                                            isOperating = false
+                                            if (res.isSuccess) onActionSuccess()
+                                        }
+                                    },
+                                    backgroundColor = Color(0xFF4CAF50),
+                                    contentColor = WhitePure,
+                                    borderColor = Color(0xFF4CAF50),
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+
+                            // Forward to District Button (if pending or approved by village)
+                            if (report.status == "village_approved" || report.status == "pending") {
+                                MButton(
+                                    text = "WILAYANI",
+                                    onClick = {
+                                        isOperating = true
+                                        scope.launch {
+                                            val res = ApiClient.forwardToDistrict(report.id)
+                                            isOperating = false
+                                            if (res.isSuccess) onActionSuccess()
+                                        }
+                                    },
+                                    backgroundColor = BlueOcean,
+                                    contentColor = WhitePure,
+                                    borderColor = BlueOcean,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+
+                            // Resolve Button (if not resolved)
+                            if (report.status != "resolved" && report.status != "closed") {
+                                MButton(
+                                    text = "TATUA",
+                                    onClick = { showResolveInput = true },
+                                    backgroundColor = Color(0xFF009688),
+                                    contentColor = WhitePure,
+                                    borderColor = Color(0xFF009688),
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+
+                            // Reject Button (if not rejected)
+                            if (report.status != "rejected" && report.status != "resolved") {
+                                MButton(
+                                    text = "KATAA",
+                                    onClick = { showRejectInput = true },
+                                    backgroundColor = Color(0xFFFF9800),
+                                    contentColor = WhitePure,
+                                    borderColor = Color(0xFFFF9800),
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+
+                            // Delete Button
+                            MButton(
+                                text = "FUTA",
+                                onClick = { showDeleteConfirm = true },
+                                backgroundColor = Color.Red,
+                                contentColor = WhitePure,
+                                borderColor = Color.Red,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    )
 }

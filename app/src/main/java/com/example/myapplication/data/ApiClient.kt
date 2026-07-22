@@ -426,6 +426,18 @@ object ApiClient {
         ))
     }
 
+    suspend fun deleteDamageReport(id: Int): Result<Boolean> = withContext(Dispatchers.IO) {
+        try {
+            val snapshot = db.collection("damageReports").whereEqualTo("id", id).get().await()
+            val doc = snapshot.documents.firstOrNull() ?: throw Exception("Report not found")
+            doc.reference.delete().await()
+            Result.success(true)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error deleting report", e)
+            Result.failure(e)
+        }
+    }
+
     private suspend fun updateDamageReportField(id: Int, updates: Map<String, Any?>): Result<Boolean> {
         return try {
             val snapshot = db.collection("damageReports").whereEqualTo("id", id).get().await()
