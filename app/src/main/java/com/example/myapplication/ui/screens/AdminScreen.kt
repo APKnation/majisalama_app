@@ -543,8 +543,13 @@ fun AdminReportCard(
 
             // Extra metadata
             Column(modifier = Modifier.fillMaxWidth()) {
+                val reporterDisplayName = if (report.reportedByName.isBlank() || report.reportedByName.equals("Anonymous", ignoreCase = true)) {
+                    "Mwananchi"
+                } else {
+                    report.reportedByName
+                }
                 Text(
-                    text = "Imeripotiwa na: ${report.reportedByName}",
+                    text = "Imeripotiwa na: $reporterDisplayName",
                     color = BlueNight,
                     fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace

@@ -188,27 +188,60 @@ fun PriorityBadge(priority: String) {
 // ── Status Badge ──────────────────────────────────────────────────────────────
 @Composable
 fun StatusBadge(status: String) {
-    val (label, color) = when (status.lowercase()) {
-        "pending_village"       -> Pair("Inasubiri",    MajiSecondary)
-        "village_approved"      -> Pair("Imeidhinishwa", WaterAqua)
-        "forwarded_to_district" -> Pair("Wilaya",        MajiPrimary)
-        "rejected"              -> Pair("Imekataliwa",   WaterAlert)
-        "assigned"              -> Pair("Imepewa",       MajiTertiary)
-        "in_progress"           -> Pair("Inafanywa",     WaterWarning)
-        "resolved"              -> Pair("Imetatuliwa",   WaterAqua)
-        "closed"                -> Pair("Imefungwa",     WaterMuted)
-        "safe"                  -> Pair("Salama",        WaterAqua)
-        "caution"               -> Pair("Tahadhari",     WaterWarning)
-        "unsafe"                -> Pair("Hatarini",      WaterAlert)
-        "under_repair"          -> Pair("Inatengenezwa", WaterWarning)
-        "dry"                   -> Pair("Kavu",          WaterMuted)
-        else                    -> Pair(status.replace("_", " ").uppercase(), WaterMuted)
+    val statusLower = status.lowercase().trim()
+    val (label, color) = when {
+        // Pending states -> Vibrant Amber / Orange
+        statusLower == "pending" || statusLower == "pending_village" || statusLower == "inasubiri" ->
+            Pair("Inasubiri", Color(0xFFE65100))
+
+        // Approved states -> Bright Teal
+        statusLower == "village_approved" || statusLower == "imeidhinishwa" ->
+            Pair("Imeidhinishwa", Color(0xFF00897B))
+
+        // Forwarded to district -> Deep Purple / Indigo
+        statusLower == "forwarded_to_district" || statusLower == "wilaya" ->
+            Pair("Wilayani", Color(0xFF673AB7))
+
+        // Assigned states -> Royal Blue
+        statusLower == "assigned" || statusLower == "imepewa" ->
+            Pair("Imepewa Afisa", Color(0xFF1976D2))
+
+        // In Progress states -> Cyan / Deep Cyan
+        statusLower == "in_progress" || statusLower == "inafanywa" || statusLower == "inafanyiwa" ||
+                statusLower == "inatengenezwa" || statusLower == "under_repair" ->
+            Pair("Inafanywa Kazi", Color(0xFF0097A7))
+
+        // Resolved states -> Pure Emerald Green
+        statusLower == "resolved" || statusLower == "imetatuliwa" ->
+            Pair("Imetatuliwa", Color(0xFF2E7D32))
+
+        // Closed states -> Slate Gray
+        statusLower == "closed" || statusLower == "imefungwa" ->
+            Pair("Imefungwa", Color(0xFF455A64))
+
+        // Rejected states -> Crimson Red
+        statusLower == "rejected" || statusLower == "imekataliwa" ->
+            Pair("Imekataliwa", Color(0xFFC62828))
+
+        // Water quality / source status
+        statusLower == "safe" || statusLower == "salama" ->
+            Pair("Salama", Color(0xFF2E7D32))
+        statusLower == "caution" || statusLower == "tahadhari" ->
+            Pair("Tahadhari", Color(0xFFF57C00))
+        statusLower == "unsafe" || statusLower == "hatarini" ->
+            Pair("Hatarini", Color(0xFFC62828))
+        statusLower == "dry" || statusLower == "kavu" ->
+            Pair("Kavu", Color(0xFF616161))
+
+        else -> Pair(status.replace("_", " ").uppercase(), Color(0xFF546E7A))
     }
+
     Box(
         modifier = Modifier
-            .clip(MaterialTheme.shapes.extraSmall)
-            .background(color.copy(alpha = 0.15f))
-            .padding(horizontal = 10.dp, vertical = 5.dp),
+            .clip(RoundedCornerShape(6.dp))
+            .background(color.copy(alpha = 0.12f))
+            .border(1.dp, color.copy(alpha = 0.35f), RoundedCornerShape(6.dp))
+            .padding(horizontal = 10.dp, vertical = 4.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -283,8 +316,13 @@ fun CleanReportCard(
                         modifier = Modifier.size(12.dp)
                     )
                     Spacer(Modifier.width(4.dp))
+                    val reporterDisplayName = if (report.reportedByName.isBlank() || report.reportedByName.equals("Anonymous", ignoreCase = true)) {
+                        "Mwananchi"
+                    } else {
+                        report.reportedByName
+                    }
                     Text(
-                        text = report.reportedByName,
+                        text = reporterDisplayName,
                         color = SubtleOnWhite,
                         style = MaterialTheme.typography.labelSmall
                     )

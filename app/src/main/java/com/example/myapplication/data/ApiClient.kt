@@ -292,7 +292,9 @@ object ApiClient {
                     waterSourceId = doc.getLong("waterSourceId")?.toInt() ?: 0,
                     waterSourceName = doc.getString("waterSourceName") ?: "",
                     reportedById = doc.getLong("reportedById")?.toInt(),
-                    reportedByName = doc.getString("reportedByName") ?: "",
+                    reportedByName = doc.getString("reportedByName").let {
+                        if (it.isNullOrBlank() || it.equals("Anonymous", ignoreCase = true)) "Mwananchi" else it
+                    },
                     reportDate = doc.getString("reportDate") ?: "",
                     title = doc.getString("title") ?: "",
                     description = doc.getString("description") ?: "",
@@ -328,7 +330,7 @@ object ApiClient {
             val sources = getWaterSources().getOrDefault(emptyList())
             val source = sources.find { it.id == waterSourceId } ?: throw Exception("Source not found")
             val reporterId = currentUser?.id
-            val reporterName = currentUser?.username ?: "Anonymous"
+            val reporterName = currentUser?.username ?: "Mwananchi"
             val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
             
             val docRef = db.collection("damageReports").document()
