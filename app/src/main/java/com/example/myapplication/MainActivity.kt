@@ -490,6 +490,9 @@ fun MainAppContainer() {
                     .padding(innerPadding)
             ) {
                 when (currentScreen) {
+                    is Screen.Splash -> SplashScreen(
+                        onSplashFinished = { navigateToRoot(Screen.Landing) }
+                    )
                     is Screen.Landing -> LandingScreen(
                         onNavigateToLogin = { navigateTo(Screen.Login) },
                         onNavigateToRegister = { navigateReplace(Screen.Register) },
