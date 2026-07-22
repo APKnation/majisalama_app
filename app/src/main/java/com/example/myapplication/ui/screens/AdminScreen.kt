@@ -49,6 +49,9 @@ fun AdminScreen(
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     
+    // SweetAlert dialog state
+    var sweetAlertData by remember { mutableStateOf<SweetAlertData?>(null) }
+
     // selectedTab: 0 -> Zote, 1 -> Zinazosubiri, 2 -> Zimetatuliwa, 3 -> Zimekataliwa
     var selectedTab by remember { mutableStateOf(0) }
 
@@ -102,301 +105,318 @@ fun AdminScreen(
         else -> reports
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BlueMist),
-        contentPadding = PaddingValues(bottom = 24.dp)
-    ) {
-        // ── Hero Header ───────────────────────────────────────────────────────
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(BlueAbyss)
-                    .padding(horizontal = 20.dp, vertical = 28.dp)
-            ) {
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        // Avatar circle
-                        Box(
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clip(CircleShape)
-                                .background(BlueDeep),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AdminPanelSettings,
-                                contentDescription = null,
-                                tint = WhitePure,
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
-                        Spacer(Modifier.width(14.dp))
-                        Column {
-                            Text(
-                                text = "Karibu, ${user?.displayName ?: "Admin"}",
-                                color = WhitePure,
-                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                            )
-                            Text(
-                                text = "Admin Panel • MajiSalama",
-                                color = WhitePure.copy(alpha = 0.7f),
-                                style = MaterialTheme.typography.bodySmall
-                            )
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BlueMist),
+            contentPadding = PaddingValues(bottom = 24.dp)
+        ) {
+            // ── Hero Header ───────────────────────────────────────────────────────
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(BlueAbyss)
+                        .padding(horizontal = 20.dp, vertical = 28.dp)
+                ) {
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(52.dp)
+                                    .clip(CircleShape)
+                                    .background(BlueDeep),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.AdminPanelSettings,
+                                    contentDescription = null,
+                                    tint = WhitePure,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
+                            Spacer(Modifier.width(14.dp))
+                            Column {
+                                Text(
+                                    text = "Karibu, ${user?.displayName ?: "Admin"}",
+                                    color = WhitePure,
+                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                                )
+                                Text(
+                                    text = "Admin Panel • MajiSalama",
+                                    color = WhitePure.copy(alpha = 0.7f),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
 
-        // ── Stat Cards Strip ─────────────────────────────────────────────────
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .offset(y = (-16).dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                AdminStatCard(
-                    modifier = Modifier.weight(1f),
-                    value = totalReports.toString(),
-                    label = "Ripoti\nZote",
-                    icon = Icons.Default.ListAlt,
-                    iconTint = BlueOcean,
-                    isSelected = selectedTab == 0,
-                    onClick = { selectedTab = 0 }
-                )
-                AdminStatCard(
-                    modifier = Modifier.weight(1f),
-                    value = pendingReports.toString(),
-                    label = "Zinasubiri\nIdhini",
-                    icon = Icons.Default.HourglassTop,
-                    iconTint = BlueDeep,
-                    isSelected = selectedTab == 1,
-                    onClick = { selectedTab = 1 }
-                )
-                AdminStatCard(
-                    modifier = Modifier.weight(1f),
-                    value = resolvedReports.toString(),
-                    label = "Zimetatuliwa",
-                    icon = Icons.Default.CheckCircle,
-                    iconTint = BlueAbyss,
-                    isSelected = selectedTab == 2,
-                    onClick = { selectedTab = 2 }
-                )
-                AdminStatCard(
-                    modifier = Modifier.weight(1f),
-                    value = totalSources.toString(),
-                    label = "Vyanzo\nvya Maji",
-                    icon = Icons.Default.WaterDrop,
-                    iconTint = BlueOcean,
-                    isSelected = false,
-                    onClick = onNavigateToCitizen
-                )
-            }
-        }
-
-        // ── Section Title ─────────────────────────────────────────────────────
-        item {
-            Text(
-                text = "Paneli za Watumiaji",
-                color = BlueNight,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp)
-            )
-        }
-
-        // ── Navigation Grid 2×2 ───────────────────────────────────────────────
-        item {
-            Column(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                    AdminNavTile(
+            // ── Stat Cards Strip ─────────────────────────────────────────────────
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .offset(y = (-16).dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    AdminStatCard(
                         modifier = Modifier.weight(1f),
-                        icon = Icons.Default.People,
-                        title = "Mwananchi",
-                        subtitle = "Dashboard ya Mwananchi",
-                        accent = BlueOcean,
+                        value = totalReports.toString(),
+                        label = "Ripoti\nZote",
+                        icon = Icons.Default.ListAlt,
+                        iconTint = BlueOcean,
+                        isSelected = selectedTab == 0,
+                        onClick = { selectedTab = 0 }
+                    )
+                    AdminStatCard(
+                        modifier = Modifier.weight(1f),
+                        value = pendingReports.toString(),
+                        label = "Zinasubiri\nIdhini",
+                        icon = Icons.Default.HourglassTop,
+                        iconTint = BlueDeep,
+                        isSelected = selectedTab == 1,
+                        onClick = { selectedTab = 1 }
+                    )
+                    AdminStatCard(
+                        modifier = Modifier.weight(1f),
+                        value = resolvedReports.toString(),
+                        label = "Zimetatuliwa",
+                        icon = Icons.Default.CheckCircle,
+                        iconTint = BlueAbyss,
+                        isSelected = selectedTab == 2,
+                        onClick = { selectedTab = 2 }
+                    )
+                    AdminStatCard(
+                        modifier = Modifier.weight(1f),
+                        value = totalSources.toString(),
+                        label = "Vyanzo\nvya Maji",
+                        icon = Icons.Default.WaterDrop,
+                        iconTint = BlueOcean,
+                        isSelected = false,
                         onClick = onNavigateToCitizen
                     )
-                    AdminNavTile(
-                        modifier = Modifier.weight(1f),
-                        icon = Icons.Default.AccountBalance,
-                        title = "Kiongozi",
-                        subtitle = "Dashboard ya Kijiji",
-                        accent = BlueDeep,
-                        onClick = onNavigateToLeader
-                    )
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                    AdminNavTile(
-                        modifier = Modifier.weight(1f),
-                        icon = Icons.Default.Engineering,
-                        title = "Afisa Maji",
-                        subtitle = "Dashboard ya Afisa",
-                        accent = BlueAbyss,
-                        onClick = onNavigateToOfficer
-                    )
-                    AdminNavTile(
-                        modifier = Modifier.weight(1f),
-                        icon = Icons.Default.LocationCity,
-                        title = "Wilaya",
-                        subtitle = "Dashboard ya Wilaya",
-                        accent = BlueNight,
-                        onClick = onNavigateToDistrict
-                    )
-                }
-                Spacer(Modifier.height(8.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                    AdminNavTile(
-                        modifier = Modifier.weight(1f),
-                        icon = Icons.Default.Add,
-                        title = "Ongeza Chanzo",
-                        subtitle = "Sajili Chanzo Kipya",
-                        accent = Color(0xFF4CAF50),
-                        onClick = onNavigateToAddWaterSource
-                    )
-                    AdminNavTile(
-                        modifier = Modifier.weight(1f),
-                        icon = Icons.Default.Add,
-                        title = "Ongeza Kijiji",
-                        subtitle = "Sajili Kijiji Kipya",
-                        accent = Color(0xFFFF9800),
-                        onClick = onNavigateToAddVillage
-                    )
                 }
             }
-        }
 
-        // ── Report Management Section Header ────────────────────────────────
-        item {
-            Spacer(Modifier.height(24.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text(
-                        text = "USIMAMIZI WA RIPOTI",
-                        color = BlueNight,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
-                    Text(
-                        text = "Angalia na uteleze majukumu ya admin kwa ripoti",
-                        color = SubtleOnWhite,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-                MButton(
-                    text = "REFRESH",
-                    onClick = { loadAdminData() }
+            // ── Section Title ─────────────────────────────────────────────────────
+            item {
+                Text(
+                    text = "Paneli za Watumiaji",
+                    color = BlueNight,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp)
                 )
             }
-            Spacer(Modifier.height(10.dp))
-        }
 
-        // ── Report Filter Tabs ────────────────────────────────────────────────
-        item {
-            val tabs = listOf(
-                "ZOTE ($totalReports)",
-                "ZINASUBIRI ($pendingReports)",
-                "ZIMETATULIWA ($resolvedReports)",
-                "ZIMEKATALIWA ($rejectedReports)"
-            )
-            PrimaryScrollableTabRow(
-                selectedTabIndex = selectedTab,
-                containerColor = WhitePure,
-                contentColor = BlueNight,
-                edgePadding = 20.dp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 6.dp)
-                    .border(1.dp, BlueFoam, RoundedCornerShape(16.dp))
-                    .clip(RoundedCornerShape(16.dp))
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index },
-                        text = {
-                            Text(
-                                text = title,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.Monospace
+            // ── Navigation Grid 2×2 ───────────────────────────────────────────────
+            item {
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        AdminNavTile(
+                            modifier = Modifier.weight(1f),
+                            icon = Icons.Default.People,
+                            title = "Mwananchi",
+                            subtitle = "Dashboard ya Mwananchi",
+                            accent = BlueOcean,
+                            onClick = onNavigateToCitizen
+                        )
+                        AdminNavTile(
+                            modifier = Modifier.weight(1f),
+                            icon = Icons.Default.AccountBalance,
+                            title = "Kiongozi",
+                            subtitle = "Dashboard ya Kijiji",
+                            accent = BlueDeep,
+                            onClick = onNavigateToLeader
+                        )
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        AdminNavTile(
+                            modifier = Modifier.weight(1f),
+                            icon = Icons.Default.Engineering,
+                            title = "Afisa Maji",
+                            subtitle = "Dashboard ya Afisa",
+                            accent = BlueAbyss,
+                            onClick = onNavigateToOfficer
+                        )
+                        AdminNavTile(
+                            modifier = Modifier.weight(1f),
+                            icon = Icons.Default.LocationCity,
+                            title = "Wilaya",
+                            subtitle = "Dashboard ya Wilaya",
+                            accent = BlueNight,
+                            onClick = onNavigateToDistrict
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        AdminNavTile(
+                            modifier = Modifier.weight(1f),
+                            icon = Icons.Default.Add,
+                            title = "Ongeza Chanzo",
+                            subtitle = "Sajili Chanzo Kipya",
+                            accent = Color(0xFF4CAF50),
+                            onClick = onNavigateToAddWaterSource
+                        )
+                        AdminNavTile(
+                            modifier = Modifier.weight(1f),
+                            icon = Icons.Default.Add,
+                            title = "Ongeza Kijiji",
+                            subtitle = "Sajili Kijiji Kipya",
+                            accent = Color(0xFFFF9800),
+                            onClick = onNavigateToAddVillage
+                        )
+                    }
+                }
+            }
+
+            // ── Report Management Section Header ────────────────────────────────
+            item {
+                Spacer(Modifier.height(24.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "USIMAMIZI WA RIPOTI",
+                            color = BlueNight,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                        Text(
+                            text = "Angalia na uteleze majukumu ya admin kwa ripoti",
+                            color = SubtleOnWhite,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    MButton(
+                        text = "REFRESH",
+                        onClick = {
+                            loadAdminData()
+                            sweetAlertData = SweetAlertData(
+                                title = "Taarifa Zimehuishwa",
+                                message = "Ripoti na takwimu zimesasishwa kutoka kwenye mfumo.",
+                                type = SweetAlertType.INFO
                             )
                         }
                     )
                 }
+                Spacer(Modifier.height(10.dp))
             }
-            Spacer(Modifier.height(12.dp))
+
+            // ── Report Filter Tabs ────────────────────────────────────────────────
+            item {
+                val tabs = listOf(
+                    "ZOTE ($totalReports)",
+                    "ZINASUBIRI ($pendingReports)",
+                    "ZIMETATULIWA ($resolvedReports)",
+                    "ZIMEKATALIWA ($rejectedReports)"
+                )
+                PrimaryScrollableTabRow(
+                    selectedTabIndex = selectedTab,
+                    containerColor = WhitePure,
+                    contentColor = BlueNight,
+                    edgePadding = 20.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 6.dp)
+                        .border(1.dp, BlueFoam, RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(16.dp))
+                ) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTab == index,
+                            onClick = { selectedTab = index },
+                            text = {
+                                Text(
+                                    text = title,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                            }
+                        )
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
+            }
+
+            // ── Report List Items ────────────────────────────────────────────────
+            if (isLoading) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = BlueOcean)
+                    }
+                }
+            } else if (errorMessage != null) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = errorMessage!!,
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily.Monospace
+                        )
+                    }
+                }
+            } else if (filteredReports.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Hakuna ripoti katika kundi hili.",
+                            color = SubtleOnWhite,
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily.Monospace
+                        )
+                    }
+                }
+            } else {
+                items(filteredReports) { report ->
+                    Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)) {
+                        AdminReportCard(
+                            report = report,
+                            workers = workers,
+                            onActionSuccess = { loadAdminData() },
+                            onShowSweetAlert = { alert -> sweetAlertData = alert }
+                        )
+                    }
+                }
+            }
+
+            item { Spacer(Modifier.height(24.dp)) }
         }
 
-        // ── Report List Items ────────────────────────────────────────────────
-        if (isLoading) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = BlueOcean)
-                }
-            }
-        } else if (errorMessage != null) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = errorMessage!!,
-                        color = MaterialTheme.colorScheme.error,
-                        fontSize = 14.sp,
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
-            }
-        } else if (filteredReports.isEmpty()) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Hakuna ripoti katika kundi hili.",
-                        color = SubtleOnWhite,
-                        fontSize = 14.sp,
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
-            }
-        } else {
-            items(filteredReports) { report ->
-                Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)) {
-                    AdminReportCard(
-                        report = report,
-                        workers = workers,
-                        onActionSuccess = { loadAdminData() }
-                    )
-                }
-            }
+        // Render SweetAlert Dialog if active
+        sweetAlertData?.let { data ->
+            SweetAlertDialog(
+                data = data,
+                onDismissRequest = { sweetAlertData = null }
+            )
         }
-
-        item { Spacer(Modifier.height(24.dp)) }
     }
 }
 
@@ -513,7 +533,8 @@ private fun AdminNavTile(
 fun AdminReportCard(
     report: DamageReport,
     workers: List<User>,
-    onActionSuccess: () -> Unit
+    onActionSuccess: () -> Unit,
+    onShowSweetAlert: (SweetAlertData) -> Unit
 ) {
     var selectedWorker by remember { mutableStateOf<User?>(null) }
     var workerDropdownExpanded by remember { mutableStateOf(false) }
@@ -524,8 +545,6 @@ fun AdminReportCard(
 
     var showResolveInput by remember { mutableStateOf(false) }
     var resolutionNotes by remember { mutableStateOf("") }
-
-    var showDeleteConfirm by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
 
@@ -651,12 +670,32 @@ fun AdminReportCard(
                                 text = "ASSIGN",
                                 onClick = {
                                     val wk = selectedWorker ?: return@MButton
-                                    isOperating = true
-                                    scope.launch {
-                                        val res = ApiClient.assignDamageReport(report.id, wk.id)
-                                        isOperating = false
-                                        if (res.isSuccess) onActionSuccess()
-                                    }
+                                    onShowSweetAlert(
+                                        SweetAlertData(
+                                            title = "Thibitisha Mfanyakazi",
+                                            message = "Je, una uhakika unataka kumpanga ${wk.username} kushughulikia ripoti hii?",
+                                            type = SweetAlertType.CONFIRM,
+                                            confirmButtonText = "Ndio, Panga",
+                                            cancelButtonText = "Ghairi",
+                                            onConfirm = {
+                                                isOperating = true
+                                                scope.launch {
+                                                    val res = ApiClient.assignDamageReport(report.id, wk.id)
+                                                    isOperating = false
+                                                    if (res.isSuccess) {
+                                                        onActionSuccess()
+                                                        onShowSweetAlert(
+                                                            SweetAlertData(
+                                                                title = "Umefanikiwa!",
+                                                                message = "Mfanyakazi ${wk.username} amepangiwa majukumu kikamilifu.",
+                                                                type = SweetAlertType.SUCCESS
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    )
                                 },
                                 backgroundColor = BlueOcean,
                                 contentColor = WhitePure,
@@ -682,7 +721,17 @@ fun AdminReportCard(
                                     scope.launch {
                                         val res = ApiClient.rejectDamageReport(report.id, rejectionReason)
                                         isOperating = false
-                                        if (res.isSuccess) onActionSuccess()
+                                        if (res.isSuccess) {
+                                            onActionSuccess()
+                                            showRejectInput = false
+                                            onShowSweetAlert(
+                                                SweetAlertData(
+                                                    title = "Ripoti Imekataliwa",
+                                                    message = "Ripoti imekataliwa na kuwekewa sababu.",
+                                                    type = SweetAlertType.WARNING
+                                                )
+                                            )
+                                        }
                                     }
                                 },
                                 backgroundColor = Color.Red,
@@ -690,7 +739,7 @@ fun AdminReportCard(
                                 borderColor = Color.Red
                             )
                             MButton(
-                                text = "GHAFILA (CANCEL)",
+                                text = "GHAIRI",
                                 onClick = { showRejectInput = false }
                             )
                         }
@@ -713,7 +762,17 @@ fun AdminReportCard(
                                     scope.launch {
                                         val res = ApiClient.resolveDamageReport(report.id, resolutionNotes)
                                         isOperating = false
-                                        if (res.isSuccess) onActionSuccess()
+                                        if (res.isSuccess) {
+                                            onActionSuccess()
+                                            showResolveInput = false
+                                            onShowSweetAlert(
+                                                SweetAlertData(
+                                                    title = "Imetatuliwa!",
+                                                    message = "Ripoti imetatuliwa na kuhifadhiwa kikamilifu.",
+                                                    type = SweetAlertType.SUCCESS
+                                                )
+                                            )
+                                        }
                                     }
                                 },
                                 backgroundColor = Color(0xFF4CAF50),
@@ -721,52 +780,14 @@ fun AdminReportCard(
                                 borderColor = Color(0xFF4CAF50)
                             )
                             MButton(
-                                text = "GHAFILA (CANCEL)",
+                                text = "GHAIRI",
                                 onClick = { showResolveInput = false }
                             )
                         }
                     }
 
-                    // 4. Delete confirm form if active
-                    if (showDeleteConfirm) {
-                        Card(
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(10.dp)) {
-                                Text(
-                                    text = "Je, una uhakika unataka kufuta ripoti hii kabisa?",
-                                    color = Color.Red,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    MButton(
-                                        text = "NDIO, FUTA",
-                                        onClick = {
-                                            isOperating = true
-                                            scope.launch {
-                                                val res = ApiClient.deleteDamageReport(report.id)
-                                                isOperating = false
-                                                if (res.isSuccess) onActionSuccess()
-                                            }
-                                        },
-                                        backgroundColor = Color.Red,
-                                        contentColor = WhitePure,
-                                        borderColor = Color.Red
-                                    )
-                                    MButton(
-                                        text = "HAPANA",
-                                        onClick = { showDeleteConfirm = false }
-                                    )
-                                }
-                            }
-                        }
-                    }
-
                     // Main Action Buttons Row for Admin
-                    if (!showRejectInput && !showResolveInput && !showDeleteConfirm) {
+                    if (!showRejectInput && !showResolveInput) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(6.dp),
                             verticalAlignment = Alignment.CenterVertically,
@@ -777,12 +798,32 @@ fun AdminReportCard(
                                 MButton(
                                     text = "IDHINISHA",
                                     onClick = {
-                                        isOperating = true
-                                        scope.launch {
-                                            val res = ApiClient.approveDamageReport(report.id)
-                                            isOperating = false
-                                            if (res.isSuccess) onActionSuccess()
-                                        }
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Thibitisha Idhini",
+                                                message = "Je, una uhakika unataka kuidhinisha ripoti hii ya uharibifu?",
+                                                type = SweetAlertType.CONFIRM,
+                                                confirmButtonText = "Ndio, Idhinisha",
+                                                cancelButtonText = "Ghairi",
+                                                onConfirm = {
+                                                    isOperating = true
+                                                    scope.launch {
+                                                        val res = ApiClient.approveDamageReport(report.id)
+                                                        isOperating = false
+                                                        if (res.isSuccess) {
+                                                            onActionSuccess()
+                                                            onShowSweetAlert(
+                                                                SweetAlertData(
+                                                                    title = "Imefanikiwa!",
+                                                                    message = "Ripoti imeidhinishwa kikamilifu.",
+                                                                    type = SweetAlertType.SUCCESS
+                                                                )
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            )
+                                        )
                                     },
                                     backgroundColor = Color(0xFF4CAF50),
                                     contentColor = WhitePure,
@@ -796,12 +837,32 @@ fun AdminReportCard(
                                 MButton(
                                     text = "WILAYANI",
                                     onClick = {
-                                        isOperating = true
-                                        scope.launch {
-                                            val res = ApiClient.forwardToDistrict(report.id)
-                                            isOperating = false
-                                            if (res.isSuccess) onActionSuccess()
-                                        }
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Peleka Wilayani",
+                                                message = "Je, una uhakika unataka kupeleka ripoti hii kwa Afisa wa Wilaya?",
+                                                type = SweetAlertType.CONFIRM,
+                                                confirmButtonText = "Ndio, Peleka",
+                                                cancelButtonText = "Ghairi",
+                                                onConfirm = {
+                                                    isOperating = true
+                                                    scope.launch {
+                                                        val res = ApiClient.forwardToDistrict(report.id)
+                                                        isOperating = false
+                                                        if (res.isSuccess) {
+                                                            onActionSuccess()
+                                                            onShowSweetAlert(
+                                                                SweetAlertData(
+                                                                    title = "Imetumwa!",
+                                                                    message = "Ripoti imetumwa Wilayani kikamilifu.",
+                                                                    type = SweetAlertType.SUCCESS
+                                                                )
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            )
+                                        )
                                     },
                                     backgroundColor = BlueOcean,
                                     contentColor = WhitePure,
@@ -837,7 +898,34 @@ fun AdminReportCard(
                             // Delete Button
                             MButton(
                                 text = "FUTA",
-                                onClick = { showDeleteConfirm = true },
+                                onClick = {
+                                    onShowSweetAlert(
+                                        SweetAlertData(
+                                            title = "Thibitisha Kufuta",
+                                            message = "Je, una uhakika unataka kufuta ripoti hii kabisa kutoka kwenye mfumo?",
+                                            type = SweetAlertType.ERROR,
+                                            confirmButtonText = "Ndio, Futa Kabisa",
+                                            cancelButtonText = "Hapana",
+                                            onConfirm = {
+                                                isOperating = true
+                                                scope.launch {
+                                                    val res = ApiClient.deleteDamageReport(report.id)
+                                                    isOperating = false
+                                                    if (res.isSuccess) {
+                                                        onActionSuccess()
+                                                        onShowSweetAlert(
+                                                            SweetAlertData(
+                                                                title = "Imefutwa!",
+                                                                message = "Ripoti imefutwa kabisa kutoka kwenye mfumo.",
+                                                                type = SweetAlertType.ERROR
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    )
+                                },
                                 backgroundColor = Color.Red,
                                 contentColor = WhitePure,
                                 borderColor = Color.Red,

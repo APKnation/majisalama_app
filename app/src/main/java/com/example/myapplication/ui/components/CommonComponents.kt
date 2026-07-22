@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -331,4 +331,120 @@ fun CleanReportCard(
             actions()
         }
     }
+}
+
+// ── SweetAlert Dialog Component ───────────────────────────────────────────────
+enum class SweetAlertType {
+    SUCCESS,
+    WARNING,
+    ERROR,
+    INFO,
+    CONFIRM
+}
+
+data class SweetAlertData(
+    val title: String,
+    val message: String,
+    val type: SweetAlertType = SweetAlertType.INFO,
+    val confirmButtonText: String = "Sawa",
+    val cancelButtonText: String? = null,
+    val onConfirm: (() -> Unit)? = null,
+    val onCancel: (() -> Unit)? = null
+)
+
+private data class AlertVisuals(
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val color: Color,
+    val bg: Color
+)
+
+@Composable
+fun SweetAlertDialog(
+    data: SweetAlertData,
+    onDismissRequest: () -> Unit
+) {
+    val visuals = when (data.type) {
+        SweetAlertType.SUCCESS -> AlertVisuals(Icons.Default.CheckCircle, Color(0xFF2E7D32), Color(0xFFE8F5E9))
+        SweetAlertType.WARNING -> AlertVisuals(Icons.Default.Warning, Color(0xFFEF6C00), Color(0xFFFFF3E0))
+        SweetAlertType.ERROR   -> AlertVisuals(Icons.Default.Error, Color(0xFFC62828), Color(0xFFFFEBEE))
+        SweetAlertType.INFO    -> AlertVisuals(Icons.Default.Info, Color(0xFF1E88E5), Color(0xFFE3F2FD))
+        SweetAlertType.CONFIRM -> AlertVisuals(Icons.Default.Help, Color(0xFF0097A7), Color(0xFFE0F7FA))
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        shape = RoundedCornerShape(24.dp),
+        containerColor = WhitePure,
+        titleContentColor = BlueNight,
+        textContentColor = SubtleOnWhite,
+        icon = {
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(androidx.compose.foundation.shape.CircleShape)
+                    .background(visuals.bg),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = visuals.icon,
+                    contentDescription = null,
+                    tint = visuals.color,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+        },
+        title = {
+            Text(
+                text = data.title,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        text = {
+            Text(
+                text = data.message,
+                fontSize = 13.sp,
+                textAlign = TextAlign.Center,
+                lineHeight = 18.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    data.onConfirm?.invoke()
+                    onDismissRequest()
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = visuals.color),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.padding(horizontal = 4.dp)
+            ) {
+                Text(
+                    text = data.confirmButtonText,
+                    color = WhitePure,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
+        dismissButton = if (data.cancelButtonText != null) {
+            {
+                OutlinedButton(
+                    onClick = {
+                        data.onCancel?.invoke()
+                        onDismissRequest()
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                ) {
+                    Text(
+                        text = data.cancelButtonText,
+                        color = SubtleOnWhite,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+        } else null
+    )
 }

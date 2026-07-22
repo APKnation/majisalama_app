@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.data.ApiClient
 import com.example.myapplication.data.WaterSource
 import com.example.myapplication.ui.components.*
+import com.example.myapplication.ui.theme.*
 import kotlinx.coroutines.launch
 import androidx.compose.material3.MaterialTheme
 
@@ -48,6 +49,10 @@ fun ReportDamageScreen(
     var isLoading by remember { mutableStateOf(false) }
     var isFetchingSources by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    
+    // SweetAlert dialog state
+    var sweetAlertData by remember { mutableStateOf<SweetAlertData?>(null) }
+    
     val scope = rememberCoroutineScope()
 
     // Fetch water sources on load if initialSourceId is null or to set initial value
@@ -66,156 +71,77 @@ fun ReportDamageScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
-    ) {
-        // Header
-        Row(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
         ) {
-            MButton(
-                text = "← GHAIRI (CANCEL)",
-                onClick = onNavigateBack
-            )
-            Text(
-                text = "RIPOTI UHARIBIFU",
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp,
-                fontFamily = FontFamily.Monospace
-            )
-        }
-
-        MStripesDivider(modifier = Modifier.padding(bottom = 16.dp))
-
-        if (isFetchingSources) {
-            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+            // Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Error Display
-                if (errorMessage != null) {
-                    item {
-                        Text(
-                            text = errorMessage!!,
-                            color = Color.Red,
-                            fontSize = 13.sp,
-                            fontFamily = FontFamily.Monospace
-                        )
-                    }
+                MButton(
+                    text = "← GHAIRI (CANCEL)",
+                    onClick = onNavigateBack
+                )
+                Text(
+                    text = "RIPOTI UHARIBIFU",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+            }
+
+            MStripesDivider(modifier = Modifier.padding(bottom = 16.dp))
+
+            if (isFetchingSources) {
+                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
                 }
-
-                // Water Source Selector / Lock Display
-                item {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "CHANZO CHA MAJI (WATER SOURCE)",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp,
+            } else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Error Display
+                    if (errorMessage != null) {
+                        item {
+                            Text(
+                                text = errorMessage!!,
+                                color = Color.Red,
+                                fontSize = 13.sp,
                                 fontFamily = FontFamily.Monospace
-                            ),
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-
-                        if (initialSourceId != null && selectedSource != null) {
-                            // Locked display since we came from Detail Screen
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
-                                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                                    .padding(14.dp)
-                            ) {
-                                Text(
-                                    text = selectedSource!!.name.uppercase(),
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 15.sp
-                                )
-                            }
-                        } else {
-                            // Dropdown selection
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .clickable { if (!isLoading) sourceDropdownExpanded = true }
-                                    .padding(14.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = selectedSource?.name ?: "Chagua Chanzo",
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        fontSize = 15.sp
-                                    )
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowDropDown,
-                                        contentDescription = "Dropdown",
-                                        tint = MaterialTheme.colorScheme.onSurface
-                                    )
-                                }
-                                DropdownMenu(
-                                    expanded = sourceDropdownExpanded,
-                                    onDismissRequest = { sourceDropdownExpanded = false },
-                                    modifier = Modifier
-                                        .fillMaxWidth(0.8f)
-                                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
-                                ) {
-                                    sources.forEach { s ->
-                                        DropdownMenuItem(
-                                            text = { Text("${s.name} (${s.villageName})", color = MaterialTheme.colorScheme.onSurface) },
-                                            onClick = {
-                                                selectedSource = s
-                                                sourceDropdownExpanded = false
-                                            }
-                                        )
-                                    }
-                                }
-                            }
+                            )
                         }
                     }
-                }
 
-                // Priority Selection
-                item {
-                    Column(modifier = Modifier.fillMaxWidth()) {
+                    // Water Source Selector / Lock Display
+                    item {
                         Text(
-                            text = "DHARURA / UMUHIMU (PRIORITY)",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp,
-                                fontFamily = FontFamily.Monospace
-                            ),
+                            text = "CHANZO CHA MAJI (WATER SOURCE)",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.Monospace,
                             modifier = Modifier.padding(bottom = 4.dp)
                         )
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
-                                .background(MaterialTheme.colorScheme.background)
-                                .clickable { if (!isLoading) priorityDropdownExpanded = true }
-                                .padding(14.dp)
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                .clickable(enabled = initialSourceId == null && sources.isNotEmpty()) {
+                                    sourceDropdownExpanded = true
+                                }
+                                .padding(16.dp)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -223,9 +149,87 @@ fun ReportDamageScreen(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(
-                                    text = priorities.find { it.first == selectedPriority }?.second ?: selectedPriority,
+                                    text = selectedSource?.name ?: "Chagua Chanzo Cha Maji",
                                     color = MaterialTheme.colorScheme.onSurface,
-                                    fontSize = 15.sp
+                                    fontSize = 14.sp,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                                if (initialSourceId == null && sources.isNotEmpty()) {
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowDropDown,
+                                        contentDescription = "Dropdown",
+                                        tint = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            }
+                            DropdownMenu(
+                                expanded = sourceDropdownExpanded,
+                                onDismissRequest = { sourceDropdownExpanded = false },
+                                modifier = Modifier
+                                    .fillMaxWidth(0.9f)
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
+                            ) {
+                                sources.forEach { src ->
+                                    DropdownMenuItem(
+                                        text = { Text(src.name, color = MaterialTheme.colorScheme.onSurface) },
+                                        onClick = {
+                                            selectedSource = src
+                                            sourceDropdownExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // Title
+                    item {
+                        MTextField(
+                            value = title,
+                            onValueChange = { title = it },
+                            label = "Kichwa cha Ripoti (Title)"
+                        )
+                    }
+
+                    // Description
+                    item {
+                        MTextField(
+                            value = description,
+                            onValueChange = { description = it },
+                            label = "Maelezo ya Uharibifu (Description)"
+                        )
+                    }
+
+                    // Priority Selector
+                    item {
+                        Text(
+                            text = "KIPAUMBELE (PRIORITY)",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.Monospace,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                .clickable { priorityDropdownExpanded = true }
+                                .padding(16.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                val currentLabel = priorities.find { it.first == selectedPriority }?.second ?: ""
+                                Text(
+                                    text = currentLabel,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontSize = 14.sp,
+                                    fontFamily = FontFamily.Monospace
                                 )
                                 Icon(
                                     imageVector = Icons.Default.ArrowDropDown,
@@ -237,15 +241,15 @@ fun ReportDamageScreen(
                                 expanded = priorityDropdownExpanded,
                                 onDismissRequest = { priorityDropdownExpanded = false },
                                 modifier = Modifier
-                                    .fillMaxWidth(0.8f)
-                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                                    .fillMaxWidth(0.9f)
+                                    .background(MaterialTheme.colorScheme.surface)
                                     .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
                             ) {
-                                priorities.forEach { p ->
+                                priorities.forEach { (key, label) ->
                                     DropdownMenuItem(
-                                        text = { Text(p.second, color = MaterialTheme.colorScheme.onSurface) },
+                                        text = { Text(label, color = MaterialTheme.colorScheme.onSurface) },
                                         onClick = {
-                                            selectedPriority = p.first
+                                            selectedPriority = key
                                             priorityDropdownExpanded = false
                                         }
                                     )
@@ -253,73 +257,87 @@ fun ReportDamageScreen(
                             }
                         }
                     }
-                }
 
-                // Title Input
-                item {
-                    MTextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        label = "Kichwa cha Ripoti (Title)",
-                        enabled = !isLoading
-                    )
-                }
-
-                // Description Input
-                item {
-                    MTextField(
-                        value = description,
-                        onValueChange = { description = it },
-                        label = "Maelezo ya Uharibifu (Description)",
-                        singleLine = false,
-                        enabled = !isLoading,
-                        modifier = Modifier.height(140.dp)
-                    )
-                }
-
-                // Submit Button
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    if (isLoading) {
-                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
-                        }
-                    } else {
-                        MButton(
-                            text = "TUMA RIPOTI (SUBMIT REPORT)",
-                            onClick = {
-                                if (selectedSource == null) {
-                                    errorMessage = "Tafadhali chagua chanzo cha maji."
-                                    return@MButton
-                                }
-                                if (title.isBlank() || description.isBlank()) {
-                                    errorMessage = "Tafadhali jaza kichwa na maelezo."
-                                    return@MButton
-                                }
-                                isLoading = true
-                                errorMessage = null
-                                scope.launch {
-                                    val res = ApiClient.reportDamage(
-                                        waterSourceId = selectedSource!!.id,
-                                        title = title,
-                                        description = description,
-                                        priority = selectedPriority
-                                    )
-                                    isLoading = false
-                                    if (res.isSuccess) {
-                                        onSuccess()
-                                    } else {
-                                        errorMessage = res.exceptionOrNull()?.message ?: "Imeshindwa kutuma ripoti."
+                    // Submit Button
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        if (isLoading) {
+                            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
+                            }
+                        } else {
+                            MButton(
+                                text = "TUMA RIPOTI (SUBMIT REPORT)",
+                                onClick = {
+                                    if (selectedSource == null) {
+                                        sweetAlertData = SweetAlertData(
+                                            title = "Taarifa Inahitajika",
+                                            message = "Tafadhali chagua chanzo cha maji kabla ya kutuma ripoti.",
+                                            type = SweetAlertType.WARNING
+                                        )
+                                        return@MButton
                                     }
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            borderColor = MaterialTheme.colorScheme.error,
-                            contentColor = MaterialTheme.colorScheme.error
-                        )
+                                    if (title.isBlank() || description.isBlank()) {
+                                        sweetAlertData = SweetAlertData(
+                                            title = "Taarifa Inahitajika",
+                                            message = "Tafadhali jaza kichwa cha ripoti pamoja na maelezo ya uharibifu.",
+                                            type = SweetAlertType.WARNING
+                                        )
+                                        return@MButton
+                                    }
+
+                                    sweetAlertData = SweetAlertData(
+                                        title = "Thibitisha Kutuma Ripoti",
+                                        message = "Je, una uhakika unataka kutuma ripoti hii ya uharibifu wa mfumo wa maji?",
+                                        type = SweetAlertType.CONFIRM,
+                                        confirmButtonText = "Ndio, Tuma",
+                                        cancelButtonText = "Ghairi",
+                                        onConfirm = {
+                                            isLoading = true
+                                            errorMessage = null
+                                            scope.launch {
+                                                val res = ApiClient.reportDamage(
+                                                    waterSourceId = selectedSource!!.id,
+                                                    title = title,
+                                                    description = description,
+                                                    priority = selectedPriority
+                                                )
+                                                isLoading = false
+                                                if (res.isSuccess) {
+                                                    sweetAlertData = SweetAlertData(
+                                                        title = "Ripoti Imetumwa!",
+                                                        message = "Ripoti yako imetolewa kikamilifu. Utaweza kufuatilia maendeleo ya ukarabati.",
+                                                        type = SweetAlertType.SUCCESS,
+                                                        confirmButtonText = "Sawa",
+                                                        onConfirm = { onSuccess() }
+                                                    )
+                                                } else {
+                                                    sweetAlertData = SweetAlertData(
+                                                        title = "Imeshindwa",
+                                                        message = res.exceptionOrNull()?.message ?: "Imeshindwa kutuma ripoti. Jaribu tena.",
+                                                        type = SweetAlertType.ERROR
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                borderColor = BlueOcean,
+                                contentColor = WhitePure,
+                                backgroundColor = BlueOcean
+                            )
+                        }
                     }
                 }
             }
+        }
+
+        sweetAlertData?.let { data ->
+            SweetAlertDialog(
+                data = data,
+                onDismissRequest = { sweetAlertData = null }
+            )
         }
     }
 }
