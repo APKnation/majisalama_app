@@ -96,7 +96,7 @@ fun SplashScreen(
     LaunchedEffect(Unit) {
         textScale.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 1400, easing = OvershootEasing(1.4f))
+            animationSpec = tween(durationMillis = 1400, easing = CubicBezierEasing(0.34f, 1.56f, 0.64f, 1.0f))
         )
     }
     LaunchedEffect(Unit) {
