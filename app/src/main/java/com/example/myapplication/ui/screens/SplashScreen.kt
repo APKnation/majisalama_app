@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,79 +29,114 @@ import kotlinx.coroutines.delay
 fun SplashScreen(
     onSplashFinished: () -> Unit
 ) {
-    // Timer for 5 seconds (within 4-8 seconds requirement)
+    // Timer for exactly 4 seconds
     LaunchedEffect(Unit) {
-        delay(5000)
+        delay(4000)
         onSplashFinished()
     }
 
-    val infiniteTransition = rememberInfiniteTransition(label = "water_drops")
+    val infiniteTransition = rememberInfiniteTransition(label = "water_drops_rain")
 
-    // Drop 1 falling animation
+    // Drop 1 (Center Main)
     val drop1Y by infiniteTransition.animateFloat(
         initialValue = -0.2f,
-        targetValue = 0.5f,
+        targetValue = 0.55f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1800, easing = LinearOutSlowInEasing),
+            animation = tween(durationMillis = 1400, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "drop1_y"
     )
-    val drop1Alpha by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 0.2f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1800, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "drop1_alpha"
-    )
 
-    // Drop 2 (offset timing)
+    // Drop 2 (Left Inner)
     val drop2Y by infiniteTransition.animateFloat(
-        initialValue = -0.3f,
-        targetValue = 0.55f,
+        initialValue = -0.35f,
+        targetValue = 0.6f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2200, delayMillis = 600, easing = FastOutLinearInEasing),
+            animation = tween(durationMillis = 1600, delayMillis = 200, easing = LinearOutSlowInEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "drop2_y"
     )
 
+    // Drop 3 (Right Inner)
+    val drop3Y by infiniteTransition.animateFloat(
+        initialValue = -0.25f,
+        targetValue = 0.52f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500, delayMillis = 400, easing = FastOutLinearInEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "drop3_y"
+    )
+
+    // Drop 4 (Far Left)
+    val drop4Y by infiniteTransition.animateFloat(
+        initialValue = -0.4f,
+        targetValue = 0.65f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1800, delayMillis = 150, easing = LinearOutSlowInEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "drop4_y"
+    )
+
+    // Drop 5 (Far Right)
+    val drop5Y by infiniteTransition.animateFloat(
+        initialValue = -0.3f,
+        targetValue = 0.58f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1700, delayMillis = 350, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "drop5_y"
+    )
+
+    // Drop 6 (Center Quick Drop)
+    val drop6Y by infiniteTransition.animateFloat(
+        initialValue = -0.15f,
+        targetValue = 0.48f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1200, delayMillis = 500, easing = LinearOutSlowInEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "drop6_y"
+    )
+
     // Ripple expansion animation
     val rippleScale by infiniteTransition.animateFloat(
         initialValue = 0.3f,
-        targetValue = 2.4f,
+        targetValue = 2.5f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1800, easing = FastOutSlowInEasing),
+            animation = tween(durationMillis = 1400, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "ripple_scale"
     )
     val rippleAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.8f,
+        initialValue = 0.85f,
         targetValue = 0.0f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1800, easing = FastOutSlowInEasing),
+            animation = tween(durationMillis = 1400, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "ripple_alpha"
     )
 
-    // Text fade-in and scale animation
+    // Text entrance animation
     val textScale = remember { Animatable(0.6f) }
     val textAlpha = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
         textScale.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 1400, easing = CubicBezierEasing(0.34f, 1.56f, 0.64f, 1.0f))
+            animationSpec = tween(durationMillis = 1000, easing = CubicBezierEasing(0.34f, 1.56f, 0.64f, 1.0f))
         )
     }
     LaunchedEffect(Unit) {
         textAlpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 1200)
+            animationSpec = tween(durationMillis = 900)
         )
     }
 
@@ -121,61 +155,121 @@ fun SplashScreen(
             ),
         contentAlignment = Alignment.Center
     ) {
-        // Decorative background water wave circles
+        // Ambient background glowing circles
         Canvas(modifier = Modifier.fillMaxSize()) {
             val canvasWidth = size.width
             val canvasHeight = size.height
-            
-            // Draw background glowing water ambient circles
+
             drawCircle(
-                color = BlueOcean.copy(alpha = 0.15f),
-                radius = canvasWidth * 0.7f,
+                color = BlueOcean.copy(alpha = 0.18f),
+                radius = canvasWidth * 0.75f,
                 center = androidx.compose.ui.geometry.Offset(canvasWidth * 0.5f, canvasHeight * 0.45f)
             )
             drawCircle(
-                color = Color(0xFF00BCD4).copy(alpha = 0.08f),
-                radius = canvasWidth * 0.9f,
+                color = Color(0xFF00E5FF).copy(alpha = 0.10f),
+                radius = canvasWidth * 0.95f,
                 center = androidx.compose.ui.geometry.Offset(canvasWidth * 0.5f, canvasHeight * 0.45f)
             )
         }
 
-        // Animated Drop 1
+        // ── Multiple Cascading Water Drops Layer ─────────────────────────────────────
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 60.dp)
+                .padding(bottom = 50.dp)
         ) {
+            // Drop 1: Center Large
             Box(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .offset(y = (drop1Y * 600).dp)
-                    .alpha(drop1Alpha)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.WaterDrop,
-                    contentDescription = null,
-                    tint = BlueOcean,
-                    modifier = Modifier.size(36.dp)
-                )
-            }
-
-            // Animated Drop 2 (offset)
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(x = (-30).dp, y = (drop2Y * 600).dp)
-                    .alpha(0.7f)
+                    .offset(y = (drop1Y * 580).dp)
+                    .alpha(0.9f)
             ) {
                 Icon(
                     imageVector = Icons.Default.WaterDrop,
                     contentDescription = null,
                     tint = Color(0xFF00E5FF),
+                    modifier = Modifier.size(38.dp)
+                )
+            }
+
+            // Drop 2: Left Inner
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(x = (-45).dp, y = (drop2Y * 580).dp)
+                    .alpha(0.8f)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WaterDrop,
+                    contentDescription = null,
+                    tint = BlueOcean,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+
+            // Drop 3: Right Inner
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(x = (45).dp, y = (drop3Y * 580).dp)
+                    .alpha(0.85f)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WaterDrop,
+                    contentDescription = null,
+                    tint = Color(0xFF80DEEA),
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+
+            // Drop 4: Far Left
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(x = (-95).dp, y = (drop4Y * 580).dp)
+                    .alpha(0.7f)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WaterDrop,
+                    contentDescription = null,
+                    tint = BlueMist,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+
+            // Drop 5: Far Right
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(x = (95).dp, y = (drop5Y * 580).dp)
+                    .alpha(0.75f)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WaterDrop,
+                    contentDescription = null,
+                    tint = Color(0xFF00BCD4),
                     modifier = Modifier.size(24.dp)
+                )
+            }
+
+            // Drop 6: Quick Center Mini Drop
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(x = (12).dp, y = (drop6Y * 580).dp)
+                    .alpha(0.95f)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WaterDrop,
+                    contentDescription = null,
+                    tint = WhitePure,
+                    modifier = Modifier.size(18.dp)
                 )
             }
         }
 
-        // Main Center Content: Water Drop Ripple + Branding
+        // ── Main Center Content: Water Drop Ripple + MAJI SALAMA Title ───────────────
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -254,7 +348,7 @@ fun SplashScreen(
 
                 Text(
                     text = "Usalama na Uhakika wa Maji Safi",
-                    color = WhitePure.copy(alpha = 0.8f),
+                    color = WhitePure.copy(alpha = 0.85f),
                     fontSize = 14.sp,
                     fontFamily = FontFamily.Monospace,
                     textAlign = TextAlign.Center
@@ -272,7 +366,7 @@ fun SplashScreen(
                     initialValue = 0.3f,
                     targetValue = 1.0f,
                     animationSpec = infiniteRepeatable(
-                        animation = tween(600, easing = FastOutSlowInEasing),
+                        animation = tween(500, easing = FastOutSlowInEasing),
                         repeatMode = RepeatMode.Reverse
                     ),
                     label = "dot1"
@@ -281,7 +375,7 @@ fun SplashScreen(
                     initialValue = 0.3f,
                     targetValue = 1.0f,
                     animationSpec = infiniteRepeatable(
-                        animation = tween(600, delayMillis = 200, easing = FastOutSlowInEasing),
+                        animation = tween(500, delayMillis = 150, easing = FastOutSlowInEasing),
                         repeatMode = RepeatMode.Reverse
                     ),
                     label = "dot2"
@@ -290,7 +384,7 @@ fun SplashScreen(
                     initialValue = 0.3f,
                     targetValue = 1.0f,
                     animationSpec = infiniteRepeatable(
-                        animation = tween(600, delayMillis = 400, easing = FastOutSlowInEasing),
+                        animation = tween(500, delayMillis = 300, easing = FastOutSlowInEasing),
                         repeatMode = RepeatMode.Reverse
                     ),
                     label = "dot3"
