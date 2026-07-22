@@ -250,31 +250,12 @@ fun SplashScreen(
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Box(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(Color(0xFF00E5FF).copy(alpha = 0.2f))
-                        .padding(horizontal = 16.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = "TANZANIA WATER PORTAL",
-                        color = Color(0xFF80DEEA),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 3.sp,
-                        fontFamily = FontFamily.Monospace,
-                        textAlign = TextAlign.Center
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
                     text = "Usalama na Uhakika wa Maji Safi",
-                    color = WhitePure.copy(alpha = 0.7f),
-                    fontSize = 13.sp,
+                    color = WhitePure.copy(alpha = 0.8f),
+                    fontSize = 14.sp,
                     fontFamily = FontFamily.Monospace,
                     textAlign = TextAlign.Center
                 )
