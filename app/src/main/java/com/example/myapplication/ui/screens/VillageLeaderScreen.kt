@@ -37,6 +37,8 @@ fun VillageLeaderScreen(
     var selectedTab by remember { mutableStateOf(0) } // 0: Pending, 1: Approved/Active, 2: Resolved/Closed, 3: Rejected
     val tabs = listOf("INASUBIRI (PENDING)", "IMESIMAMIWA (ACTIVE)", "IMETATULIWA (RESOLVED)", "IMEKATALIWA (REJECTED)")
     
+    // SweetAlert dialog state
+    var sweetAlertData by remember { mutableStateOf<SweetAlertData?>(null) }
     val scope = rememberCoroutineScope()
 
     // Fetch data
@@ -45,7 +47,6 @@ fun VillageLeaderScreen(
         errorMessage = null
         scope.launch {
             try {
-                // Fetch reports
                 val repRes = ApiClient.getDamageReports()
                 if (repRes.isSuccess) {
                     reports = repRes.getOrThrow()
@@ -53,7 +54,6 @@ fun VillageLeaderScreen(
                     errorMessage = repRes.exceptionOrNull()?.message
                 }
 
-                // Fetch water officers for assignment
                 val workRes = ApiClient.getWaterOfficers()
                 if (workRes.isSuccess) {
                     workers = workRes.getOrThrow()
@@ -70,111 +70,128 @@ fun VillageLeaderScreen(
         loadLeaderData()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
-    ) {
-        // Header
-        Row(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
         ) {
-            MButton(
-                text = "← DASHBOARD",
-                onClick = onNavigateBack
-            )
-            Text(
-                text = "IDHINI ZA MWENYEKITI",
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp,
-                fontFamily = FontFamily.Monospace
-            )
-            MButton(
-                text = "REFRESH",
-                onClick = { loadLeaderData() }
-            )
-        }
-
-        MStripesDivider(modifier = Modifier.padding(bottom = 16.dp))
-
-        // Tabs
-        PrimaryScrollableTabRow(
-            selectedTabIndex = selectedTab,
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            edgePadding = 0.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
-        ) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTab == index,
-                    onClick = { selectedTab = index },
-                    text = {
-                        Text(
-                            text = title,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.Monospace
+            // Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                MButton(
+                    text = "← DASHBOARD",
+                    onClick = onNavigateBack
+                )
+                Text(
+                    text = "IDHINI ZA MWENYEKITI",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+                MButton(
+                    text = "REFRESH",
+                    onClick = {
+                        loadLeaderData()
+                        sweetAlertData = SweetAlertData(
+                            title = "Taarifa Zimehuishwa",
+                            message = "Taarifa za idhini za mwenyekiti zimesasishwa.",
+                            type = SweetAlertType.INFO
                         )
                     }
                 )
             }
-        }
 
-        if (isLoading) {
-            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
-            }
-        } else {
-            // Filter reports by tab
-            val filteredReports = when (selectedTab) {
-                0 -> reports.filter { it.status == "pending_village" || it.status == "pending" }
-                1 -> reports.filter {
-                    it.status == "village_approved" || it.status == "forwarded_to_district" ||
-                            it.status == "assigned" || it.status == "in_progress"
-                }
-                2 -> reports.filter { it.status == "resolved" || it.status == "closed" }
-                else -> reports.filter { it.status == "rejected" }
-            }
+            MStripesDivider(modifier = Modifier.padding(bottom = 16.dp))
 
-            if (filteredReports.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Hakuna ripoti katika kundi hili.",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 14.sp,
-                        fontFamily = FontFamily.Monospace
+            // Tabs
+            PrimaryScrollableTabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                edgePadding = 0.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
+            ) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = {
+                            Text(
+                                text = title,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.Monospace
+                            )
+                        }
                     )
                 }
+            }
+
+            if (isLoading) {
+                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
+                }
             } else {
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(filteredReports) { report ->
-                        LeaderReportCard(
-                            report = report,
-                            workers = workers,
-                            onActionSuccess = { loadLeaderData() }
+                // Filter reports by tab
+                val filteredReports = when (selectedTab) {
+                    0 -> reports.filter { it.status == "pending_village" || it.status == "pending" }
+                    1 -> reports.filter {
+                        it.status == "village_approved" || it.status == "forwarded_to_district" ||
+                                it.status == "assigned" || it.status == "in_progress"
+                    }
+                    2 -> reports.filter { it.status == "resolved" || it.status == "closed" }
+                    else -> reports.filter { it.status == "rejected" }
+                }
+
+                if (filteredReports.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Hakuna ripoti katika kundi hili.",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily.Monospace
                         )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(filteredReports) { report ->
+                            LeaderReportCard(
+                                report = report,
+                                workers = workers,
+                                onActionSuccess = { loadLeaderData() },
+                                onShowSweetAlert = { alert -> sweetAlertData = alert }
+                            )
+                        }
                     }
                 }
             }
+        }
+
+        sweetAlertData?.let { data ->
+            SweetAlertDialog(
+                data = data,
+                onDismissRequest = { sweetAlertData = null }
+            )
         }
     }
 }
@@ -184,7 +201,8 @@ fun VillageLeaderScreen(
 fun LeaderReportCard(
     report: DamageReport,
     workers: List<User>,
-    onActionSuccess: () -> Unit
+    onActionSuccess: () -> Unit,
+    onShowSweetAlert: (SweetAlertData) -> Unit
 ) {
     var rejectionReason by remember { mutableStateOf("") }
     var showRejectInput by remember { mutableStateOf(false) }
@@ -197,7 +215,6 @@ fun LeaderReportCard(
     var isOperating by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    // Setup initial selected worker
     LaunchedEffect(workers) {
         if (workers.isNotEmpty() && selectedWorker == null) {
             selectedWorker = workers.first()
@@ -261,7 +278,17 @@ fun LeaderReportCard(
                                 scope.launch {
                                     val res = ApiClient.rejectDamageReport(report.id, rejectionReason)
                                     isOperating = false
-                                    if (res.isSuccess) onActionSuccess()
+                                    if (res.isSuccess) {
+                                        onActionSuccess()
+                                        showRejectInput = false
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imekataliwa",
+                                                message = "Ripoti imekataliwa na kuwekewa sababu.",
+                                                type = SweetAlertType.WARNING
+                                            )
+                                        )
+                                    }
                                 }
                             },
                             borderColor = MaterialTheme.colorScheme.error,
@@ -277,12 +304,32 @@ fun LeaderReportCard(
                         MButton(
                             text = "IDHINISHA",
                             onClick = {
-                                isOperating = true
-                                scope.launch {
-                                    val res = ApiClient.approveDamageReport(report.id)
-                                    isOperating = false
-                                    if (res.isSuccess) onActionSuccess()
-                                }
+                                onShowSweetAlert(
+                                    SweetAlertData(
+                                        title = "Thibitisha Idhini",
+                                        message = "Je, una uhakika unataka kuidhinisha ripoti hii kama Mwenyekiti?",
+                                        type = SweetAlertType.CONFIRM,
+                                        confirmButtonText = "Ndio, Idhinisha",
+                                        cancelButtonText = "Ghairi",
+                                        onConfirm = {
+                                            isOperating = true
+                                            scope.launch {
+                                                val res = ApiClient.approveDamageReport(report.id)
+                                                isOperating = false
+                                                if (res.isSuccess) {
+                                                    onActionSuccess()
+                                                    onShowSweetAlert(
+                                                        SweetAlertData(
+                                                            title = "Imefanikiwa!",
+                                                            message = "Ripoti imeidhinishwa kikamilifu na Mwenyekiti.",
+                                                            type = SweetAlertType.SUCCESS
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    )
+                                )
                             },
                             borderColor = Color(0xFF4CAF50),
                             contentColor = WhitePure,
@@ -291,12 +338,32 @@ fun LeaderReportCard(
                         MButton(
                             text = "PELEKA WILAYANI",
                             onClick = {
-                                isOperating = true
-                                scope.launch {
-                                    val res = ApiClient.forwardToDistrict(report.id)
-                                    isOperating = false
-                                    if (res.isSuccess) onActionSuccess()
-                                }
+                                onShowSweetAlert(
+                                    SweetAlertData(
+                                        title = "Peleka Wilayani",
+                                        message = "Je, una uhakika unataka kupeleka ripoti hii kwa Afisa wa Wilaya?",
+                                        type = SweetAlertType.CONFIRM,
+                                        confirmButtonText = "Ndio, Peleka",
+                                        cancelButtonText = "Ghairi",
+                                        onConfirm = {
+                                            isOperating = true
+                                            scope.launch {
+                                                val res = ApiClient.forwardToDistrict(report.id)
+                                                isOperating = false
+                                                if (res.isSuccess) {
+                                                    onActionSuccess()
+                                                    onShowSweetAlert(
+                                                        SweetAlertData(
+                                                            title = "Imetumwa Wilayani",
+                                                            message = "Ripoti imewasilishwa Wilayani kwa hatua zaidi.",
+                                                            type = SweetAlertType.SUCCESS
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    )
+                                )
                             },
                             borderColor = BlueOcean,
                             contentColor = WhitePure,
@@ -335,7 +402,17 @@ fun LeaderReportCard(
                                 scope.launch {
                                     val res = ApiClient.resolveDamageReport(report.id, resolutionNotes)
                                     isOperating = false
-                                    if (res.isSuccess) onActionSuccess()
+                                    if (res.isSuccess) {
+                                        onActionSuccess()
+                                        showResolveInput = false
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imetatuliwa!",
+                                                message = "Ripoti imetatuliwa na kuwekewa maelezo ya utatuzi.",
+                                                type = SweetAlertType.SUCCESS
+                                            )
+                                        )
+                                    }
                                 }
                             },
                             borderColor = Color(0xFF4CAF50),
@@ -362,7 +439,6 @@ fun LeaderReportCard(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                // Dropdown
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
@@ -411,12 +487,32 @@ fun LeaderReportCard(
                                     text = "ASSIGN",
                                     onClick = {
                                         val wk = selectedWorker ?: return@MButton
-                                        isOperating = true
-                                        scope.launch {
-                                            val res = ApiClient.assignDamageReport(report.id, wk.id)
-                                            isOperating = false
-                                            if (res.isSuccess) onActionSuccess()
-                                        }
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Thibitisha Afisa",
+                                                message = "Je, una uhakika unataka kumpanga ${wk.username} kushughulikia tatizo hili?",
+                                                type = SweetAlertType.CONFIRM,
+                                                confirmButtonText = "Ndio, Panga",
+                                                cancelButtonText = "Ghairi",
+                                                onConfirm = {
+                                                    isOperating = true
+                                                    scope.launch {
+                                                        val res = ApiClient.assignDamageReport(report.id, wk.id)
+                                                        isOperating = false
+                                                        if (res.isSuccess) {
+                                                            onActionSuccess()
+                                                            onShowSweetAlert(
+                                                                SweetAlertData(
+                                                                    title = "Umefanikiwa!",
+                                                                    message = "Afisa ${wk.username} amepangiwa majukumu kikamilifu.",
+                                                                    type = SweetAlertType.SUCCESS
+                                                                )
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            )
+                                        )
                                     },
                                     borderColor = com.example.myapplication.ui.theme.BlueOcean,
                                     contentColor = com.example.myapplication.ui.theme.WhitePure,
@@ -430,12 +526,32 @@ fun LeaderReportCard(
                                 MButton(
                                     text = "PELEKA WILAYANI",
                                     onClick = {
-                                        isOperating = true
-                                        scope.launch {
-                                            val res = ApiClient.forwardToDistrict(report.id)
-                                            isOperating = false
-                                            if (res.isSuccess) onActionSuccess()
-                                        }
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Peleka Wilayani",
+                                                message = "Je, una uhakika unataka kupeleka ripoti hii kwa Afisa wa Wilaya?",
+                                                type = SweetAlertType.CONFIRM,
+                                                confirmButtonText = "Ndio, Peleka",
+                                                cancelButtonText = "Ghairi",
+                                                onConfirm = {
+                                                    isOperating = true
+                                                    scope.launch {
+                                                        val res = ApiClient.forwardToDistrict(report.id)
+                                                        isOperating = false
+                                                        if (res.isSuccess) {
+                                                            onActionSuccess()
+                                                            onShowSweetAlert(
+                                                                SweetAlertData(
+                                                                    title = "Imetumwa Wilayani",
+                                                                    message = "Ripoti imewasilishwa Wilayani kwa hatua zaidi.",
+                                                                    type = SweetAlertType.SUCCESS
+                                                                )
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            )
+                                        )
                                     },
                                     borderColor = BlueOcean,
                                     contentColor = WhitePure,

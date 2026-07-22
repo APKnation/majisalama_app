@@ -39,6 +39,9 @@ fun DistrictOfficerScreen(
     var selectedTab by remember { mutableStateOf(0) } // 0: Forwarded, 1: Active, 2: Resolved, 3: All
 
     val tabs = listOf("ZILIZOTUMWA", "INAFANYIWA KAZI", "IMETATULIWA", "ZOTE")
+    
+    // SweetAlert dialog state
+    var sweetAlertData by remember { mutableStateOf<SweetAlertData?>(null) }
     val scope = rememberCoroutineScope()
 
     val loadDistrictData = {
@@ -48,7 +51,6 @@ fun DistrictOfficerScreen(
             try {
                 val repRes = ApiClient.getDamageReports()
                 if (repRes.isSuccess) {
-                    // District officer sees all forwarded, assigned, in_progress, and resolved/closed reports
                     reports = repRes.getOrThrow().filter {
                         it.status == "forwarded_to_district" || it.status == "assigned" ||
                                 it.status == "in_progress" || it.status == "resolved" || it.status == "closed"
@@ -80,126 +82,143 @@ fun DistrictOfficerScreen(
         else -> reports
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
-    ) {
-        // Header
-        Row(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
         ) {
-            val user = ApiClient.currentUser
-            Column {
-                Text(
-                    text = "DASHBOARD YA WILAYA",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 1.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-                Text(
-                    text = "Afisa: ${user?.displayName?.uppercase() ?: ""}",
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-            }
-            Column(horizontalAlignment = Alignment.End) {
-                MButton(
-                    text = "REFRESH",
-                    onClick = { loadDistrictData() },
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    MButton(
-                        text = "+ CHANZO",
-                        onClick = onNavigateToAddWaterSource,
-                        backgroundColor = Color(0xFF4CAF50),
-                        contentColor = Color.White,
-                        borderColor = Color(0xFF4CAF50)
+            // Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val user = ApiClient.currentUser
+                Column {
+                    Text(
+                        text = "DASHBOARD YA WILAYA",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 1.sp,
+                        fontFamily = FontFamily.Monospace
                     )
-                    MButton(
-                        text = "+ KIJIJI",
-                        onClick = onNavigateToAddVillage,
-                        backgroundColor = Color(0xFFFF9800),
-                        contentColor = Color.White,
-                        borderColor = Color(0xFFFF9800)
+                    Text(
+                        text = "Afisa: ${user?.displayName?.uppercase() ?: ""}",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily.Monospace
                     )
                 }
-            }
-        }
-
-        MStripesDivider(modifier = Modifier.padding(bottom = 12.dp))
-
-        // Tabs
-        PrimaryScrollableTabRow(
-            selectedTabIndex = selectedTab,
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            edgePadding = 0.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
-        ) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTab == index,
-                    onClick = { selectedTab = index },
-                    text = {
-                        Text(
-                            text = title,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.Monospace
+                Column(horizontalAlignment = Alignment.End) {
+                    MButton(
+                        text = "REFRESH",
+                        onClick = {
+                            loadDistrictData()
+                            sweetAlertData = SweetAlertData(
+                                title = "Taarifa Zimehuishwa",
+                                message = "Taarifa za wilaya zimesasishwa kutoka kwenye mfumo.",
+                                type = SweetAlertType.INFO
+                            )
+                        },
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        MButton(
+                            text = "+ CHANZO",
+                            onClick = onNavigateToAddWaterSource,
+                            backgroundColor = Color(0xFF4CAF50),
+                            contentColor = Color.White,
+                            borderColor = Color(0xFF4CAF50)
+                        )
+                        MButton(
+                            text = "+ KIJIJI",
+                            onClick = onNavigateToAddVillage,
+                            backgroundColor = Color(0xFFFF9800),
+                            contentColor = Color.White,
+                            borderColor = Color(0xFFFF9800)
                         )
                     }
-                )
+                }
             }
-        }
 
-        if (isLoading) {
-            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
-            }
-        } else if (errorMessage != null) {
-            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = errorMessage!!,
-                    color = MaterialTheme.colorScheme.error,
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-            }
-        } else if (filteredReports.isEmpty()) {
-            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "Hakuna ripoti katika kundi hili.",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+            MStripesDivider(modifier = Modifier.padding(bottom = 12.dp))
+
+            // Tabs
+            PrimaryScrollableTabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                edgePadding = 0.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
             ) {
-                items(filteredReports) { report ->
-                    DistrictReportCard(
-                        report = report,
-                        workers = workers,
-                        onActionSuccess = { loadDistrictData() }
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = {
+                            Text(
+                                text = title,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.Monospace
+                            )
+                        }
                     )
                 }
             }
+
+            if (isLoading) {
+                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
+                }
+            } else if (errorMessage != null) {
+                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = errorMessage!!,
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            } else if (filteredReports.isEmpty()) {
+                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Hakuna ripoti katika kundi hili.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(filteredReports) { report ->
+                        DistrictReportCard(
+                            report = report,
+                            workers = workers,
+                            onActionSuccess = { loadDistrictData() },
+                            onShowSweetAlert = { alert -> sweetAlertData = alert }
+                        )
+                    }
+                }
+            }
+        }
+
+        sweetAlertData?.let { data ->
+            SweetAlertDialog(
+                data = data,
+                onDismissRequest = { sweetAlertData = null }
+            )
         }
     }
 }
@@ -209,7 +228,8 @@ fun DistrictOfficerScreen(
 fun DistrictReportCard(
     report: DamageReport,
     workers: List<User>,
-    onActionSuccess: () -> Unit
+    onActionSuccess: () -> Unit,
+    onShowSweetAlert: (SweetAlertData) -> Unit
 ) {
     var selectedWorker by remember { mutableStateOf<User?>(null) }
     var workerDropdownExpanded by remember { mutableStateOf(false) }
@@ -288,7 +308,17 @@ fun DistrictReportCard(
                                 scope.launch {
                                     val res = ApiClient.resolveDamageReport(report.id, resolutionNotes)
                                     isOperating = false
-                                    if (res.isSuccess) onActionSuccess()
+                                    if (res.isSuccess) {
+                                        onActionSuccess()
+                                        showResolveInput = false
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imetatuliwa!",
+                                                message = "Ripoti imetatuliwa kikamilifu na kuweka maelezo ya utatuzi.",
+                                                type = SweetAlertType.SUCCESS
+                                            )
+                                        )
+                                    }
                                 }
                             },
                             backgroundColor = Color(0xFF4CAF50),
@@ -316,7 +346,17 @@ fun DistrictReportCard(
                                 scope.launch {
                                     val res = ApiClient.rejectDamageReport(report.id, rejectionReason)
                                     isOperating = false
-                                    if (res.isSuccess) onActionSuccess()
+                                    if (res.isSuccess) {
+                                        onActionSuccess()
+                                        showRejectInput = false
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imekataliwa",
+                                                message = "Ripoti imekataliwa na kuwekewa sababu.",
+                                                type = SweetAlertType.WARNING
+                                            )
+                                        )
+                                    }
                                 }
                             },
                             backgroundColor = Color.Red,
@@ -391,12 +431,32 @@ fun DistrictReportCard(
                                     text = "ASSIGN",
                                     onClick = {
                                         val wk = selectedWorker ?: return@MButton
-                                        isOperating = true
-                                        scope.launch {
-                                            val res = ApiClient.assignDamageReport(report.id, wk.id)
-                                            isOperating = false
-                                            if (res.isSuccess) onActionSuccess()
-                                        }
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Thibitisha Afisa",
+                                                message = "Je, una uhakika unataka kumpanga ${wk.username} kushughulikia ripoti hii wilayani?",
+                                                type = SweetAlertType.CONFIRM,
+                                                confirmButtonText = "Ndio, Panga",
+                                                cancelButtonText = "Ghairi",
+                                                onConfirm = {
+                                                    isOperating = true
+                                                    scope.launch {
+                                                        val res = ApiClient.assignDamageReport(report.id, wk.id)
+                                                        isOperating = false
+                                                        if (res.isSuccess) {
+                                                            onActionSuccess()
+                                                            onShowSweetAlert(
+                                                                SweetAlertData(
+                                                                    title = "Umefanikiwa!",
+                                                                    message = "Afisa ${wk.username} amepangiwa kazi kikamilifu.",
+                                                                    type = SweetAlertType.SUCCESS
+                                                                )
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            )
+                                        )
                                     },
                                     borderColor = BlueOcean,
                                     contentColor = WhitePure,
