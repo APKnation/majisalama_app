@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.material3.MaterialTheme
 
 sealed class Screen {
+    object Splash : Screen()
     object Landing : Screen()
     object Login : Screen()
     object Register : Screen()
