@@ -70,8 +70,8 @@ private data class DrawerItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainAppContainer() {
-    val backStack = remember { mutableStateListOf<Screen>(Screen.Landing) }
-    val currentScreen = backStack.lastOrNull() ?: Screen.Landing
+    val backStack = remember { mutableStateListOf<Screen>(Screen.Splash) }
+    val currentScreen = backStack.lastOrNull() ?: Screen.Splash
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -95,8 +95,9 @@ fun MainAppContainer() {
     BackHandler(enabled = backStack.size > 1) { navigateBack() }
 
     // ── Screens where ALL chrome (top + bottom bars) is hidden ─────────────
-    // Only Login / Register are truly full-screen (they are form flows)
-    val isFullScreen = currentScreen is Screen.Login ||
+    // Splash, Login, Register are truly full-screen
+    val isFullScreen = currentScreen is Screen.Splash ||
+                       currentScreen is Screen.Login ||
                        currentScreen is Screen.Register
 
     // ── Landing is public — hide top bar but SHOW bottom nav ─────────────
