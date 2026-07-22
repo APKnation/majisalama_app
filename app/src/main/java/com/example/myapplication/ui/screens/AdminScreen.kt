@@ -799,14 +799,15 @@ fun AdminReportCard(
                         }
                     }
 
-                    // Main Action Buttons Row for Admin
+                    // Main Action Buttons Row for Admin (Responsive FlowRow)
                     if (!showRejectInput && !showResolveInput) {
-                        Row(
+                        @OptIn(ExperimentalLayoutApi::class)
+                        FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
+                            verticalArrangement = Arrangement.spacedBy(6.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            // Approve Button (if pending) - executes immediately -> shows Success alert
+                            // Approve Button (if pending)
                             if (report.status == "pending_village" || report.status == "pending") {
                                 MButton(
                                     text = "IDHINISHA",
@@ -837,12 +838,11 @@ fun AdminReportCard(
                                     },
                                     backgroundColor = Color(0xFF4CAF50),
                                     contentColor = WhitePure,
-                                    borderColor = Color(0xFF4CAF50),
-                                    modifier = Modifier.weight(1f)
+                                    borderColor = Color(0xFF4CAF50)
                                 )
                             }
 
-                            // Forward to District Button (if pending or approved by village) - executes immediately -> shows Success alert
+                            // Forward to District Button (if pending or approved by village)
                             if (report.status == "village_approved" || report.status == "pending") {
                                 MButton(
                                     text = "WILAYANI",
@@ -873,8 +873,7 @@ fun AdminReportCard(
                                     },
                                     backgroundColor = BlueOcean,
                                     contentColor = WhitePure,
-                                    borderColor = BlueOcean,
-                                    modifier = Modifier.weight(1f)
+                                    borderColor = BlueOcean
                                 )
                             }
 
@@ -885,8 +884,7 @@ fun AdminReportCard(
                                     onClick = { showResolveInput = true },
                                     backgroundColor = Color(0xFF009688),
                                     contentColor = WhitePure,
-                                    borderColor = Color(0xFF009688),
-                                    modifier = Modifier.weight(1f)
+                                    borderColor = Color(0xFF009688)
                                 )
                             }
 
@@ -897,8 +895,7 @@ fun AdminReportCard(
                                     onClick = { showRejectInput = true },
                                     backgroundColor = Color(0xFFFF9800),
                                     contentColor = WhitePure,
-                                    borderColor = Color(0xFFFF9800),
-                                    modifier = Modifier.weight(1f)
+                                    borderColor = Color(0xFFFF9800)
                                 )
                             }
 
@@ -943,8 +940,7 @@ fun AdminReportCard(
                                 },
                                 backgroundColor = Color.Red,
                                 contentColor = WhitePure,
-                                borderColor = Color.Red,
-                                modifier = Modifier.weight(1f)
+                                borderColor = Color.Red
                             )
                         }
                     }
