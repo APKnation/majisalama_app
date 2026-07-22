@@ -297,43 +297,34 @@ fun AddWaterSourceScreen(
                                 val lat = latitudeText.toDoubleOrNull()
                                 val lng = longitudeText.toDoubleOrNull()
 
-                                sweetAlertData = SweetAlertData(
-                                    title = "Thibitisha Usajili",
-                                    message = "Je, una uhakika unataka kusajili chanzo cha maji '$name' katika kijiji cha ${selectedVillage?.name}?",
-                                    type = SweetAlertType.CONFIRM,
-                                    confirmButtonText = "Ndio, Sajili",
-                                    cancelButtonText = "Ghairi",
-                                    onConfirm = {
-                                        isLoading = true
-                                        errorMessage = null
-                                        scope.launch {
-                                            val res = ApiClient.addWaterSource(
-                                                name = name,
-                                                sourceType = selectedSourceType,
-                                                villageId = selectedVillage!!.id,
-                                                villageName = selectedVillage!!.name,
-                                                latitude = lat,
-                                                longitude = lng
-                                            )
-                                            isLoading = false
-                                            if (res.isSuccess) {
-                                                sweetAlertData = SweetAlertData(
-                                                    title = "Umefanikiwa!",
-                                                    message = "Chanzo cha maji cha '$name' kimesajiliwa kikamilifu.",
-                                                    type = SweetAlertType.SUCCESS,
-                                                    confirmButtonText = "Sawa",
-                                                    onConfirm = { onSuccess() }
-                                                )
-                                            } else {
-                                                sweetAlertData = SweetAlertData(
-                                                    title = "Imeshindwa",
-                                                    message = res.exceptionOrNull()?.message ?: "Imeshindwa kuongeza chanzo cha maji.",
-                                                    type = SweetAlertType.ERROR
-                                                )
-                                            }
-                                        }
+                                isLoading = true
+                                errorMessage = null
+                                scope.launch {
+                                    val res = ApiClient.addWaterSource(
+                                        name = name,
+                                        sourceType = selectedSourceType,
+                                        villageId = selectedVillage!!.id,
+                                        villageName = selectedVillage!!.name,
+                                        latitude = lat,
+                                        longitude = lng
+                                    )
+                                    isLoading = false
+                                    if (res.isSuccess) {
+                                        sweetAlertData = SweetAlertData(
+                                            title = "Umefanikiwa!",
+                                            message = "Chanzo cha maji cha '$name' kimesajiliwa kikamilifu.",
+                                            type = SweetAlertType.SUCCESS,
+                                            confirmButtonText = "Sawa",
+                                            onConfirm = { onSuccess() }
+                                        )
+                                    } else {
+                                        sweetAlertData = SweetAlertData(
+                                            title = "Imeshindwa",
+                                            message = res.exceptionOrNull()?.message ?: "Imeshindwa kuongeza chanzo cha maji.",
+                                            type = SweetAlertType.ERROR
+                                        )
                                     }
-                                )
+                                }
                             },
                             modifier = Modifier.fillMaxWidth()
                         )

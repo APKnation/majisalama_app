@@ -286,41 +286,32 @@ fun ReportDamageScreen(
                                         return@MButton
                                     }
 
-                                    sweetAlertData = SweetAlertData(
-                                        title = "Thibitisha Kutuma Ripoti",
-                                        message = "Je, una uhakika unataka kutuma ripoti hii ya uharibifu wa mfumo wa maji?",
-                                        type = SweetAlertType.CONFIRM,
-                                        confirmButtonText = "Ndio, Tuma",
-                                        cancelButtonText = "Ghairi",
-                                        onConfirm = {
-                                            isLoading = true
-                                            errorMessage = null
-                                            scope.launch {
-                                                val res = ApiClient.reportDamage(
-                                                    waterSourceId = selectedSource!!.id,
-                                                    title = title,
-                                                    description = description,
-                                                    priority = selectedPriority
-                                                )
-                                                isLoading = false
-                                                if (res.isSuccess) {
-                                                    sweetAlertData = SweetAlertData(
-                                                        title = "Ripoti Imetumwa!",
-                                                        message = "Ripoti yako imetolewa kikamilifu. Utaweza kufuatilia maendeleo ya ukarabati.",
-                                                        type = SweetAlertType.SUCCESS,
-                                                        confirmButtonText = "Sawa",
-                                                        onConfirm = { onSuccess() }
-                                                    )
-                                                } else {
-                                                    sweetAlertData = SweetAlertData(
-                                                        title = "Imeshindwa",
-                                                        message = res.exceptionOrNull()?.message ?: "Imeshindwa kutuma ripoti. Jaribu tena.",
-                                                        type = SweetAlertType.ERROR
-                                                    )
-                                                }
-                                            }
+                                    isLoading = true
+                                    errorMessage = null
+                                    scope.launch {
+                                        val res = ApiClient.reportDamage(
+                                            waterSourceId = selectedSource!!.id,
+                                            title = title,
+                                            description = description,
+                                            priority = selectedPriority
+                                        )
+                                        isLoading = false
+                                        if (res.isSuccess) {
+                                            sweetAlertData = SweetAlertData(
+                                                title = "Ripoti Imetumwa!",
+                                                message = "Ripoti yako imetolewa kikamilifu. Utaweza kufuatilia maendeleo ya ukarabati.",
+                                                type = SweetAlertType.SUCCESS,
+                                                confirmButtonText = "Sawa",
+                                                onConfirm = { onSuccess() }
+                                            )
+                                        } else {
+                                            sweetAlertData = SweetAlertData(
+                                                title = "Imeshindwa",
+                                                message = res.exceptionOrNull()?.message ?: "Imeshindwa kutuma ripoti. Jaribu tena.",
+                                                type = SweetAlertType.ERROR
+                                            )
                                         }
-                                    )
+                                    }
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                                 borderColor = BlueOcean,
