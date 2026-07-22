@@ -25,10 +25,9 @@ import com.example.myapplication.data.ApiClient
 import com.example.myapplication.data.User
 import com.example.myapplication.data.Village
 import com.example.myapplication.ui.components.*
+import com.example.myapplication.ui.theme.*
 import kotlinx.coroutines.launch
 import androidx.compose.material3.MaterialTheme
-
-
 
 @Composable
 fun LoginScreen(
@@ -40,6 +39,9 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    
+    // SweetAlert state
+    var sweetAlertData by remember { mutableStateOf<SweetAlertData?>(null) }
     val scope = rememberCoroutineScope()
 
     Box(
@@ -91,8 +93,6 @@ fun LoginScreen(
 
             MStripesDivider(modifier = Modifier.padding(bottom = 12.dp))
 
-
-
             if (errorMessage != null) {
                 Text(
                     text = errorMessage!!,
@@ -131,7 +131,11 @@ fun LoginScreen(
                     text = "INGIA (LOGIN)",
                     onClick = {
                         if (username.isBlank() || password.isBlank()) {
-                            errorMessage = "Tafadhali jaza nafasi zote."
+                            sweetAlertData = SweetAlertData(
+                                title = "Taarifa Inahitajika",
+                                message = "Tafadhali jaza Jina la Mtumiaji/Email na Neno la Siri.",
+                                type = SweetAlertType.WARNING
+                            )
                             return@MButton
                         }
                         isLoading = true
@@ -140,9 +144,21 @@ fun LoginScreen(
                             val result = ApiClient.login(username, password)
                             isLoading = false
                             if (result.isSuccess) {
-                                onLoginSuccess(result.getOrThrow())
+                                val loggedUser = result.getOrThrow()
+                                sweetAlertData = SweetAlertData(
+                                    title = "Karibu Tena!",
+                                    message = "Umefanikiwa kuingia kama ${loggedUser.displayName}.",
+                                    type = SweetAlertType.SUCCESS,
+                                    confirmButtonText = "Sawa, Endelea",
+                                    onConfirm = { onLoginSuccess(loggedUser) }
+                                )
                             } else {
-                                errorMessage = result.exceptionOrNull()?.message ?: "Kuingia kumeshindwa."
+                                val err = result.exceptionOrNull()?.message ?: "Kuingia kumeshindwa."
+                                sweetAlertData = SweetAlertData(
+                                    title = "Kuingia Kumeshindwa",
+                                    message = err,
+                                    type = SweetAlertType.ERROR
+                                )
                             }
                         }
                     },
@@ -160,9 +176,14 @@ fun LoginScreen(
                         .clickable { onNavigateToRegister() }
                         .padding(8.dp)
                 )
-
-
             }
+        }
+
+        sweetAlertData?.let { data ->
+            SweetAlertDialog(
+                data = data,
+                onDismissRequest = { sweetAlertData = null }
+            )
         }
     }
 }
@@ -197,6 +218,9 @@ fun RegisterScreen(
 
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    
+    // SweetAlert state
+    var sweetAlertData by remember { mutableStateOf<SweetAlertData?>(null) }
     val scope = rememberCoroutineScope()
 
     // Fetch villages on load
@@ -453,7 +477,11 @@ fun RegisterScreen(
                         text = "JISAJILI SASA",
                         onClick = {
                             if (username.isBlank() || email.isBlank() || password.isBlank() || firstName.isBlank() || lastName.isBlank()) {
-                                errorMessage = "Tafadhali jaza taarifa zote muhimu."
+                                sweetAlertData = SweetAlertData(
+                                    title = "Taarifa Inahitajika",
+                                    message = "Tafadhali jaza nafasi zote muhimu za usajili.",
+                                    type = SweetAlertType.WARNING
+                                )
                                 return@MButton
                             }
                             isLoading = true
@@ -471,9 +499,21 @@ fun RegisterScreen(
                                 )
                                 isLoading = false
                                 if (result.isSuccess) {
-                                    onRegisterSuccess(result.getOrThrow())
+                                    val newUser = result.getOrThrow()
+                                    sweetAlertData = SweetAlertData(
+                                        title = "Usajili Umefanikiwa!",
+                                        message = "Akaunti yako imeundwa kikamilifu. Karibu MajiSalama Tanzania Water Portal.",
+                                        type = SweetAlertType.SUCCESS,
+                                        confirmButtonText = "Sawa, Anza",
+                                        onConfirm = { onRegisterSuccess(newUser) }
+                                    )
                                 } else {
-                                    errorMessage = result.exceptionOrNull()?.message ?: "Jisajili kumeshindwa."
+                                    val err = result.exceptionOrNull()?.message ?: "Usajili kumeshindwa."
+                                    sweetAlertData = SweetAlertData(
+                                        title = "Usajili Kumeshindwa",
+                                        message = err,
+                                        type = SweetAlertType.ERROR
+                                    )
                                 }
                             }
                         },
@@ -491,10 +531,15 @@ fun RegisterScreen(
                             .clickable { onNavigateToLogin() }
                             .padding(8.dp)
                     )
-
-
                 }
             }
+        }
+
+        sweetAlertData?.let { data ->
+            SweetAlertDialog(
+                data = data,
+                onDismissRequest = { sweetAlertData = null }
+            )
         }
     }
 }
