@@ -318,6 +318,14 @@ fun DistrictReportCard(
                                                 type = SweetAlertType.SUCCESS
                                             )
                                         )
+                                    } else {
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imeshindwa",
+                                                message = res.exceptionOrNull()?.message ?: "Imeshindwa kutatua ripoti.",
+                                                type = SweetAlertType.ERROR
+                                            )
+                                        )
                                     }
                                 }
                             },
@@ -354,6 +362,14 @@ fun DistrictReportCard(
                                                 title = "Imekataliwa",
                                                 message = "Ripoti imekataliwa na kuwekewa sababu.",
                                                 type = SweetAlertType.WARNING
+                                            )
+                                        )
+                                    } else {
+                                        onShowSweetAlert(
+                                            SweetAlertData(
+                                                title = "Imeshindwa",
+                                                message = res.exceptionOrNull()?.message ?: "Imeshindwa kukataa ripoti.",
+                                                type = SweetAlertType.ERROR
                                             )
                                         )
                                     }
@@ -431,32 +447,29 @@ fun DistrictReportCard(
                                     text = "ASSIGN",
                                     onClick = {
                                         val wk = selectedWorker ?: return@MButton
-                                        onShowSweetAlert(
-                                            SweetAlertData(
-                                                title = "Thibitisha Afisa",
-                                                message = "Je, una uhakika unataka kumpanga ${wk.username} kushughulikia ripoti hii wilayani?",
-                                                type = SweetAlertType.CONFIRM,
-                                                confirmButtonText = "Ndio, Panga",
-                                                cancelButtonText = "Ghairi",
-                                                onConfirm = {
-                                                    isOperating = true
-                                                    scope.launch {
-                                                        val res = ApiClient.assignDamageReport(report.id, wk.id)
-                                                        isOperating = false
-                                                        if (res.isSuccess) {
-                                                            onActionSuccess()
-                                                            onShowSweetAlert(
-                                                                SweetAlertData(
-                                                                    title = "Umefanikiwa!",
-                                                                    message = "Afisa ${wk.username} amepangiwa kazi kikamilifu.",
-                                                                    type = SweetAlertType.SUCCESS
-                                                                )
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            )
-                                        )
+                                        isOperating = true
+                                        scope.launch {
+                                            val res = ApiClient.assignDamageReport(report.id, wk.id)
+                                            isOperating = false
+                                            if (res.isSuccess) {
+                                                onActionSuccess()
+                                                onShowSweetAlert(
+                                                    SweetAlertData(
+                                                        title = "Umefanikiwa!",
+                                                        message = "Afisa ${wk.username} amepangiwa kazi kikamilifu.",
+                                                        type = SweetAlertType.SUCCESS
+                                                    )
+                                                )
+                                            } else {
+                                                onShowSweetAlert(
+                                                    SweetAlertData(
+                                                        title = "Imeshindwa",
+                                                        message = res.exceptionOrNull()?.message ?: "Imeshindwa kupanga afisa.",
+                                                        type = SweetAlertType.ERROR
+                                                    )
+                                                )
+                                            }
+                                        }
                                     },
                                     borderColor = BlueOcean,
                                     contentColor = WhitePure,

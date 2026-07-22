@@ -163,43 +163,34 @@ fun AddVillageScreen(
                                 val lat = latitudeText.toDoubleOrNull()
                                 val lng = longitudeText.toDoubleOrNull()
 
-                                sweetAlertData = SweetAlertData(
-                                    title = "Thibitisha Usajili",
-                                    message = "Je, una uhakika unataka kusajili kijiji cha '$name' Wilaya ya $district?",
-                                    type = SweetAlertType.CONFIRM,
-                                    confirmButtonText = "Ndio, Sajili",
-                                    cancelButtonText = "Ghairi",
-                                    onConfirm = {
-                                        isLoading = true
-                                        errorMessage = null
-                                        scope.launch {
-                                            val res = ApiClient.addVillage(
-                                                name = name,
-                                                district = district,
-                                                region = region,
-                                                population = pop,
-                                                latitude = lat,
-                                                longitude = lng
-                                            )
-                                            isLoading = false
-                                            if (res.isSuccess) {
-                                                sweetAlertData = SweetAlertData(
-                                                    title = "Umefanikiwa!",
-                                                    message = "Kijiji cha '$name' kimesajiliwa kikamilifu kwenye mfumo.",
-                                                    type = SweetAlertType.SUCCESS,
-                                                    confirmButtonText = "Sawa",
-                                                    onConfirm = { onSuccess() }
-                                                )
-                                            } else {
-                                                sweetAlertData = SweetAlertData(
-                                                    title = "Imeshindwa",
-                                                    message = res.exceptionOrNull()?.message ?: "Imeshindwa kuongeza kijiji.",
-                                                    type = SweetAlertType.ERROR
-                                                )
-                                            }
-                                        }
+                                isLoading = true
+                                errorMessage = null
+                                scope.launch {
+                                    val res = ApiClient.addVillage(
+                                        name = name,
+                                        district = district,
+                                        region = region,
+                                        population = pop,
+                                        latitude = lat,
+                                        longitude = lng
+                                    )
+                                    isLoading = false
+                                    if (res.isSuccess) {
+                                        sweetAlertData = SweetAlertData(
+                                            title = "Umefanikiwa!",
+                                            message = "Kijiji cha '$name' kimesajiliwa kikamilifu kwenye mfumo.",
+                                            type = SweetAlertType.SUCCESS,
+                                            confirmButtonText = "Sawa",
+                                            onConfirm = { onSuccess() }
+                                        )
+                                    } else {
+                                        sweetAlertData = SweetAlertData(
+                                            title = "Imeshindwa",
+                                            message = res.exceptionOrNull()?.message ?: "Imeshindwa kuongeza kijiji.",
+                                            type = SweetAlertType.ERROR
+                                        )
                                     }
-                                )
+                                }
                             },
                             modifier = Modifier.fillMaxWidth()
                         )
