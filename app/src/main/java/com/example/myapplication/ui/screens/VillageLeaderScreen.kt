@@ -22,9 +22,10 @@ import com.example.myapplication.data.ApiClient
 import com.example.myapplication.data.DamageReport
 import com.example.myapplication.data.User
 import com.example.myapplication.ui.components.*
+import com.example.myapplication.ui.theme.*
 import kotlinx.coroutines.launch
-import androidx.compose.material3.MaterialTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VillageLeaderScreen(
     onNavigateBack: () -> Unit
@@ -94,6 +95,10 @@ fun VillageLeaderScreen(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
                 fontFamily = FontFamily.Monospace
+            )
+            MButton(
+                text = "REFRESH",
+                onClick = { loadLeaderData() }
             )
         }
 
@@ -181,9 +186,12 @@ fun LeaderReportCard(
     workers: List<User>,
     onActionSuccess: () -> Unit
 ) {
-    var isExpanding by remember { mutableStateOf(false) }
     var rejectionReason by remember { mutableStateOf("") }
     var showRejectInput by remember { mutableStateOf(false) }
+
+    var resolutionNotes by remember { mutableStateOf("") }
+    var showResolveInput by remember { mutableStateOf(false) }
+
     var selectedWorker by remember { mutableStateOf<User?>(null) }
     var workerDropdownExpanded by remember { mutableStateOf(false) }
     var isOperating by remember { mutableStateOf(false) }
@@ -209,10 +217,20 @@ fun LeaderReportCard(
                 )
             }
 
+            if (report.status == "resolved" && report.resolutionNotes?.isNotEmpty() == true) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Maelezo ya Utatuzi: ${report.resolutionNotes}",
+                    color = Color(0xFF4CAF50),
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+            }
+
             if (report.assignedToName != null) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Wafanyakazi: ${report.assignedToName}",
+                    text = "Afisa aliyepangiwa: ${report.assignedToName}",
                     color = Color(0xFF00BCD4),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -243,9 +261,7 @@ fun LeaderReportCard(
                                 scope.launch {
                                     val res = ApiClient.rejectDamageReport(report.id, rejectionReason)
                                     isOperating = false
-                                    if (res.isSuccess) {
-                                        onActionSuccess()
-                                    }
+                                    if (res.isSuccess) onActionSuccess()
                                 }
                             },
                             borderColor = MaterialTheme.colorScheme.error,
@@ -257,24 +273,37 @@ fun LeaderReportCard(
                         )
                     }
                 } else {
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         MButton(
-                            text = "IDHINISHA (APPROVE)",
+                            text = "IDHINISHA",
                             onClick = {
                                 isOperating = true
                                 scope.launch {
                                     val res = ApiClient.approveDamageReport(report.id)
                                     isOperating = false
-                                    if (res.isSuccess) {
-                                        onActionSuccess()
-                                    }
+                                    if (res.isSuccess) onActionSuccess()
                                 }
                             },
                             borderColor = Color(0xFF4CAF50),
-                            contentColor = Color(0xFF4CAF50)
+                            contentColor = WhitePure,
+                            backgroundColor = Color(0xFF4CAF50)
                         )
                         MButton(
-                            text = "KATAA (REJECT)",
+                            text = "PELEKA WILAYANI",
+                            onClick = {
+                                isOperating = true
+                                scope.launch {
+                                    val res = ApiClient.forwardToDistrict(report.id)
+                                    isOperating = false
+                                    if (res.isSuccess) onActionSuccess()
+                                }
+                            },
+                            borderColor = BlueOcean,
+                            contentColor = WhitePure,
+                            backgroundColor = BlueOcean
+                        )
+                        MButton(
+                            text = "KATAA",
                             onClick = { showRejectInput = true },
                             borderColor = MaterialTheme.colorScheme.error,
                             contentColor = MaterialTheme.colorScheme.error
@@ -283,88 +312,142 @@ fun LeaderReportCard(
                 }
             }
 
-            // Action controls for assigning a worker to approved reports
-            if ((report.status == "village_approved" || report.status == "forwarded_to_district" || report.status == "assigned") && workers.isNotEmpty()) {
+            // Action controls for active/approved reports
+            if ((report.status == "village_approved" || report.status == "forwarded_to_district" || report.status == "assigned" || report.status == "in_progress") && report.status != "resolved") {
                 Spacer(modifier = Modifier.height(12.dp))
                 MStripesDivider(height = 1.dp, modifier = Modifier.padding(bottom = 12.dp))
 
                 if (isOperating) {
                     CircularProgressIndicator(color = com.example.myapplication.ui.theme.BlueNight, modifier = Modifier.size(20.dp))
-                } else {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "PANGA MFANYAKAZI (ASSIGN WATER OFFICER)",
-                            color = com.example.myapplication.ui.theme.BlueNight,
-                            fontSize = 10.sp,
-                            fontFamily = FontFamily.Monospace,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            // Dropdown
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .border(1.dp, com.example.myapplication.ui.theme.BlueFoam, RoundedCornerShape(16.dp))
-                                    .background(com.example.myapplication.ui.theme.WhitePure)
-                                    .clickable { workerDropdownExpanded = true }
-                                    .padding(10.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = selectedWorker?.username ?: "Chagua Mfanyakazi",
-                                        color = com.example.myapplication.ui.theme.BlueNight,
-                                        fontSize = 13.sp
-                                    )
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowDropDown,
-                                        contentDescription = "Dropdown",
-                                        tint = com.example.myapplication.ui.theme.BlueNight
-                                    )
+                } else if (showResolveInput) {
+                    MTextField(
+                        value = resolutionNotes,
+                        onValueChange = { resolutionNotes = it },
+                        label = "Maelezo ya Utatuzi",
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        MButton(
+                            text = "THIBITISHA TATIJO",
+                            onClick = {
+                                if (resolutionNotes.isBlank()) return@MButton
+                                isOperating = true
+                                scope.launch {
+                                    val res = ApiClient.resolveDamageReport(report.id, resolutionNotes)
+                                    isOperating = false
+                                    if (res.isSuccess) onActionSuccess()
                                 }
-                                DropdownMenu(
-                                    expanded = workerDropdownExpanded,
-                                    onDismissRequest = { workerDropdownExpanded = false },
+                            },
+                            borderColor = Color(0xFF4CAF50),
+                            contentColor = WhitePure,
+                            backgroundColor = Color(0xFF4CAF50)
+                        )
+                        MButton(
+                            text = "GHAIRI",
+                            onClick = { showResolveInput = false }
+                        )
+                    }
+                } else {
+                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        if (workers.isNotEmpty()) {
+                            Text(
+                                text = "PANGA MFANYAKAZI (ASSIGN WATER OFFICER)",
+                                color = com.example.myapplication.ui.theme.BlueNight,
+                                fontSize = 10.sp,
+                                fontFamily = FontFamily.Monospace,
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                // Dropdown
+                                Box(
                                     modifier = Modifier
-                                        .fillMaxWidth(0.6f)
-                                        .background(com.example.myapplication.ui.theme.WhitePure)
+                                        .weight(1f)
                                         .border(1.dp, com.example.myapplication.ui.theme.BlueFoam, RoundedCornerShape(16.dp))
+                                        .background(com.example.myapplication.ui.theme.WhitePure)
+                                        .clickable { workerDropdownExpanded = true }
+                                        .padding(10.dp)
                                 ) {
-                                    workers.forEach { w ->
-                                        DropdownMenuItem(
-                                            text = { Text(w.username, color = com.example.myapplication.ui.theme.BlueNight) },
-                                            onClick = {
-                                                selectedWorker = w
-                                                workerDropdownExpanded = false
-                                            }
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            text = selectedWorker?.username ?: "Chagua Mfanyakazi",
+                                            color = com.example.myapplication.ui.theme.BlueNight,
+                                            fontSize = 13.sp
+                                        )
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowDropDown,
+                                            contentDescription = "Dropdown",
+                                            tint = com.example.myapplication.ui.theme.BlueNight
                                         )
                                     }
-                                }
-                            }
-
-                            MButton(
-                                text = "ASSIGN",
-                                onClick = {
-                                    val wk = selectedWorker ?: return@MButton
-                                    isOperating = true
-                                    scope.launch {
-                                        val res = ApiClient.assignDamageReport(report.id, wk.id)
-                                        isOperating = false
-                                        if (res.isSuccess) {
-                                            onActionSuccess()
+                                    DropdownMenu(
+                                        expanded = workerDropdownExpanded,
+                                        onDismissRequest = { workerDropdownExpanded = false },
+                                        modifier = Modifier
+                                            .fillMaxWidth(0.6f)
+                                            .background(com.example.myapplication.ui.theme.WhitePure)
+                                            .border(1.dp, com.example.myapplication.ui.theme.BlueFoam, RoundedCornerShape(16.dp))
+                                    ) {
+                                        workers.forEach { w ->
+                                            DropdownMenuItem(
+                                                text = { Text(w.username, color = com.example.myapplication.ui.theme.BlueNight) },
+                                                onClick = {
+                                                    selectedWorker = w
+                                                    workerDropdownExpanded = false
+                                                }
+                                            )
                                         }
                                     }
-                                },
-                                borderColor = com.example.myapplication.ui.theme.BlueOcean,
-                                contentColor = com.example.myapplication.ui.theme.WhitePure,
-                                backgroundColor = com.example.myapplication.ui.theme.BlueOcean
+                                }
+
+                                MButton(
+                                    text = "ASSIGN",
+                                    onClick = {
+                                        val wk = selectedWorker ?: return@MButton
+                                        isOperating = true
+                                        scope.launch {
+                                            val res = ApiClient.assignDamageReport(report.id, wk.id)
+                                            isOperating = false
+                                            if (res.isSuccess) onActionSuccess()
+                                        }
+                                    },
+                                    borderColor = com.example.myapplication.ui.theme.BlueOcean,
+                                    contentColor = com.example.myapplication.ui.theme.WhitePure,
+                                    backgroundColor = com.example.myapplication.ui.theme.BlueOcean
+                                )
+                            }
+                        }
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            if (report.status != "forwarded_to_district") {
+                                MButton(
+                                    text = "PELEKA WILAYANI",
+                                    onClick = {
+                                        isOperating = true
+                                        scope.launch {
+                                            val res = ApiClient.forwardToDistrict(report.id)
+                                            isOperating = false
+                                            if (res.isSuccess) onActionSuccess()
+                                        }
+                                    },
+                                    borderColor = BlueOcean,
+                                    contentColor = WhitePure,
+                                    backgroundColor = BlueOcean
+                                )
+                            }
+                            MButton(
+                                text = "TATUA",
+                                onClick = { showResolveInput = true },
+                                borderColor = Color(0xFF4CAF50),
+                                contentColor = WhitePure,
+                                backgroundColor = Color(0xFF4CAF50)
                             )
                         }
                     }
